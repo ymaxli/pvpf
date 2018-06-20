@@ -27,7 +27,10 @@ This project was built and tested on the Mac OS X platform with the
 following dependencies:
 
 * CMake >= 3.5
-* Boost >= 1.61
+* Boost >= 1.66
+* TBB >= 4.4
+* CUDA >= 7.6.31
+* Rapidjson >= 1.1.0
 
 ## Instructions
 
