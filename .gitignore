@@ -35,8 +35,14 @@
 *.DS_Store
 *.idea/
 
+# Makefile Related
 build/*
 bin/*
 cmake-build-debug/*
 */CMakeFiles/*
 CMakeFiles/*
+Makefile
+*.cmake
+*.cbp
+*/*.cmake
+*/Makefile
