@@ -42,7 +42,9 @@ cmake-build-debug/*
 */CMakeFiles/*
 CMakeFiles/*
 Makefile
+CMakeCache.txt
 *.cmake
 *.cbp
 */*.cmake
 */Makefile
+*/CMakeCache.txt
