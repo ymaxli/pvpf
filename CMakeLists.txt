@@ -13,7 +13,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 # Gather all sources except the main entry point
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB_RECURSE INC_FILES include/*/*.h)
+file(GLOB_RECURSE INC_FILES include/*.h)
 file(GLOB_RECURSE SRC_FILES src/*/*.cpp)
+file(GLOB_RECURSE SRC_FILES src/*.cpp)
 
 # Dependencies
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
