@@ -17,10 +17,10 @@ file(GLOB_RECURSE SRC_FILES src/*/*.cpp)
 # Dependencies
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
-# find_package(TBB REQUIRED)
-find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-# find_package(OpenCV REQUIRED)
-# find_package(rapidjson REQUIRED)
+ find_package(TBB REQUIRED)
+ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+ find_package(OpenCV REQUIRED)
+ find_package(rapidjson REQUIRED)
 
 # Unit tests
 add_subdirectory(unittest)
