@@ -38,8 +38,9 @@ Do as you would any CMake project to compile:
 
 ```
 mkdir build
-cmake build
 cd build
+cmake ..
+
 make
 ```
 
