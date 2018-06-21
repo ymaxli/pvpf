@@ -23,7 +23,8 @@ find_package(Boost COMPONENTS unit_test_framework REQUIRED)
 # find_package(rapidjson REQUIRED)
 
 # Unit tests
-add_subdirectory(test)
+add_subdirectory(unittest)
+add_subdirectory(systemtest)
 
 # Assign the include directories
 include_directories (${Boost_INCLUDE_DIRS})
