@@ -38,8 +38,8 @@ Do as you would any CMake project to compile:
 
 ```
 mkdir build
+cmake build
 cd build
-cmake ..
 make
 ```
 
@@ -53,10 +53,16 @@ cd bin
 Run unit test suite:
 
 ```
-cd build/test
+cd build/unittest
 ctest
 ```
 
+Run system test suite:
+
+```
+cd build/systemtest
+ctest
+```
 ## References
 
 * [CMake: An introduction](https://www.cs.swarthmore.edu/~adanner/tips/cmake.php)
