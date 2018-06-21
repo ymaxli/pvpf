@@ -15,7 +15,7 @@ namespace config
 {
     class config_reader{
     public:
-        rapidjson::Document load_json_conf(std::string file);
+        rapidjson::Document load_json_conf(const std::string &file);
     };
 }
 
