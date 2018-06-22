@@ -4,11 +4,8 @@
 
 #include "pvpf/config_reader.h"
 #include <iostream>
-#include <rapidjson/document.h>
-#include <rapidjson/filereadstream.h>
 #include <rapidjson/istreamwrapper.h>
 #include <fstream>
-#include <cstdio>
 
 using namespace rapidjson;
 using namespace std;
