@@ -10,6 +10,6 @@ using namespace std;
 
 
 int main() {
-//    std::cout << __VERSION__ << std::endl;
+    std::cout << __VERSION__ << std::endl;
     return 0;
 }
