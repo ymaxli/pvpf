@@ -20,17 +20,20 @@ PVPF_NAMESPACE_BEGIN
             buffer(int buffer_size, bool blocking) : buffer_size(buffer_size), blocking(blocking) {
                 write_index = 0;
                 read_index = 0;
+                write_complete = false;
                 buffer_array = new data_bucket[buffer_size];
                 buffer_array_read_available = new bool[buffer_size];
                 for (int i = 0; i < buffer_size; i++) buffer_array_read_available[i] = false;
             }
 
             ~buffer() {
-                delete [] buffer_array;
-                delete [] buffer_array_read_available;
+                delete[] buffer_array;
+                delete[] buffer_array_read_available;
             }
 
             void write(data_bucket data) {
+                if(write_complete) return;
+
                 if (blocking) {
                     while (buffer_array_read_available[write_index]) {
                         std::this_thread::sleep_for(std::chrono::milliseconds(BLOCK_INTERVAL));
@@ -65,6 +68,15 @@ PVPF_NAMESPACE_BEGIN
                 return result;
             }
 
+            bool is_empty() {
+                return write_complete && !buffer_array_read_available[read_index];
+            }
+
+
+            void stop_writing() {
+                write_complete = true;
+            }
+
         private:
             const int BLOCK_INTERVAL = 100;
             int buffer_size;
@@ -73,9 +85,11 @@ PVPF_NAMESPACE_BEGIN
             std::mutex mutex;
             data_bucket *buffer_array; // use a dynamically-allocated array to contain buffer
             bool *buffer_array_read_available; // flag for buffer read availability
+            bool write_complete;
             void write_to_current_position(data_bucket data) {
                 buffer_array[write_index] = data;
                 buffer_array_read_available[write_index] = true;
+                if (!blocking) read_index = write_index;
                 write_index = (write_index + 1) % buffer_size;
             }
 
