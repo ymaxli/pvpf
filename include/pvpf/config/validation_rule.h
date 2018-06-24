@@ -10,7 +10,7 @@
 
 #include <rapidjson/document.h>
 #include "pvpf/pvpf.h"
-#include "pvpf/config_validator.h"
+#include "config_validator.h"
 
 PVPF_NAMESPACE_BEGIN
 
@@ -21,9 +21,9 @@ namespace config
         virtual validation_result validate(rapidjson::Document &conf) = 0;
     };
 
-    class concrete_rule_sink : public validation_rule {
+    class concrete_rule_source : public validation_rule {
     public:
-        validation_result validate(rapidjson::Document &conf);
+        validation_result validate(rapidjson::Document &conf) override;
     };
 }
 

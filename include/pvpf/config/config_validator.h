@@ -19,11 +19,19 @@ namespace config
         int type; // type: int(0: pass, 1: warning, 2: error)
         std::string message;
         inline validation_result(int t, std::string m) : type(t), message(m) {};
+        inline validation_result(const validation_result &vr){
+            type = vr.type;
+            message = vr.message;
+        }
     };
 
     class config_validator {
     public:
-        std::vector<validation_result const> validate(rapidjson::Document &conf);
+        const validation_result test(rapidjson::Document &d){
+            const validation_result vr(2, "invalid JSON file");
+            return vr;
+        }
+        std::vector<const validation_result> validate(rapidjson::Document &conf);
     };
 
 }
