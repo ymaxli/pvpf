@@ -29,6 +29,10 @@ namespace config
                 std::cerr << "Stream error!\n";
             else
                 std::cerr << "Unknown failure opening file.\n";
+
+            //if cannot open file, return NULL
+            Document d = NULL;
+            return d;
         }
         IStreamWrapper isw(f);
         Document d;

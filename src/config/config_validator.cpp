@@ -17,14 +17,12 @@ namespace config
         vector<validation_result const> res;
 
         // check json format
-        if(!conf.IsObject()) {
-            const validation_result vr(2, "invalid JSON file");
-            res.push_back(vr);
+        concrete_rule_format rule_format = concrete_rule_format();
+        const validation_result format = rule_format.validate(conf);
+        res.push_back(format);
+        //if invalid format, return immediately
+        if(format.type == 2) {
             return res;
-        }
-        else {
-            const validation_result vr(0, "valid JSON file");
-            res.push_back(vr);
         }
 
         //check source field

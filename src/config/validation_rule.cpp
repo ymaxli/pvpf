@@ -11,11 +11,38 @@ PVPF_NAMESPACE_BEGIN
 
 namespace config
 {
+    validation_result concrete_rule_format::validate(rapidjson::Document &conf) {
+        if(!conf.IsObject()) {
+            return validation_result(2, "invalid JSON file");
+        }
+        else {
+            return validation_result(0, "valid JSON file");
+
+        }
+    }
+
     validation_result concrete_rule_source::validate(Document &conf) {
         if(!conf.HasMember("source")){
-            return validation_result(2, "lack “source” field");
+            return validation_result(2, "Error: lack “source” field");
         }
-        //TODO
+        else if(conf["source"].Empty()){
+            return validation_result(2, "Error: “source” field has to have at least one child");
+        }
+        else {
+            return validation_result(0, "Pass: source field check");
+        }
+    }
+
+    validation_result concrete_rule_graph::validate(Document &conf) {
+        if(!conf.HasMember("graph")){
+            return validation_result(2, "Error: lack “graph” field");
+        }
+        else if(conf["source"].Empty()){
+            return validation_result(2, "Error: “graph” field has to have at least one child");
+        }
+        else {
+            return validation_result(0, "Pass: graph field check");
+        }
     }
 }
 

@@ -21,7 +21,17 @@ namespace config
         virtual validation_result validate(rapidjson::Document &conf) = 0;
     };
 
+    class concrete_rule_format : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
     class concrete_rule_source : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
+    class concrete_rule_graph : public validation_rule {
     public:
         validation_result validate(rapidjson::Document &conf) override;
     };
