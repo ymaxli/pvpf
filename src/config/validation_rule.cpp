@@ -40,6 +40,9 @@ namespace config
                 if (!source[i].HasMember("id")) {
                     return validation_result(2, "Error: node has to have an id");
                 }
+                else {
+                    (this->node_ids).push_back(source[i]["id"]);
+                }
                 // rule 10: check task field of source node
                 if (!source[i].HasMember("task")) {
                     return validation_result(2, "Error: source node has to have a task field");
@@ -74,25 +77,23 @@ namespace config
             for (SizeType i = 0; i < graph.Size(); i ++)
             {
                 // rule 8: check node id
-                if (! graph[i].HasMember("id"))
-                {
+                if (! graph[i].HasMember("id")) {
                     return validation_result(2, "Error: node has to have an id");
                 }
+                else {
+                    (this->node_ids).push_back(graph[i]["id"]);
+                }
                 // rule 14: check input field of graph node
-                if (! graph[i].HasMember("input"))
-                {
+                if (! graph[i].HasMember("input")) {
                     return validation_result(2, "Error: graph node has to have an input field");
                 }
                 // rule 15: : check task field of graph node
-                if (! graph[i].HasMember("task"))
-                {
+                if (! graph[i].HasMember("task")) {
                     return validation_result(2, "Error: graph node has to have an task field");
                 }
                     // rule 16: check algorithm of graph node
-                else
-                {
-                    if (graph[i]["task"].HasMember("algorithm"))
-                    {
+                else {
+                    if (graph[i]["task"].HasMember("algorithm")) {
                         return validation_result(2, "Error: algorithm not found");
                     }
                 }
@@ -109,8 +110,7 @@ namespace config
             return validation_result(2, "Error: lack “sink” field");
         }
         // rule 7: check sink field is empty or not
-        else if(conf["sink"].Empty())
-        {
+        else if(conf["sink"].Empty()) {
             return validation_result(2, "Error: “sink” field has to have at least one child");
         }
         else if (!conf["sink"].isArray()) {
@@ -122,6 +122,9 @@ namespace config
                 // rule 8: check node id
                 if (!sink[i].HasMember("id")) {
                     return validation_result(2, "Error: node has to have an id");
+                }
+                else {
+                    (this->node_ids).push_back(sink[i]["id"]);
                 }
                 // rule 11: check task field of sink node
                 if (!sink[i].HasMember("task")) {
@@ -138,8 +141,13 @@ namespace config
         }
     }
 
-    //TODO
     // rule 9: check duplicate node
+    validation_result duplicate_node_rule::validate(Document &conf) {
+        std::set<int> id_set(this->node_ids.begin(), this->node_ids.end());
+        if (id_set.size() < this->node_ids.size())
+            return validation_result(2, "Error: detect duplicate node id");
+        return validation_result(0, "Pass: no duplicate node id");
+    }
 }
 
 
