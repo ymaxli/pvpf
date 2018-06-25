@@ -30,6 +30,9 @@
 *.exe
 *.out
 *.app
+systemtest/dev_env_system_tests
+unittest/dev_env_unit_tests
+
 
 # Environment Related
 *.DS_Store
