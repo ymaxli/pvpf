@@ -44,6 +44,18 @@ namespace config
             return validation_result(0, "Pass: graph field check");
         }
     }
+
+    validation_result concrete_rule_sink::validate(Document &conf) {
+        if(!conf.HasMember("sink")){
+            return validation_result(2, "Error: lack “sink” field");
+        }
+        else if(conf["source"].Empty()){
+            return validation_result(2, "Error: “sink” field has to have at least one child");
+        }
+        else {
+            return validation_result(0, "Pass: sink field check");
+        }
+    }
 }
 
 PVPF_NAMESPACE_END

@@ -27,10 +27,6 @@ namespace config
 
     class config_validator {
     public:
-        const validation_result test(rapidjson::Document &d){
-            const validation_result vr(2, "invalid JSON file");
-            return vr;
-        }
         std::vector<const validation_result> validate(rapidjson::Document &conf);
     };
 

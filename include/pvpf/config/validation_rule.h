@@ -35,6 +35,11 @@ namespace config
     public:
         validation_result validate(rapidjson::Document &conf) override;
     };
+
+    class concrete_rule_sink : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
 }
 
 PVPF_NAMESPACE_END

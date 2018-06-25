@@ -30,6 +30,16 @@ namespace config
         const validation_result source = rule_source.validate(conf);
         res.push_back(source);
 
+        //check graph field
+        concrete_rule_graph rule_graph = concrete_rule_graph();
+        const validation_result graph = rule_graph.validate(conf);
+        res.push_back(graph);
+
+        //check sink field
+        concrete_rule_sink rule_sink = concrete_rule_sink();
+        const validation_result sink = rule_sink.validate(conf);
+        res.push_back(sink);
+
 
 
 
