@@ -13,10 +13,10 @@ namespace config
 {
     validation_result concrete_rule_format::validate(rapidjson::Document &conf) {
         if(!conf.IsObject()) {
-            return validation_result(2, "invalid JSON file");
+            return validation_result(2, "Error: invalid JSON file");
         }
         else {
-            return validation_result(0, "valid JSON file");
+            return validation_result(0, "Pass: valid JSON file");
 
         }
     }

@@ -17,19 +17,19 @@ using namespace pvpf::config;
 
 BOOST_AUTO_TEST_SUITE(config_reader_test)
 
-    BOOST_AUTO_TEST_CASE(read_json)
+    BOOST_AUTO_TEST_CASE(reader_read_json)
     {
         config_reader cr;
-        string json = "read_json.json";
-        Document d = cr.load_json_conf(json);
+        string jsonfile = "../../unittest/test_json/read_json.json";
+        Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(d.IsObject());
     }
 
-    BOOST_AUTO_TEST_CASE(read_other_file)
+    BOOST_AUTO_TEST_CASE(reader_read_other_file)
     {
         config_reader cr;
-        string json = "";
-        Document d = cr.load_json_conf(json);
+        string jsonfile = "";
+        Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(!d.IsObject());
     }
 
