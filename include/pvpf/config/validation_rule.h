@@ -18,6 +18,7 @@ namespace config
 {
     class validation_rule{
     public:
+        std::vector<string> node_ids;
         virtual validation_result validate(rapidjson::Document &conf) = 0;
     };
 
@@ -40,6 +41,12 @@ namespace config
     public:
         validation_result validate(rapidjson::Document &conf) override;
     };
+
+    class duplicate_node_rule : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
 }
 
 PVPF_NAMESPACE_END

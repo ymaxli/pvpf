@@ -24,7 +24,7 @@ int main() {
 //    return 0;
     config::config_reader cr;
 
-    string json = "read_correct_json.json";
+    string json = "dadf";
     rapidjson::Document d = cr.load_json_conf(json);
 
     config::config_validator cv;

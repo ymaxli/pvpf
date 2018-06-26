@@ -13,7 +13,9 @@ PVPF_NAMESPACE_BEGIN
 
 namespace config
 {
-    vector<validation_result const> config_validator::validate(Document &conf) {
+
+    vector<validation_result const> config_validator::validate(Document &conf)
+    {
         vector<validation_result const> res;
 
         // check json format
@@ -40,14 +42,14 @@ namespace config
         const validation_result sink = rule_sink.validate(conf);
         res.push_back(sink);
 
-
-
+        // check node duplicate
+        duplicate_node_rule rule_duplicate = duplicate_node_rule();
+        const validation_result duplicate = duplicate_node_rule(conf);
+        res.push_back(duplicate);
 
         return res;
 
-
     }
-
 }
 
 PVPF_NAMESPACE_END
