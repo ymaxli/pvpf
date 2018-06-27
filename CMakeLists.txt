@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 # Definitions
-set(PROJECT_NAME_STR dev_env)
+set(PROJECT_NAME_STR point_vision_pipeline_framework)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin")
 set(CMAKE_BUILD_TYPE Debug)
 
@@ -36,5 +36,5 @@ include_directories (${Boost_INCLUDE_DIRS})
 # Build
 set(SOURCE_FILES src/main.cpp ${INC_FILES} ${SRC_FILES})
 #set(SOURCE_FILES src/main.cpp ${SRC_FILES})
-add_executable(dev_env ${SOURCE_FILES})
-target_link_libraries(dev_env ${Boost_LIBRARIES})
+add_executable(point_vision_pipeline_framework ${SOURCE_FILES})
+target_link_libraries(point_vision_pipeline_framework ${Boost_LIBRARIES})
