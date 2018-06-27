@@ -1,0 +1,55 @@
+{
+  "meta": {
+    "name": "pvp-project-1",
+    "version": "0.0.1"
+  },
+  "source": {
+    "id": "source-1",
+    "task": {
+      "dylib": {
+        "location": "file location",
+        "func": "function name"
+      }
+    },
+    "output": {
+      "data": {
+        "key1": "any",
+        "key2": "int"
+      },
+      "conf": { // optional
+        "output_port_num": 2 // optional
+      }
+    }
+  },
+  "sink": {
+    "id": "sink-1",
+    "input": {
+      "pre": [
+        "node-1",
+        "node-2"
+      ],
+      "pre_conf": [
+        {
+          "readonly": true
+        }
+      ], // optional, config for predecessors
+      "mapping": {
+        "input": {
+          "image_arr": "key1.all",
+          "image_arr2": [
+            "key1.1",
+            "key1.0"
+          ],
+          "data1": "whatever.0",
+          "data2": "however.1"
+        }
+      }
+    },
+    "task": {
+      "dylib": {
+        "location": "",
+        "func": ""
+      }
+    }
+  }
+}
