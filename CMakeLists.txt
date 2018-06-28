@@ -26,8 +26,8 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
  find_package(rapidjson REQUIRED)
 
 # Unit tests
-add_subdirectory(unittest)
-add_subdirectory(systemtest)
+add_subdirectory(unit_test)
+add_subdirectory(system_test)
 
 # Assign the include directories
 include_directories (${Boost_INCLUDE_DIRS})

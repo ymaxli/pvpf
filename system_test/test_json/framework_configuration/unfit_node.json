@@ -3,7 +3,7 @@
     "name": "pvp-project-1",
     "version": "0.0.1"
   },
-  "source": {
+  "source": [{
     "id": "source-1",
     "task": {
       "dylib": {
@@ -20,16 +20,15 @@
         "output_port_num": 2 // optional
       }
     }
-  },
-  "graph": {
+  }],
+  "graph": [{
     "id": "node-1",
     "control": { // optional
       "frame_dropping": true
     },
     "input": {
       "pre": [
-        "source-1", // id of a node
-        "source-2"
+        "source-1"
       ],
       "pre_conf": [
         {
@@ -37,13 +36,11 @@
         }
       ], // optional, config for predecessors
       "mapping": { // optional
-        "image_arr": "key1.all",
+        "image_arr": "key1999.0",
         "image_arr2": [
-          "key1.1",
+          "key1.0",
           "key1.0"
-        ],
-        "data1": "whatever.0",
-        "data2": "however.1"
+        ]
       }
     },
     "task": {
@@ -53,12 +50,38 @@
     "output": {
       "mapping": { // optional
         "result_key": "output_key",
-        "key2": "hea"
+        "key1": "hea"
       },
       "conf": { // optional
         "output_port_num": 2
       }
     }
 
-  }
+  }],
+  "sink": [{
+    "id": "sink-1",
+    "input": {
+      "pre": [
+        "node-1"
+      ],
+      "pre_conf": [
+        {
+          "readonly": true
+        }
+      ], // optional, config for predecessors
+      "mapping": {
+        "image_arr": "key1.0",
+        "image_arr2": [
+          "key1.0",
+          "key1.0"
+        ]
+      }
+    },
+    "task": {
+      "dylib": {
+        "location": "",
+        "func": ""
+      }
+    }
+  }]
 }
