@@ -8,6 +8,7 @@
 #endif //VALIDATION_RULE_H
 #pragma once
 
+#include <iostream>
 #include <rapidjson/document.h>
 #include "pvpf/pvpf.h"
 #include "config_validator.h"
@@ -18,7 +19,6 @@ namespace config
 {
     class validation_rule{
     public:
-        std::vector<string> node_ids;
         virtual validation_result validate(rapidjson::Document &conf) = 0;
     };
 
