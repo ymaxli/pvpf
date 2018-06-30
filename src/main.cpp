@@ -4,7 +4,6 @@
 //#include <rapidjson/rapidjson.h>
 #include <boost/any.hpp>
 //#include <CUDA/cuda.h>
-
 using namespace std;
 
 int main() {
