@@ -17,16 +17,16 @@ PVPF_NAMESPACE_BEGIN
 
     namespace data_io {
         tuple<unique_ptr<source_io_pipe>, unique_ptr<io_pipe_for_source_node>> create_source(int buffer_size, bool buffer_blocking) {
-            auto buffer = make_shared<buffer>(buffer_size, buffer_blocking);
-            auto sip = make_unique<source_io_pipe>(buffer);
-            auto ipsn = make_unique<io_pipe_for_source_node>(buffer);
-            return make_tuple(sip, ipsn);
+            auto b = make_shared<buffer>(buffer_size, buffer_blocking);
+            auto sip = make_unique<source_io_pipe>(b);
+            auto ipsn = make_unique<io_pipe_for_source_node>(b);
+            return make_tuple(move(sip), move(ipsn));
         };
         tuple<unique_ptr<sink_io_pipe>, unique_ptr<io_pipe_for_sink_node>> create_sink(int buffer_size, bool buffer_blocking) {
-            auto buffer = make_shared<buffer>(buffer_size, buffer_blocking);
-            auto sip = make_unique<sink_io_pipe>(buffer);
-            auto ipsn = make_unique<io_pipe_for_sink_node>(buffer);
-            return make_tuple(sip, ipsn);
+            auto b = make_shared<buffer>(buffer_size, buffer_blocking);
+            auto sip = make_unique<sink_io_pipe>(b);
+            auto ipsn = make_unique<io_pipe_for_sink_node>(b);
+            return make_tuple(move(sip), move(ipsn));
         };
     }
 
