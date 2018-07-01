@@ -6,7 +6,6 @@
 #include <iostream>
 #include <unordered_set>
 #include <unordered_map>
-#include <boost/filesystem.hpp>
 
 using namespace rapidjson;
 using namespace std;
@@ -39,17 +38,20 @@ namespace config
         }
         else {
             const Value& source = conf["source"];
-            for (Value::ConstValueIterator itr = source.Begin(); itr != source.End(); ++itr) {
+            for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
                 // rule 1.8: check node id
-                if (!itr->HasMember("id")) {
+                if (!source[i].HasMember("id")) {
                     return validation_result(2, "Error: source node has to have an id");
                 }
+                else if(!source[i]["id"].IsString() || (source[i]["id"].GetStringLength() == 0)) {
+                    return validation_result(2, "Error: source node id should be nonempty string");
+                }
                 // rule 1.10: check task field of source node
-                if (!itr->HasMember("task")) {
+                if (!source[i].HasMember("task")) {
                     return validation_result(2, "Error: source node has to have a task field");
                 }
                 // rule 1.12: check output field of source node
-                if (!itr->HasMember("output")) {
+                if (!source[i].HasMember("output")) {
                     return validation_result(2, "Error: source node has to have an output field");
                 }
             }
@@ -166,16 +168,16 @@ namespace config
         return validation_result(0, "Pass: no duplicate node id");
     }
 
-    validation_result concrete_rule_library_search::validate(Document &conf) {
-        const Value& sink = conf["sink"];
-        for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
-            string task = sink[i]["task"].GetString();
-//            if(!boost::filesystem::exists(task))
-//                return validation_result(2, "Error: dylib");
-            //TODO
-
-        }
-    }
+//    validation_result concrete_rule_library_search::validate(Document &conf) {
+//        const Value& sink = conf["sink"];
+//        for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
+//            string task = sink[i]["task"].GetString();
+////            if(!boost::filesystem::exists(task))
+////                return validation_result(2, "Error: dylib");
+//            //TODO
+//
+//        }
+//    }
 
 
     validation_result concrete_rule_predecessor_check::validate(Document &conf) {
@@ -291,8 +293,10 @@ namespace config
             }
         }
 
-        return validation_result(0, "Pass: successors number match");
+        return validation_result(0, "Pass: successors number check");
     }
+
+
 
 }
 
