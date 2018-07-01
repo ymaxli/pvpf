@@ -133,7 +133,6 @@ namespace config
 
     validation_result concrete_rule_duplicate_id::validate(Document &conf) {
         unordered_set<string> id_set;
-        cout << 1 << endl;
         //get id in sink
         const Value& sink = conf["sink"];
         for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
@@ -143,7 +142,6 @@ namespace config
             }
             id_set.insert(id);
         }
-        cout << 2 << endl;
         //get id in source
         const Value& source = conf["source"];
         for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
@@ -153,7 +151,6 @@ namespace config
             }
             id_set.insert(id);
         }
-        cout << 3 << endl;
         //get id in graph
         const Value& graph = conf["graph"];
         for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
