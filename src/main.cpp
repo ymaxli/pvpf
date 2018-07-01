@@ -2,39 +2,36 @@
 //#include <tbb/tbb.h>
 //#include <opencv/cv.h>
 //#include <rapidjson/rapidjson.h>
-#include <boost/any.hpp>
+//#include <boost/any.hpp>
 //#include <CUDA/cuda.h>
 #include <pvpf/data_io/buffer.h>
 #include "pvpf/config/config_reader.h"
 #include "pvpf/config/config_validator.h"
 #include <rapidjson/document.h>
+#include "pvpf/config/validation_rule.h"
 
 using namespace std;
 using namespace pvpf;
+using namespace rapidjson;
 
-int test(rapidjson::Document &d){
-    return 0;
-}
 
 int main() {
-//    std::cout << __VERSION__ << std::endl;
-//    data_io::Buffer b;
-//    b.write(3);
-//    std::cout << b.read() << std::endl;
-//    return 0;
-    config::config_reader cr;
+    const char* json = "{\n"
+                       "    \"hello\": \"\",\n"
+                       "    \"t\": true ,\n"
+                       "    \"f\": false,\n"
+                       "    \"n\": null,\n"
+                       "    \"i\": 123,\n"
+                       "    \"pi\": 3.1416,\n"
+                       "    \"a\": [1, 2, 3, 4]\n"
+                       "}";
+    Document d;
+    d.Parse(json);
 
-    string json = "dadf";
-    rapidjson::Document d = cr.load_json_conf(json);
+    string i = d["hello"].GetString();
+    cout << i << endl;
 
-    config::config_validator cv;
-
-    vector<config::validation_result const> res = cv.validate(d);
-    cout << res.size() << endl;
-    for(auto a : res) {
-
-        cout << a.message << endl;
-    }
+//    config::validation_result res = crs.validate(d);
 }
 
 
