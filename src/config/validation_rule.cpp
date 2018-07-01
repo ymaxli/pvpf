@@ -28,12 +28,12 @@ namespace config
         if(!conf.HasMember("source")){
             return validation_result(2, "Error: lack “source” field");
         }
+        else if (!conf["source"].IsArray()) {
+            return validation_result(2, "Error: the content of “source” field is not an array");
+        }
         // rule 1.3: check source field is empty or not
         else if(conf["source"].Empty()){
             return validation_result(2, "Error: “source” field has to have at least one child");
-        }
-        else if (!conf["source"].IsArray()) {
-            return validation_result(2, "Error: the content of “source” field is not an array");
         }
         else {
             const Value& source = conf["source"];
@@ -48,7 +48,7 @@ namespace config
                 }
                 // rule 1.12: check output field of source node
                 if (!itr->HasMember("output")) {
-                    return validation_result(2, "Error:  source node has to have an output field");
+                    return validation_result(2, "Error: source node has to have an output field");
                 }
             }
 
@@ -63,14 +63,14 @@ namespace config
         if(!conf.HasMember("graph")){
             return validation_result(2, "Error: lack “graph” field");
         }
+        else if (! conf["graph"].IsArray()){
+            return validation_result(2, "Error: the content of “graph” field is not an array");
+        }
         // rule 1.5: check graph field is empty or not
         else if(conf["graph"].Empty()){
             return validation_result(2, "Error: “graph” field has to have at least one child");
         }
-        else if (!conf["graph"].IsArray()){
-            return validation_result(2, "Error: the content of “graph” field is not an array");
-        }
-        else if (conf["graph"].IsArray()){
+        else {
             const Value &graph = conf["graph"];
             for (Value::ConstValueIterator itr = graph.Begin(); itr != graph.End(); ++itr) {
                 // rule 1.8: check node id
@@ -83,7 +83,7 @@ namespace config
                 }
                 // rule 1.15: : check task field of graph node
                 if (!itr->HasMember("task")) {
-                    return validation_result(2, "Error: graph node has to have an task field");
+                    return validation_result(2, "Error: graph node has to have a task field");
                 }
                     // rule 1.16: check algorithm of graph node
 //                else {
@@ -101,14 +101,14 @@ namespace config
         if(!conf.HasMember("sink")){
             return validation_result(2, "Error: lack “sink” field");
         }
+        else if (!conf["sink"].IsArray()) {
+            return validation_result(2, "Error: the content of “sink” field is not an array");
+        }
         // rule 1.7: check sink field is empty or not
         else if(conf["sink"].Empty()) {
             return validation_result(2, "Error: “sink” field has to have at least one child");
         }
-        else if (!conf["sink"].IsArray()) {
-            return validation_result(2, "Error: the content of “sink” field is not an array");
-        }
-        else if (conf["sink"].IsArray()) {
+        else {
             const Value& sink = conf["sink"];
             for (Value::ConstValueIterator itr = sink.Begin(); itr != sink.End(); ++itr){
                 // rule 1.8: check node id
@@ -117,7 +117,7 @@ namespace config
                 }
                 // rule 11: check task field of sink node
                 if (!itr->HasMember("task")) {
-                    return validation_result(2, "Error: A sink node missing the task field");
+                    return validation_result(2, "Error: sink node has to have a task field");
                 }
                 // rule 13: check input field of sink node
                 if (!itr->HasMember("input")) {
@@ -131,9 +131,9 @@ namespace config
     // rule 9: check duplicate node
     // after check the other rules
 
-    validation_result duplicate_node_rule::validate(Document &conf) {
+    validation_result concrete_rule_duplicate_id::validate(Document &conf) {
         unordered_set<string> id_set;
-        id_set.find("a");
+        cout << 1 << endl;
         //get id in sink
         const Value& sink = conf["sink"];
         for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
@@ -143,7 +143,7 @@ namespace config
             }
             id_set.insert(id);
         }
-
+        cout << 2 << endl;
         //get id in source
         const Value& source = conf["source"];
         for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
@@ -153,7 +153,7 @@ namespace config
             }
             id_set.insert(id);
         }
-
+        cout << 3 << endl;
         //get id in graph
         const Value& graph = conf["graph"];
         for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {

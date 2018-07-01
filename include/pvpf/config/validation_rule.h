@@ -42,7 +42,7 @@ namespace config
         validation_result validate(rapidjson::Document &conf) override;
     };
 
-    class duplicate_node_rule : public validation_rule {
+    class concrete_rule_duplicate_id : public validation_rule {
     public:
         validation_result validate(rapidjson::Document &conf) override;
     };

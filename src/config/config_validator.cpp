@@ -32,6 +32,7 @@ namespace config
         rules.push_back(new concrete_rule_source);
         rules.push_back(new concrete_rule_graph);
         rules.push_back(new concrete_rule_sink);
+        rules.push_back(new concrete_rule_duplicate_id);
 
         for(int i = 0; i < rules.size(); ++i) {
             const validation_result result = rules[i]->validate(conf);
