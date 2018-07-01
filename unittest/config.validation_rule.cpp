@@ -133,7 +133,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
+        BOOST_CHECK_EQUAL(res.message, "Error: source node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(rule_source_without_task)
@@ -299,7 +299,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crg.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
+        BOOST_CHECK_EQUAL(res.message, "Error: graph node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(rule_graph_without_task)
@@ -460,7 +460,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
+        BOOST_CHECK_EQUAL(res.message, "Error: sink node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(rule_sink_without_task)
@@ -573,7 +573,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crd.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: detect duplicate node id");
+        BOOST_CHECK_EQUAL(res.message, "Error: detect duplicate node id \"1\"");
     }
 
     BOOST_AUTO_TEST_CASE(rule_no_duplicate_id)
