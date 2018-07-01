@@ -33,7 +33,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crf.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 0);
         BOOST_CHECK_EQUAL(res.message, "Pass: valid JSON file");
     }
@@ -51,7 +50,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crf.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: invalid JSON file");
     }
@@ -160,7 +158,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: source node has to have a task field");
     }
@@ -188,7 +185,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: source node has to have an output field");
     }
@@ -221,7 +217,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 0);
         BOOST_CHECK_EQUAL(res.message, "Pass: source field check");
     }
@@ -242,7 +237,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crg.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: lack “graph” field");
     }
@@ -260,7 +254,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crg.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: “graph” field has to have at least one child");
     }
@@ -353,7 +346,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crg.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: graph node has to have an input field");
     }
@@ -382,7 +374,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crg.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 0);
         BOOST_CHECK_EQUAL(res.message, "Pass: graph field check");
     }
@@ -404,7 +395,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: lack “sink” field");
     }
@@ -422,7 +412,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: “sink” field has to have at least one child");
     }
@@ -470,7 +459,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
     }
@@ -522,7 +510,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: sink node has to have an input field");
     }
@@ -553,7 +540,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crs.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 0);
         BOOST_CHECK_EQUAL(res.message, "Pass: sink field check");
     }
@@ -586,7 +572,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crd.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: detect duplicate node id");
     }
@@ -619,7 +604,6 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         d.Parse(json);
         validation_result res = crd.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.type, 0);
         BOOST_CHECK_EQUAL(res.message, "Pass: no duplicate node id");
     }
