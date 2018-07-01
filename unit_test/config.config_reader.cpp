@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_SUITE(config_reader_test)
     BOOST_AUTO_TEST_CASE(reader_read_json)
     {
         config_reader cr;
-        string jsonfile = "../../unittest/test_json/read_json.json";
+        string jsonfile = "../../unit_test/test_json/read_json.json";
         Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(d.IsObject());
     }

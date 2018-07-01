@@ -4,6 +4,7 @@
 //#include <rapidjson/rapidjson.h>
 //#include <boost/any.hpp>
 //#include <CUDA/cuda.h>
+<<<<<<< HEAD
 #include <pvpf/data_io/buffer.h>
 #include "pvpf/config/config_reader.h"
 #include "pvpf/config/config_validator.h"
@@ -32,6 +33,5 @@ int main() {
     cout << i << endl;
 
 //    config::validation_result res = crs.validate(d);
+
 }
-
-
