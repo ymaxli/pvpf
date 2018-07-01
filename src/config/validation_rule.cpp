@@ -46,13 +46,34 @@ namespace config
                 else if(!source[i]["id"].IsString() || (source[i]["id"].GetStringLength() == 0)) {
                     return validation_result(2, "Error: source node id should be nonempty string");
                 }
+
                 // rule 1.10: check task field of source node
                 if (!source[i].HasMember("task")) {
                     return validation_result(2, "Error: source node has to have a task field");
                 }
+                else if(!source[i]["task"].IsObject()) {
+                    return validation_result(2, "Error: source node task should be an object");
+                }
+                else if(!source[i]["task"].HasMember("dylib")){
+                    return validation_result(2, "Error: source node task should have a dylib field");
+                }
+                else if(!source[i]["task"]["dylib"].HasMember("location") || !source[i]["task"]["dylib"].HasMember("func")) {
+                    return validation_result(2, "Error: source node task dylib should have location and func");
+                }
+                else if(!source[i]["task"]["dylib"]["location"].IsString() || source[i]["task"]["dylib"]["location"].GetStringLength() == 0
+                        || !source[i]["task"]["dylib"]["func"].IsString() || source[i]["task"]["dylib"]["func"].GetStringLength() == 0) {
+                    return validation_result(2, "Error: source node id should be nonempty string");
+                }
+
                 // rule 1.12: check output field of source node
                 if (!source[i].HasMember("output")) {
                     return validation_result(2, "Error: source node has to have an output field");
+                }
+                else if(!source[i]["output"].IsObject()) {
+                    return validation_result(2, "Error: source node output should be an object");
+                }
+                else if(!source[i]["output"].HasMember("data")) {
+                    return validation_result(2, "Error: source node output should have a data field");
                 }
             }
 
@@ -76,18 +97,48 @@ namespace config
         }
         else {
             const Value &graph = conf["graph"];
-            for (Value::ConstValueIterator itr = graph.Begin(); itr != graph.End(); ++itr) {
+            for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
                 // rule 1.8: check node id
-                if (!itr->HasMember("id")) {
+                if (!graph[i].HasMember("id")) {
                     return validation_result(2, "Error: graph node has to have an id");
                 }
+                else if(!graph[i]["id"].IsString() || (graph[i]["id"].GetStringLength() == 0)) {
+                    return validation_result(2, "Error: graph node id should be nonempty string");
+                }
                 // rule 1.14: check input field of graph node
-                if (!itr->HasMember("input")) {
+                if (!graph[i].HasMember("input")) {
                     return validation_result(2, "Error: graph node has to have an input field");
                 }
+                else if(!graph[i]["input"].IsObject()) {
+                    return validation_result(2, "Error: graph node input should be an object");
+                }
+                else if(!graph[i]["input"].HasMember("pre")) {
+                    return validation_result(2, "Error: graph node input should have a pre field");
+                }
+                else if(!(graph[i]["input"]["pre"].IsString() && graph[i]["input"]["pre"].GetStringLength() != 0)
+                        || !graph[i]["input"]["pre"].IsArray()) {
+                    return validation_result(2, "Error: graph node input pre should be nonempty string or string list");
+                }
+                else if(graph[i]["input"]["pre"].IsArray()) {
+                    const Value &pre = graph[i]["input"]["pre"];
+                    for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                        if(!pre[j].IsString() || pre[j].GetStringLength() == 0)
+                            return validation_result(2, "Error: graph node input pre should be nonempty string or string list");
+                    }
+                }
+
                 // rule 1.15: : check task field of graph node
-                if (!itr->HasMember("task")) {
+                if (!graph[i].HasMember("task")) {
                     return validation_result(2, "Error: graph node has to have a task field");
+                }
+                else if(!graph[i]["task"].IsObject()) {
+                    return validation_result(2, "Error: graph node task should be an object");
+                }
+                else if(!graph[i]["task"].HasMember("algorithm")) {
+                    return validation_result(2, "Error: graph node task should have an algorithm field");
+                }
+                else if(!graph[i]["task"]["algorithm"].IsString() || graph[i]["task"]["algorithm"].GetStringLength() == 0) {
+                    return validation_result(2, "Error: graph node task algorithm should be nonempty string");
                 }
                     // rule 1.16: check algorithm of graph node
 //                else {
@@ -114,18 +165,53 @@ namespace config
         }
         else {
             const Value& sink = conf["sink"];
-            for (Value::ConstValueIterator itr = sink.Begin(); itr != sink.End(); ++itr){
+            for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
                 // rule 1.8: check node id
-                if (!itr->HasMember("id")) {
+                if (!sink[i].HasMember("id")) {
                     return validation_result(2, "Error: sink node has to have an id");
                 }
+                else if(!sink[i]["id"].IsString()  || (sink[i]["id"].GetStringLength() == 0)) {
+                    return validation_result(2, "Error: sink node id should be nonempty string");
+                }
+
                 // rule 11: check task field of sink node
-                if (!itr->HasMember("task")) {
+                if (!sink[i].HasMember("task")) {
                     return validation_result(2, "Error: sink node has to have a task field");
                 }
+                else if(!sink[i]["task"].IsObject()) {
+                    return validation_result(2, "Error: sink node task should be an object");
+                }
+                else if(!sink[i]["task"].HasMember("dylib")){
+                    return validation_result(2, "Error: sink node task should have a dylib field");
+                }
+                else if(!sink[i]["task"]["dylib"].HasMember("location") || !sink[i]["task"]["dylib"].HasMember("func")) {
+                    return validation_result(2, "Error: sink node task dylib should have location and func");
+                }
+                else if(!sink[i]["task"]["dylib"]["location"].IsString() || sink[i]["task"]["dylib"]["location"].GetStringLength() == 0
+                        || !sink[i]["task"]["dylib"]["func"].IsString() || sink[i]["task"]["dylib"]["func"].GetStringLength() == 0) {
+                    return validation_result(2, "Error: sink node id should be nonempty string");
+                }
+
                 // rule 13: check input field of sink node
-                if (!itr->HasMember("input")) {
+                if (!sink[i].HasMember("input")) {
                     return validation_result(2, "Error: sink node has to have an input field");
+                }
+                else if(!sink[i]["input"].IsObject()) {
+                    return validation_result(2, "Error: sink node input should be an object");
+                }
+                else if(!sink[i]["input"].HasMember("pre")) {
+                    return validation_result(2, "Error: sink node input should have a pre field");
+                }
+                else if(!(sink[i]["input"]["pre"].IsString() && sink[i]["input"]["pre"].GetStringLength() != 0)
+                        || !sink[i]["input"]["pre"].IsArray()) {
+                    return validation_result(2, "Error: sink node input pre should be nonempty string or string list");
+                }
+                else if(sink[i]["input"]["pre"].IsArray()) {
+                    const Value &pre = sink[i]["input"]["pre"];
+                    for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                        if(!pre[j].IsString() || pre[j].GetStringLength() == 0)
+                            return validation_result(2, "Error: sink node input pre should be nonempty string or string list");
+                    }
                 }
             }
             return validation_result(0, "Pass: sink field check");
