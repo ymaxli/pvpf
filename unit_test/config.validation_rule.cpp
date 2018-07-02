@@ -71,12 +71,29 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.message, "Error: lack “source” field");
     }
 
-    BOOST_AUTO_TEST_CASE(rule_empty_source)
+    BOOST_AUTO_TEST_CASE(rule_empty_source_array)
     {
         concrete_rule_source crs;
         const char* json = "{\n"
                            "    \"meta\":[],\n"
                            "    \"source\": [],\n"
+                           "    \"graph\": [],\n"
+                           "    \"sink\": []\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: “source” field has to have at least one child");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_source_empty_object)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\":[],\n"
+                           "    \"source\": [{}],\n"
                            "    \"graph\": [],\n"
                            "    \"sink\": []\n"
                            "}";
@@ -133,7 +150,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: source node has to have an id");
+        BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(rule_source_id_not_string)
@@ -331,7 +348,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crg.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: graph node has to have an id");
+        BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(rule_graph_without_task)
@@ -492,7 +509,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: sink node has to have an id");
+        BOOST_CHECK_EQUAL(res.message, "Error: node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(rule_sink_without_task)

@@ -39,9 +39,12 @@ namespace config
         else {
             const Value& source = conf["source"];
             for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
+                if(source[i].ObjectEmpty()) {
+                    return validation_result(2, "Error: “source” field has to have at least one child");
+                }
                 // rule 1.8: check node id
                 if (!source[i].HasMember("id")) {
-                    return validation_result(2, "Error: source node has to have an id");
+                    return validation_result(2, "Error: node has to have an id");
                 }
                 else if(!source[i]["id"].IsString() || (source[i]["id"].GetStringLength() == 0)) {
                     return validation_result(2, "Error: source node id should be nonempty string");
@@ -98,9 +101,12 @@ namespace config
         else {
             const Value &graph = conf["graph"];
             for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
+                if(graph[i].ObjectEmpty()) {
+                    return validation_result(2, "Error: “graph” field has to have at least one child");
+                }
                 // rule 1.8: check node id
                 if (!graph[i].HasMember("id")) {
-                    return validation_result(2, "Error: graph node has to have an id");
+                    return validation_result(2, "Error: node has to have an id");
                 }
                 else if(!graph[i]["id"].IsString() || (graph[i]["id"].GetStringLength() == 0)) {
                     return validation_result(2, "Error: graph node id should be nonempty string");
@@ -166,9 +172,12 @@ namespace config
         else {
             const Value& sink = conf["sink"];
             for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
+                if(sink[i].ObjectEmpty()) {
+                    return validation_result(2, "Error: “sink” field has to have at least one child");
+                }
                 // rule 1.8: check node id
                 if (!sink[i].HasMember("id")) {
-                    return validation_result(2, "Error: sink node has to have an id");
+                    return validation_result(2, "Error: node has to have an id");
                 }
                 else if(!sink[i]["id"].IsString()  || (sink[i]["id"].GetStringLength() == 0)) {
                     return validation_result(2, "Error: sink node id should be nonempty string");
