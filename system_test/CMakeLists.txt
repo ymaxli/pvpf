@@ -6,6 +6,7 @@ set(PROJECT_SYSTEM_TESTS_NAME ${PROJECT_NAME_STR}_system_tests)
 
 # Dependencies
 find_package(Boost COMPONENTS filesystem system unit_test_framework REQUIRED)
+find_package(OpenCV REQUIRED)
 
 # Gather the header and source files
 file(GLOB SYSTEM_TESTS_INC_FILES ${PROJECT_SOURCE_DIR}/system_test/*.hpp)
@@ -24,7 +25,7 @@ include_directories(${SYSTEM_TESTS_INCLUDES})
 add_definitions(-DBOOST_TEST_DYN_LINK)
 #add_executable(${PROJECT_SYSTEM_TESTS_NAME} ${SYSTEM_TESTS_SRC_FILES} $<TARGET_OBJECTS:demo_objects> )
 add_executable(${PROJECT_SYSTEM_TESTS_NAME} ${SYSTEM_TESTS_SRC_FILES} ${SRC_FILES})
-target_link_libraries(${PROJECT_SYSTEM_TESTS_NAME} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_SYSTEM_TESTS_NAME} ${Boost_LIBRARIES} ${OpenCV_LIBS})
 
 enable_testing()
 add_test(DemoTest ${PROJECT_SYSTEM_TESTS_NAME})

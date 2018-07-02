@@ -26,11 +26,11 @@ PVPF_NAMESPACE_BEGIN
 
         data_bucket(const data_bucket &new_data_bucket) = delete;
 
-        data_bucket(data_bucket &&new_data_bucket) : map(new_data_bucket.map) {
+        data_bucket(data_bucket &&new_data_bucket) noexcept : map(new_data_bucket.map) {
             new_data_bucket.map = nullptr;
         }
 
-        data_bucket &operator=(data_bucket &&new_data_bucket) {
+        data_bucket &operator=(data_bucket &&new_data_bucket) noexcept {
             if (this != &new_data_bucket) {
                 map = new_data_bucket.map;
                 new_data_bucket.map = nullptr;
@@ -67,6 +67,10 @@ PVPF_NAMESPACE_BEGIN
             } else {
                 throw std::string("key:") + key + std::string(" does not exist");
             }
+        }
+
+        unsigned long size() {
+            return this->map ? this->map->size() : 0;
         }
 
         std::map<std::string, std::shared_ptr<core::any>>::iterator begin() {

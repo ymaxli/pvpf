@@ -6,29 +6,28 @@
 #define DEV_ENV_IO_PIPE_H
 #pragma once
 
+#include <utility>
 #include "pvpf/pvpf.h"
 #include "pvpf/utils/data_bucket.h"
 #include "buffer.h"
-
-using namespace std;
 
 PVPF_NAMESPACE_BEGIN
 
     namespace data_io {
         class source_io_pipe {
         public:
-            source_io_pipe(shared_ptr<buffer> b) : buffer(b) {}
+            explicit source_io_pipe(std::shared_ptr<buffer> b) : buffer(b) {}
 
             template<typename T>
-            void source_write(const string &key, T &obj) {
+            void source_write(std::string const &key, T &&obj) {
                 data_bucket bucket;
-                bucket.put(key, obj);
+                bucket.put(key, std::forward<T>(obj));
 
-                source_write(bucket);
+                source_write(std::move(bucket));
             }
 
             void source_write(data_bucket data) {
-                buffer->write(data);
+                buffer->write(std::move(data));
             }
 
             void source_complete() {
@@ -36,12 +35,12 @@ PVPF_NAMESPACE_BEGIN
             }
 
         private:
-            shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buffer;
         };
 
         class io_pipe_for_source_node {
         public:
-            io_pipe_for_source_node(shared_ptr<buffer> b) : buffer(b) {}
+            explicit io_pipe_for_source_node(std::shared_ptr<buffer> b) : buffer(b) {}
 
             bool is_empty() {
                 return buffer->is_empty();
@@ -52,18 +51,12 @@ PVPF_NAMESPACE_BEGIN
             }
 
         private:
-            shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buffer;
         };
 
         class sink_io_pipe {
         public:
-            sink_io_pipe(shared_ptr<buffer> b) : buffer(b) {}
-
-            template<typename T>
-            T sink_read(const string &key) {
-                data_bucket data = buffer->read();
-                return boost::any_cast<T>(data.get(key));
-            }
+            explicit sink_io_pipe(std::shared_ptr<buffer> b) : buffer(b) {}
 
             data_bucket sink_read() {
                 return buffer->read();
@@ -74,15 +67,15 @@ PVPF_NAMESPACE_BEGIN
             }
 
         private:
-            shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buffer;
         };
 
         class io_pipe_for_sink_node {
         public:
-            io_pipe_for_sink_node(shared_ptr<buffer> b) : buffer(b) {}
+            explicit io_pipe_for_sink_node(std::shared_ptr<buffer> b) : buffer(b) {}
 
             void write(data_bucket data) {
-                buffer->write(data);
+                buffer->write(std::move(data));
             }
 
             void stop_writing() {
@@ -90,7 +83,7 @@ PVPF_NAMESPACE_BEGIN
             }
 
         private:
-            shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buffer;
         };
     }
 
