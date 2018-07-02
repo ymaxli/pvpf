@@ -2,11 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 # Project settings
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ".")
-set(PROJECT_SYSTEM_TESTS_NAME ${PROJECT_NAME_STR}_system_tests)
+set(PROJECT_SYSTEM_TESTS_NAME pvpf_system_tests)
 
 # Dependencies
-find_package(Boost COMPONENTS filesystem system unit_test_framework REQUIRED)
-find_package(OpenCV REQUIRED)
+#find_package(Boost COMPONENTS filesystem system unit_test_framework REQUIRED)
+#find_package(OpenCV REQUIRED)
 
 # Gather the header and source files
 file(GLOB SYSTEM_TESTS_INC_FILES ${PROJECT_SOURCE_DIR}/system_test/*.hpp)
