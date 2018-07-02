@@ -11,22 +11,20 @@
 #include "io_pipe.h"
 #include "buffer.h"
 
-using namespace std;
-
 PVPF_NAMESPACE_BEGIN
 
     namespace data_io {
-        tuple<unique_ptr<source_io_pipe>, unique_ptr<io_pipe_for_source_node>> create_source(int buffer_size, bool buffer_blocking) {
-            auto buffer = make_shared<buffer>(buffer_size, buffer_blocking);
-            auto sip = make_unique<source_io_pipe>(buffer);
-            auto ipsn = make_unique<io_pipe_for_source_node>(buffer);
-            return make_tuple(sip, ipsn);
+        std::tuple<std::unique_ptr<source_io_pipe>, std::unique_ptr<io_pipe_for_source_node>> create_source(int buffer_size, bool buffer_blocking) {
+            auto b = std::make_shared<buffer>(buffer_size, buffer_blocking);
+            auto sip = std::make_unique<source_io_pipe>(b);
+            auto ipsn = std::make_unique<io_pipe_for_source_node>(b);
+            return std::make_tuple(std::move(sip), std::move(ipsn));
         };
-        tuple<unique_ptr<sink_io_pipe>, unique_ptr<io_pipe_for_sink_node>> create_sink(int buffer_size, bool buffer_blocking) {
-            auto buffer = make_shared<buffer>(buffer_size, buffer_blocking);
-            auto sip = make_unique<sink_io_pipe>(buffer);
-            auto ipsn = make_unique<io_pipe_for_sink_node>(buffer);
-            return make_tuple(sip, ipsn);
+        std::tuple<std::unique_ptr<sink_io_pipe>, std::unique_ptr<io_pipe_for_sink_node>> create_sink(int buffer_size, bool buffer_blocking) {
+            auto b = std::make_shared<buffer>(buffer_size, buffer_blocking);
+            auto sip = std::make_unique<sink_io_pipe>(b);
+            auto ipsn = std::make_unique<io_pipe_for_sink_node>(b);
+            return std::make_tuple(std::move(sip), std::move(ipsn));
         };
     }
 

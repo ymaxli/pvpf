@@ -28,4 +28,4 @@ target_link_libraries(${PROJECT_UNIT_TESTS_NAME} ${Boost_LIBRARIES})
 
 enable_testing()
 #add_test(RealTest second_test)
-add_test(DemoTest ${PROJECT_UNIT_TESTS_NAME})
+add_test(UNITTEST ${PROJECT_UNIT_TESTS_NAME})
