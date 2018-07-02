@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: lack “source” field");
+        BOOST_CHECK_EQUAL(res.message, "Error: lack \"source\" field");
     }
 
     BOOST_AUTO_TEST_CASE(rule_empty_source)
@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: “source” field has to have at least one child");
+        BOOST_CHECK_EQUAL(res.message, "Error: \"source\" field has to have at least one child");
     }
 
     BOOST_AUTO_TEST_CASE(rule_source_not_array)
@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: the content of “source” field is not an array");
+        BOOST_CHECK_EQUAL(res.message, "Error: the content of \"source\" field is not an array");
     }
 
     BOOST_AUTO_TEST_CASE(rule_source_without_id)
@@ -270,7 +270,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crg.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: lack “graph” field");
+        BOOST_CHECK_EQUAL(res.message, "Error: lack \"graph\" field");
     }
 
     BOOST_AUTO_TEST_CASE(rule_empty_graph)
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crg.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: “graph” field has to have at least one child");
+        BOOST_CHECK_EQUAL(res.message, "Error: \"graph\" field has to have at least one child");
     }
 
 
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crg.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: the content of “graph” field is not an array");
+        BOOST_CHECK_EQUAL(res.message, "Error: the content of \"graph\" field is not an array");
     }
 
     BOOST_AUTO_TEST_CASE(rule_graph_without_id)
@@ -428,7 +428,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: lack “sink” field");
+        BOOST_CHECK_EQUAL(res.message, "Error: lack \"sink\" field");
     }
 
     BOOST_AUTO_TEST_CASE(rule_empty_sink)
@@ -445,7 +445,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: “sink” field has to have at least one child");
+        BOOST_CHECK_EQUAL(res.message, "Error: \"sink\" field has to have at least one child");
     }
 
 
@@ -463,7 +463,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: the content of “sink” field is not an array");
+        BOOST_CHECK_EQUAL(res.message, "Error: the content of \"sink\" field is not an array");
     }
 
     BOOST_AUTO_TEST_CASE(rule_sink_without_id)

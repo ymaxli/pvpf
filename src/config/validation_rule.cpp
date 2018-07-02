@@ -27,14 +27,14 @@ namespace config
     validation_result concrete_rule_source::validate(Document &conf) {
         // rule 1.2: check source field
         if(!conf.HasMember("source")){
-            return validation_result(2, "Error: lack “source” field");
+            return validation_result(2, "Error: lack \"source\" field");
         }
         else if (!conf["source"].IsArray()) {
-            return validation_result(2, "Error: the content of “source” field is not an array");
+            return validation_result(2, "Error: the content of \"source\" field is not an array");
         }
         // rule 1.3: check source field is empty or not
         else if(conf["source"].Empty()){
-            return validation_result(2, "Error: “source” field has to have at least one child");
+            return validation_result(2, "Error: \"source\" field has to have at least one child");
         }
         else {
             const Value& source = conf["source"];
@@ -86,14 +86,14 @@ namespace config
     validation_result concrete_rule_graph::validate(Document &conf) {
         // rule 1.4: check graph field
         if(!conf.HasMember("graph")){
-            return validation_result(2, "Error: lack “graph” field");
+            return validation_result(2, "Error: lack \"graph\" field");
         }
         else if (! conf["graph"].IsArray()){
-            return validation_result(2, "Error: the content of “graph” field is not an array");
+            return validation_result(2, "Error: the content of \"graph\" field is not an array");
         }
         // rule 1.5: check graph field is empty or not
         else if(conf["graph"].Empty()){
-            return validation_result(2, "Error: “graph” field has to have at least one child");
+            return validation_result(2, "Error: \"graph\" field has to have at least one child");
         }
         else {
             const Value &graph = conf["graph"];
@@ -116,7 +116,7 @@ namespace config
                     return validation_result(2, "Error: graph node input should have a pre field");
                 }
                 else if(!(graph[i]["input"]["pre"].IsString() && graph[i]["input"]["pre"].GetStringLength() != 0)
-                        || !graph[i]["input"]["pre"].IsArray()) {
+                        && !graph[i]["input"]["pre"].IsArray()) {
                     return validation_result(2, "Error: graph node input pre should be nonempty string or string list");
                 }
                 else if(graph[i]["input"]["pre"].IsArray()) {
@@ -154,14 +154,14 @@ namespace config
     validation_result concrete_rule_sink::validate(Document &conf) {
         // rule 1.6: check sink field
         if(!conf.HasMember("sink")){
-            return validation_result(2, "Error: lack “sink” field");
+            return validation_result(2, "Error: lack \"sink\" field");
         }
         else if (!conf["sink"].IsArray()) {
-            return validation_result(2, "Error: the content of “sink” field is not an array");
+            return validation_result(2, "Error: the content of \"sink\" field is not an array");
         }
         // rule 1.7: check sink field is empty or not
         else if(conf["sink"].Empty()) {
-            return validation_result(2, "Error: “sink” field has to have at least one child");
+            return validation_result(2, "Error: \"sink\" field has to have at least one child");
         }
         else {
             const Value& sink = conf["sink"];
@@ -203,7 +203,7 @@ namespace config
                     return validation_result(2, "Error: sink node input should have a pre field");
                 }
                 else if(!(sink[i]["input"]["pre"].IsString() && sink[i]["input"]["pre"].GetStringLength() != 0)
-                        || !sink[i]["input"]["pre"].IsArray()) {
+                        && !sink[i]["input"]["pre"].IsArray()) {
                     return validation_result(2, "Error: sink node input pre should be nonempty string or string list");
                 }
                 else if(sink[i]["input"]["pre"].IsArray()) {
