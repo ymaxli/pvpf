@@ -8,11 +8,12 @@ set(CMAKE_BUILD_TYPE Debug)
 # Project title and define versioning
 project(${PROJECT_NAME_STR})
 
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 ${SRC_FILES} -ltbb")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 --coverage ${SRC_FILES} -ltbb")
 
 # Gather all sources except the main entry point
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-file(GLOB_RECURSE INC_FILES include/**/*.h)
+file(GLOB_RECURSE INC_FILES include/**/*.h include/**/*.hpp)
 #file(GLOB_RECURSE INC_FILES include/*.h)
 file(GLOB_RECURSE SRC_FILES src/**/*.cpp)
 #file(GLOB_RECURSE SRC_FILES src/*.cpp)
