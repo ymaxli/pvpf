@@ -46,6 +46,7 @@ public:
     }
 
 private:
+
     void print(string &&str) {
         if (output) {
             cout << id + " " + str << endl;
@@ -192,7 +193,6 @@ BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
 
         {
             data_bucket bucket;
-            A b(false, "b", 100);
 
             bucket.put("abc", 1.2f);
 
@@ -201,6 +201,51 @@ BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
         }
 
         BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+    }
+
+    BOOST_AUTO_TEST_CASE(move_assign_to_self) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            bucket.put("abc", 1.2f);
+            bucket = std::move(bucket);
+
+            auto a = bucket.get_copy<float>("abc");
+            BOOST_TEST(a == 1.2f);
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE(get_copy_exception) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            bucket.put("abc", 1.2f);
+
+            try {
+                bucket.get_copy<float>("ac");
+                BOOST_TEST(false);
+            } catch (std::exception& e) {
+                BOOST_TEST(!string("key:ac does not exist").compare(e.what()));
+            }
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE(get_ptr_exception) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            bucket.put("abc", 1.2f);
+
+            try {
+                bucket.get_ptr<float>("acd");
+                BOOST_TEST(false);
+            } catch (std::exception& e) {
+                BOOST_TEST(!string("key:acd does not exist").compare(e.what()));
+            }
+        }
     }
 
 BOOST_AUTO_TEST_SUITE_END()

@@ -46,26 +46,26 @@ PVPF_NAMESPACE_BEGIN
 
         template<typename T>
         T get_copy(std::string const &key) {
-            if (!(map->count(key))) throw std::string("key:") + key + std::string(" does not exist");
+            if (!(map->count(key))) throw std::logic_error(std::string("key:") + key + std::string(" does not exist"));
 
             std::weak_ptr<core::any> ptr = (*map)[key];
             if (auto spt = ptr.lock()) {
                 return core::any_cast<T>(*spt);
             } else {
-                throw std::string("key:") + key + std::string(" does not exist");
+                throw std::logic_error(std::string("key:") + key + std::string(" does not exist"));
             }
         }
 
         template<typename T>
         T *get_ptr(std::string const &key) {
-            if (!(map->count(key))) throw std::string("key:") + key + std::string(" does not exist");
+            if (!(map->count(key))) throw std::logic_error(std::string("key:") + key + std::string(" does not exist"));
 
             std::weak_ptr<core::any> ptr = (*map)[key];
             if (auto spt = ptr.lock()) {
                 T *ptr = core::any_cast<T>(spt.get());
                 return ptr;
             } else {
-                throw std::string("key:") + key + std::string(" does not exist");
+                throw std::logic_error(std::string("key:") + key + std::string(" does not exist"));
             }
         }
 
