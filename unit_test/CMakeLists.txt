@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 # Project settings
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ".")
-set(PROJECT_UNIT_TESTS_NAME ${PROJECT_NAME_STR}_unit_tests)
+set(PROJECT_UNIT_TESTS_NAME pvpf_unit_tests)
 
 # Dependencies
-find_package(Boost COMPONENTS filesystem system unit_test_framework REQUIRED)
+#find_package(Boost COMPONENTS filesystem system unit_test_framework REQUIRED)
 
 # Gather the header and source files
 file(GLOB UNIT_TESTS_INC_FILES ${PROJECT_SOURCE_DIR}/unit_test/*.hpp)

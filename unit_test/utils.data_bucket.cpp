@@ -2,7 +2,7 @@
 // Created by Max on 2018/7/1.
 //
 #ifdef STAND_ALONE
-#define BOOST_TEST_MODULE DemoTestinginginging
+#define BOOST_TEST_MODULE DataBucket
 #endif
 
 #include <boost/test/unit_test.hpp>
