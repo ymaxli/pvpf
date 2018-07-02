@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         validation_result res = crs.validate(d);
 
         BOOST_CHECK_EQUAL(res.type, 2);
-        BOOST_CHECK_EQUAL(res.message, "Error: “source” field has to have at least one child");
+        BOOST_CHECK_EQUAL(res.message, "Error: \"source\" field has to have at least one child");
     }
 
     BOOST_AUTO_TEST_CASE(rule_source_not_array)
