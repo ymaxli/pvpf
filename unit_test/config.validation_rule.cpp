@@ -136,6 +136,38 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.message, "Error: source node has to have an id");
     }
 
+    BOOST_AUTO_TEST_CASE(rule_source_id_not_string)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\":[],\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": 1,\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"/usr/local/libraries/a.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [],\n"
+                           "    \"sink\": []\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node id should be nonempty string");
+    }
+
     BOOST_AUTO_TEST_CASE(rule_source_without_task)
     {
         concrete_rule_source crs;
@@ -606,6 +638,207 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
 
         BOOST_CHECK_EQUAL(res.type, 0);
         BOOST_CHECK_EQUAL(res.message, "Pass: no duplicate node id");
+    }
+
+
+    ////////////////////// predecessor
+    BOOST_AUTO_TEST_CASE(rule_valid_predecessor)
+    {
+        concrete_rule_predecessor_check crpc;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"source-1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"node-1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crpc.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 0);
+        BOOST_CHECK_EQUAL(res.message, "Pass: predecessors exist");
+    }
+
+
+    BOOST_AUTO_TEST_CASE(rule_graph_predecessor_not_array)
+    {
+        concrete_rule_predecessor_check crpc;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"source-2\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"node-1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crpc.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: predecessor \"source-2\" does not exist");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_graph_predecessor_is_array)
+    {
+        concrete_rule_predecessor_check crpc;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": [\n"
+                           "                    \"source-1\",\n"
+                           "                    \"source-2\"\n"
+                           "                ]\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"node-1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crpc.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: predecessor \"source-2\" does not exist");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_sink_predecessor_not_array)
+    {
+        concrete_rule_predecessor_check crpc;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\":\n"
+                           "                    \"source-1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"node-3\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crpc.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: predecessor \"node-3\" does not exist");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_sink_predecessor_is_array)
+    {
+        concrete_rule_predecessor_check crpc;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\":\n"
+                           "                    \"source-1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": [\n"
+                           "                    \"node-3\",\n"
+                           "                    \"node-1\"\n"
+                           "                ]\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crpc.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: predecessor \"node-3\" does not exist");
     }
 
 BOOST_AUTO_TEST_SUITE_END()

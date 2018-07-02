@@ -18,25 +18,22 @@ namespace config
     {
         vector<validation_result const> res;
 
-        // check json format
-        concrete_rule_format rule_format = concrete_rule_format();
-        const validation_result format = rule_format.validate(conf);
-        res.push_back(format);
-        //if invalid format, return immediately
-        if(format.type == 2) {
-            return res;
-        }
-
         vector<validation_rule*> rules;
 
-        rules.push_back(new concrete_rule_source);
-        rules.push_back(new concrete_rule_graph);
-        rules.push_back(new concrete_rule_sink);
-        rules.push_back(new concrete_rule_duplicate_id);
+        rules.push_back(new concrete_rule_format());
+        rules.push_back(new concrete_rule_source());
+        rules.push_back(new concrete_rule_graph());
+        rules.push_back(new concrete_rule_sink());
+        rules.push_back(new concrete_rule_duplicate_id());
+        rules.push_back(new concrete_rule_predecessor_check());
+
 
         for(int i = 0; i < rules.size(); ++i) {
             const validation_result result = rules[i]->validate(conf);
             res.push_back(result);
+            if(result.type == 2) {
+                break;
+            }
         }
 
         return res;

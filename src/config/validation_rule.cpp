@@ -298,14 +298,14 @@ namespace config
             if(!pre.IsArray()) {
                 string pre_id = pre.GetString();
                 if(source_id.find(pre_id) == source_id.end() && graph_id.find(pre_id) == graph_id.end()){
-                    return validation_result(2, "Error: predecessor does not exist \"" + pre_id + "\"");
+                    return validation_result(2, "Error: predecessor \"" + pre_id +"\" does not exist");
                 }
             }
             else {
-                for (rapidjson::SizeType j = 0; j < graph.Size(); j++) {
-                    string pre_id = pre[i].GetString();
+                for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                    string pre_id = pre[j].GetString();
                     if(source_id.find(pre_id) == source_id.end() && graph_id.find(pre_id) == graph_id.end()){
-                        return validation_result(2, "Error: predecessor does not exist \"" + pre_id + "\"");
+                        return validation_result(2, "Error: predecessor \"" + pre_id +"\" does not exist");
                     }
                 }
             }
@@ -317,14 +317,14 @@ namespace config
             if(!pre.IsArray()) {
                 string pre_id = pre.GetString();
                 if(source_id.find(pre_id) == source_id.end() && graph_id.find(pre_id) == graph_id.end()){
-                    return validation_result(2, "Error: predecessor does not exist \"" + pre_id + "\"");
+                    return validation_result(2, "Error: predecessor \"" + pre_id +"\" does not exist");
                 }
             }
             else {
-                for (rapidjson::SizeType j = 0; j < sink.Size(); j++) {
-                    string pre_id = pre[i].GetString();
+                for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                    string pre_id = pre[j].GetString();
                     if(source_id.find(pre_id) == source_id.end() && graph_id.find(pre_id) == graph_id.end()){
-                        return validation_result(2, "Error: predecessor does not exist \"" + pre_id + "\"");
+                        return validation_result(2, "Error: predecessor \"" + pre_id +"\" does not exist");
                     }
                 }
             }
@@ -350,8 +350,8 @@ namespace config
                 pre_map[pre_id]++;
             }
             else {
-                for (rapidjson::SizeType j = 0; j < graph.Size(); j++) {
-                    string pre_id = pre[i].GetString();
+                for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                    string pre_id = pre[j].GetString();
                     pre_map[pre_id]++;
                 }
             }
@@ -365,8 +365,8 @@ namespace config
                 pre_map[pre_id]++;
             }
             else {
-                for (rapidjson::SizeType j = 0; j < sink.Size(); j++) {
-                    string pre_id = pre[i].GetString();
+                for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                    string pre_id = pre[j].GetString();
                     pre_map[pre_id]++;
                 }
             }
