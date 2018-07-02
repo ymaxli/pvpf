@@ -62,8 +62,8 @@
     "id": "sink-1",
     "task": {
       "dylib": {
-        "location": "",
-        "func": ""
+        "location": "test",
+        "func": "test"
       }
     }
   }]

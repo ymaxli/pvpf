@@ -39,8 +39,8 @@ namespace config
         else {
             const Value& source = conf["source"];
             for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
-                if(source[i].ObjectEmpty()) {
-                    return validation_result(2, "Error: “source” field has to have at least one child");
+                if(!source[i].IsObject() || source[i].ObjectEmpty()) {
+                    return validation_result(2, "Error: \"source\" field has to have at least one child");
                 }
                 // rule 1.8: check node id
                 if (!source[i].HasMember("id")) {
@@ -65,7 +65,7 @@ namespace config
                 }
                 else if(!source[i]["task"]["dylib"]["location"].IsString() || source[i]["task"]["dylib"]["location"].GetStringLength() == 0
                         || !source[i]["task"]["dylib"]["func"].IsString() || source[i]["task"]["dylib"]["func"].GetStringLength() == 0) {
-                    return validation_result(2, "Error: source node id should be nonempty string");
+                    return validation_result(2, "Error: source node task dylib and func should be nonempty string");
                 }
 
                 // rule 1.12: check output field of source node
@@ -101,8 +101,8 @@ namespace config
         else {
             const Value &graph = conf["graph"];
             for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
-                if(graph[i].ObjectEmpty()) {
-                    return validation_result(2, "Error: “graph” field has to have at least one child");
+                if(!graph[i].IsObject() || graph[i].ObjectEmpty()) {
+                    return validation_result(2, "Error: \"graph\" field has to have at least one child");
                 }
                 // rule 1.8: check node id
                 if (!graph[i].HasMember("id")) {
@@ -172,8 +172,8 @@ namespace config
         else {
             const Value& sink = conf["sink"];
             for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
-                if(sink[i].ObjectEmpty()) {
-                    return validation_result(2, "Error: “sink” field has to have at least one child");
+                if(!sink[i].IsObject() || sink[i].ObjectEmpty()) {
+                    return validation_result(2, "Error: \"sink\" field has to have at least one child");
                 }
                 // rule 1.8: check node id
                 if (!sink[i].HasMember("id")) {
@@ -198,7 +198,7 @@ namespace config
                 }
                 else if(!sink[i]["task"]["dylib"]["location"].IsString() || sink[i]["task"]["dylib"]["location"].GetStringLength() == 0
                         || !sink[i]["task"]["dylib"]["func"].IsString() || sink[i]["task"]["dylib"]["func"].GetStringLength() == 0) {
-                    return validation_result(2, "Error: sink node id should be nonempty string");
+                    return validation_result(2, "Error: sink node task dylib and func should be nonempty string");
                 }
 
                 // rule 13: check input field of sink node

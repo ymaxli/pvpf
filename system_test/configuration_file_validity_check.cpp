@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[4].type, 2);
-        BOOST_CHECK_EQUAL(res[4].message, "Error: detect duplicate node id \"source-1\" ");
+        BOOST_CHECK_EQUAL(res[4].message, "Error: detect duplicate node id \"source-1\"");
     }
 
     BOOST_AUTO_TEST_CASE(source_missing_task)
@@ -182,16 +182,16 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         BOOST_CHECK_EQUAL(res[2].message, "Error: graph node has to have a task field");
     }
 
-    BOOST_AUTO_TEST_CASE(graph_missing_algorithm)
-    {
-        config_reader cr;
-        string jsonfile = "../../system_test/test_json/framework_configuration/graph_missing_algorithm.json";
-        Document d = cr.load_json_conf(jsonfile);
-        config_validator cv;
-        vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[2].type, 2);
-        BOOST_CHECK_EQUAL(res[2].message, "Error: algorithm not found");
-    }
+//    BOOST_AUTO_TEST_CASE(graph_missing_algorithm)
+//    {
+//        config_reader cr;
+//        string jsonfile = "../../system_test/test_json/framework_configuration/graph_missing_algorithm.json";
+//        Document d = cr.load_json_conf(jsonfile);
+//        config_validator cv;
+//        vector<validation_result const> res = cv.validate(d);
+//        BOOST_CHECK_EQUAL(res[2].type, 2);
+//        BOOST_CHECK_EQUAL(res[2].message, "Error: algorithm not found");
+//    }
 
     BOOST_AUTO_TEST_CASE(predecessor_not_found)
     {
@@ -200,47 +200,47 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "Error: predecessor does not exist");
+        BOOST_CHECK_EQUAL(res[5].type, 2);
+        BOOST_CHECK_EQUAL(res[5].message, "Error: predecessor \"source-2\" does not exist");
     }
-    BOOST_AUTO_TEST_CASE(number_of_successor_exceed)
-    {
-        config_reader cr;
-        string jsonfile = "../../system_test/test_json/framework_configuration/number_of_successor_exceed.json";
-        Document d = cr.load_json_conf(jsonfile);
-        config_validator cv;
-        vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "Error: number of successors of one node exceeds maximum value");
-    }
-    BOOST_AUTO_TEST_CASE(mapping_error)
-    {
-        config_reader cr;
-        string jsonfile = "../../system_test/test_json/framework_configuration/mapping_error.json";
-        Document d = cr.load_json_conf(jsonfile);
-        config_validator cv;
-        vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "Error: mapping error");
-    }
-    BOOST_AUTO_TEST_CASE(unfit_node)
-    {
-        config_reader cr;
-        string jsonfile = "../../system_test/test_json/framework_configuration/unfit_node.json";
-        Document d = cr.load_json_conf(jsonfile);
-        config_validator cv;
-        vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "Error: two nodes are unfit");
-    }
-    BOOST_AUTO_TEST_CASE(invalid_data_type)
-    {
-        config_reader cr;
-        string jsonfile = "../../system_test/test_json/framework_configuration/invalid_data_type.json";
-        Document d = cr.load_json_conf(jsonfile);
-        config_validator cv;
-        vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "Error: invalid data type");
-    }
+//    BOOST_AUTO_TEST_CASE(number_of_successor_exceed)
+//    {
+//        config_reader cr;
+//        string jsonfile = "../../system_test/test_json/framework_configuration/number_of_successor_exceed.json";
+//        Document d = cr.load_json_conf(jsonfile);
+//        config_validator cv;
+//        vector<validation_result const> res = cv.validate(d);
+//        BOOST_CHECK_EQUAL(res[0].type, 2);
+//        BOOST_CHECK_EQUAL(res[0].message, "Error: number of successors of one node exceeds maximum value");
+//    }
+//    BOOST_AUTO_TEST_CASE(mapping_error)
+//    {
+//        config_reader cr;
+//        string jsonfile = "../../system_test/test_json/framework_configuration/mapping_error.json";
+//        Document d = cr.load_json_conf(jsonfile);
+//        config_validator cv;
+//        vector<validation_result const> res = cv.validate(d);
+//        BOOST_CHECK_EQUAL(res[0].type, 2);
+//        BOOST_CHECK_EQUAL(res[0].message, "Error: mapping error");
+//    }
+//    BOOST_AUTO_TEST_CASE(unfit_node)
+//    {
+//        config_reader cr;
+//        string jsonfile = "../../system_test/test_json/framework_configuration/unfit_node.json";
+//        Document d = cr.load_json_conf(jsonfile);
+//        config_validator cv;
+//        vector<validation_result const> res = cv.validate(d);
+//        BOOST_CHECK_EQUAL(res[0].type, 2);
+//        BOOST_CHECK_EQUAL(res[0].message, "Error: two nodes are unfit");
+//    }
+//    BOOST_AUTO_TEST_CASE(invalid_data_type)
+//    {
+//        config_reader cr;
+//        string jsonfile = "../../system_test/test_json/framework_configuration/invalid_data_type.json";
+//        Document d = cr.load_json_conf(jsonfile);
+//        config_validator cv;
+//        vector<validation_result const> res = cv.validate(d);
+//        BOOST_CHECK_EQUAL(res[0].type, 2);
+//        BOOST_CHECK_EQUAL(res[0].message, "Error: invalid data type");
+//    }
 BOOST_AUTO_TEST_SUITE_END()
