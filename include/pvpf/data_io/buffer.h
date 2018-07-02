@@ -42,10 +42,10 @@ PVPF_NAMESPACE_BEGIN
 
                 if (write_index == read_index) {
                     mutex.try_lock();
-                    write_to_current_position(data);
+                    write_to_current_position(std::move(data));
                     mutex.unlock();
                 } else {
-                    write_to_current_position(data);
+                    write_to_current_position(std::move(data));
                 }
 
             }
@@ -87,17 +87,15 @@ PVPF_NAMESPACE_BEGIN
             bool *buffer_array_read_available; // flag for buffer read availability
             bool write_complete;
             void write_to_current_position(data_bucket data) {
-                buffer_array[write_index] = data;
+                buffer_array[write_index] = std::move(data);
                 buffer_array_read_available[write_index] = true;
                 if (!blocking) read_index = write_index;
                 write_index = (write_index + 1) % buffer_size;
             }
 
             data_bucket read_from_current_position() {
-                data_bucket result;
-
                 buffer_array_read_available[read_index] = false;
-                result = buffer_array[read_index];
+                data_bucket result = std::move(buffer_array[read_index]);
                 read_index = (read_index + 1) % buffer_size;
 
                 return result;
