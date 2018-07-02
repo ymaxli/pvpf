@@ -3,7 +3,7 @@
 ////
 //
 #ifdef STAND_ALONE
-#define BOOST_TEST_MODULE DemoTestinginginging
+#define BOOST_TEST_MODULE DataIOBuffer
 #endif
 
 #include <boost/test/unit_test.hpp>
