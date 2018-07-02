@@ -27,4 +27,5 @@ add_executable(${PROJECT_SYSTEM_TESTS_NAME} ${SYSTEM_TESTS_SRC_FILES} ${SRC_FILE
 target_link_libraries(${PROJECT_SYSTEM_TESTS_NAME} ${Boost_LIBRARIES})
 
 enable_testing()
-add_test(DemoTest ${PROJECT_SYSTEM_TESTS_NAME})
+add_test(SYSTEMTEST ${PROJECT_SYSTEM_TESTS_NAME})
+

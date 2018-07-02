@@ -7,7 +7,7 @@
   }],
   "graph": [{
     "id": "node-1",
-    "control": { // optional
+    "control": {
       "frame_dropping": true
     },
     "input": {
@@ -18,8 +18,8 @@
         {
           "readonly": true
         }
-      ], // optional, config for predecessors
-      "mapping": { // optional
+      ],
+      "mapping": {
         "image_arr": "key1.0",
         "image_arr2": [
           "key1.0",
@@ -29,14 +29,14 @@
     },
     "task": {
       "algorithm": "a",
-      "params": {} // optional, parameters for the algorithm
+      "params": {}
     },
     "output": {
-      "mapping": { // optional
+      "mapping": {
         "result_key": "output_key",
         "key1": "hea"
       },
-      "conf": { // optional
+      "conf": {
         "output_port_num": 2
       }
     }
@@ -52,7 +52,7 @@
         {
           "readonly": true
         }
-      ], // optional, config for predecessors
+      ],
       "mapping": {
         "image_arr": "key1.0",
         "image_arr2": [
