@@ -8,6 +8,7 @@
 #endif //VALIDATION_RULE_H
 #pragma once
 
+#include <iostream>
 #include <rapidjson/document.h>
 #include "pvpf/pvpf.h"
 #include "config_validator.h"
@@ -21,6 +22,7 @@ namespace config
         virtual validation_result validate(rapidjson::Document &conf) = 0;
     };
 
+    // check the JSON format
     class concrete_rule_format : public validation_rule {
     public:
         validation_result validate(rapidjson::Document &conf) override;
@@ -40,6 +42,28 @@ namespace config
     public:
         validation_result validate(rapidjson::Document &conf) override;
     };
+
+    class concrete_rule_duplicate_id : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
+    //TODO
+    class concrete_rule_library_search : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
+    class concrete_rule_predecessor_check : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
+    class concrete_rule_successor_check : public validation_rule {
+    public:
+        validation_result validate(rapidjson::Document &conf) override;
+    };
+
 }
 
 PVPF_NAMESPACE_END
