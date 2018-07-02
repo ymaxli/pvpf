@@ -185,6 +185,38 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.message, "Error: source node id should be nonempty string");
     }
 
+    BOOST_AUTO_TEST_CASE(rule_source_id_length)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\":[],\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"/usr/local/libraries/a.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [],\n"
+                           "    \"sink\": []\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node id should be nonempty string");
+    }
+
     BOOST_AUTO_TEST_CASE(rule_source_without_task)
     {
         concrete_rule_source crs;
@@ -210,6 +242,143 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: source node has to have a task field");
     }
+
+    BOOST_AUTO_TEST_CASE(rule_source_task_not_object)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": \"\",\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node task should be an object");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_source_task_no_dylib)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {},\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node task should have a dylib field");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_source_task_dylib_no_func)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node task dylib should have location and func");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_source_task_dylib_func_empty)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"\",\n"
+                           "                    \"func\": \"\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node task dylib and func should be nonempty string");
+    }
+
 
     BOOST_AUTO_TEST_CASE(rule_source_without_output)
     {
@@ -237,6 +406,76 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.type, 2);
         BOOST_CHECK_EQUAL(res.message, "Error: source node has to have an output field");
     }
+
+
+    BOOST_AUTO_TEST_CASE(rule_source_output_not_object)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"/usr/local/libraries/a.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": \"\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node output should be an object");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_source_output_no_data)
+    {
+        concrete_rule_source crs;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"/usr/local/libraries/a.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crs.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: source node output should have a data field");
+    }
+
+
 
     BOOST_AUTO_TEST_CASE(rule_valid_source)
     {
@@ -593,27 +832,100 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.message, "Pass: sink field check");
     }
 
-    BOOST_AUTO_TEST_CASE(rule_duplicate_id)
+    BOOST_AUTO_TEST_CASE(rule_duplicate_id_source)
     {
         concrete_rule_duplicate_id crd;
         const char* json = "{\n"
                            "    \"meta\": {\n"
-                           "        \"name\": \"minimal-conf-project\",\n"
+                           "        \"name\": \"pvp-project-1\",\n"
                            "        \"version\": \"0.0.1\"\n"
                            "    },\n"
                            "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"1\"\n"
+                           "        },\n"
                            "        {\n"
                            "            \"id\": \"1\"\n"
                            "        }\n"
                            "    ],\n"
                            "    \"graph\": [\n"
                            "        {\n"
-                           "            \"id\": \"1\"\n"
+                           "            \"id\": \"node-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\"\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crd.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: detect duplicate node id \"1\"");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_duplicate_id_sink)
+    {
+        concrete_rule_duplicate_id crd;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"pvp-project-1\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\"\n"
                            "        }\n"
                            "    ],\n"
                            "    \"sink\": [\n"
                            "        {\n"
                            "            \"id\": \"1\"\n"
+                           "        },\n"
+                           "        {\n"
+                           "            \"id\": \"1\"\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = crd.validate(d);
+
+        BOOST_CHECK_EQUAL(res.type, 2);
+        BOOST_CHECK_EQUAL(res.message, "Error: detect duplicate node id \"1\"");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_duplicate_id_graph)
+    {
+        concrete_rule_duplicate_id crd;
+        const char* json = "{\n"
+                           "    \"meta\": {\n"
+                           "        \"name\": \"pvp-project-1\",\n"
+                           "        \"version\": \"0.0.1\"\n"
+                           "    },\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"1\"\n"
+                           "        },\n"
+                           "        {\n"
+                           "            \"id\": \"1\"\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\"\n"
                            "        }\n"
                            "    ]\n"
                            "}";
