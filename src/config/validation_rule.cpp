@@ -116,7 +116,7 @@ namespace config
                     return validation_result(2, "Error: graph node input should have a pre field");
                 }
                 else if(!(graph[i]["input"]["pre"].IsString() && graph[i]["input"]["pre"].GetStringLength() != 0)
-                        || !graph[i]["input"]["pre"].IsArray()) {
+                        && !graph[i]["input"]["pre"].IsArray()) {
                     return validation_result(2, "Error: graph node input pre should be nonempty string or string list");
                 }
                 else if(graph[i]["input"]["pre"].IsArray()) {
@@ -203,7 +203,7 @@ namespace config
                     return validation_result(2, "Error: sink node input should have a pre field");
                 }
                 else if(!(sink[i]["input"]["pre"].IsString() && sink[i]["input"]["pre"].GetStringLength() != 0)
-                        || !sink[i]["input"]["pre"].IsArray()) {
+                        && !sink[i]["input"]["pre"].IsArray()) {
                     return validation_result(2, "Error: sink node input pre should be nonempty string or string list");
                 }
                 else if(sink[i]["input"]["pre"].IsArray()) {
