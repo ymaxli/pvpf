@@ -12,6 +12,7 @@ project(${PROJECT_NAME_STR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 --coverage ${SRC_FILES} -ltbb")
 
 # Gather all sources except the main entry point
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 file(GLOB_RECURSE INC_FILES include/**/*.h include/**/*.hpp)
 #file(GLOB_RECURSE INC_FILES include/*.h)
@@ -39,3 +40,4 @@ set(SOURCE_FILES src/main.cpp ${INC_FILES} ${SRC_FILES})
 #set(SOURCE_FILES src/main.cpp ${SRC_FILES})
 add_executable(point_vision_pipeline_framework ${SOURCE_FILES})
 target_link_libraries(point_vision_pipeline_framework ${Boost_LIBRARIES})
+

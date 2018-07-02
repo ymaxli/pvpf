@@ -18,13 +18,14 @@ using namespace pvpf::config;
 BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
     BOOST_AUTO_TEST_CASE(invalid_json_format)
     {
+        BOOST_CHECK_EQUAL(1, 1);
         config_reader cr;
         string jsonfile = "../../system_test/test_json/framework_configuration/invalid_json.json";
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "invalid JSON file");
+        BOOST_CHECK_EQUAL(res[0].message, "Error: invalid JSON file");
     }
 
     BOOST_AUTO_TEST_CASE(lack_source_field)
@@ -34,8 +35,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "lack \"source\" field");
+        BOOST_CHECK_EQUAL(res[1].type, 2);
+        BOOST_CHECK_EQUAL(res[1].message, "Error: lack \"source\" field");
     }
 
     BOOST_AUTO_TEST_CASE(empty_source_field)
@@ -45,8 +46,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "\"source\" field has to have at least one child");
+        BOOST_CHECK_EQUAL(res[1].type, 2);
+        BOOST_CHECK_EQUAL(res[1].message, "Error: \"source\" field has to have at least one child");
     }
 
     BOOST_AUTO_TEST_CASE(omit_graph_field)
@@ -56,8 +57,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "lack \"graph\" field");
+        BOOST_CHECK_EQUAL(res[2].type, 2);
+        BOOST_CHECK_EQUAL(res[2].message, "Error: lack \"graph\" field");
     }
 
     BOOST_AUTO_TEST_CASE(empty_graph_field)
@@ -67,8 +68,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "\"graph\" field has to have at least one child");
+        BOOST_CHECK_EQUAL(res[2].type, 2);
+        BOOST_CHECK_EQUAL(res[2].message, "Error: \"graph\" field has to have at least one child");
     }
 
     BOOST_AUTO_TEST_CASE(omit_sink_field)
@@ -78,8 +79,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "lack \"sink\" field");
+        BOOST_CHECK_EQUAL(res[3].type, 2);
+        BOOST_CHECK_EQUAL(res[3].message, "Error: lack \"sink\" field");
     }
 
     BOOST_AUTO_TEST_CASE(empty_sink_field)
@@ -89,8 +90,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "\"sink\" field has to have at least one child");
+        BOOST_CHECK_EQUAL(res[3].type, 2);
+        BOOST_CHECK_EQUAL(res[3].message, "Error: \"sink\" field has to have at least one child");
     }
 
     BOOST_AUTO_TEST_CASE(lack_node_id)
@@ -100,8 +101,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "node has to have an id");
+        BOOST_CHECK_EQUAL(res[1].type, 2);
+        BOOST_CHECK_EQUAL(res[1].message, "Error: node has to have an id");
     }
 
     BOOST_AUTO_TEST_CASE(duplicate_node_id)
@@ -111,8 +112,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "detect duplicate node id");
+        BOOST_CHECK_EQUAL(res[4].type, 2);
+        BOOST_CHECK_EQUAL(res[4].message, "Error: detect duplicate node id \"source-1\" ");
     }
 
     BOOST_AUTO_TEST_CASE(source_missing_task)
@@ -122,8 +123,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "source node has to have a task field");
+        BOOST_CHECK_EQUAL(res[1].type, 2);
+        BOOST_CHECK_EQUAL(res[1].message, "Error: source node has to have a task field");
     }
 
     BOOST_AUTO_TEST_CASE(sink_missing_task)
@@ -133,8 +134,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "sink node has to have a task field");
+        BOOST_CHECK_EQUAL(res[3].type, 2);
+        BOOST_CHECK_EQUAL(res[3].message, "Error: sink node has to have a task field");
     }
 
     BOOST_AUTO_TEST_CASE(source_missing_output)
@@ -144,8 +145,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "source node has to have an output field");
+        BOOST_CHECK_EQUAL(res[1].type, 2);
+        BOOST_CHECK_EQUAL(res[1].message, "Error: source node has to have an output field");
     }
 
     BOOST_AUTO_TEST_CASE(sink_missing_input)
@@ -155,8 +156,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "sink node has to have an input field");
+        BOOST_CHECK_EQUAL(res[3].type, 2);
+        BOOST_CHECK_EQUAL(res[3].message, "Error: sink node has to have an input field");
     }
 
     BOOST_AUTO_TEST_CASE(graph_missing_input)
@@ -166,8 +167,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "graph node has to have an input field");
+        BOOST_CHECK_EQUAL(res[2].type, 2);
+        BOOST_CHECK_EQUAL(res[2].message, "Error: graph node has to have an input field");
     }
 
     BOOST_AUTO_TEST_CASE(graph_missing_task)
@@ -177,8 +178,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "graph node has to have a task field");
+        BOOST_CHECK_EQUAL(res[2].type, 2);
+        BOOST_CHECK_EQUAL(res[2].message, "Error: graph node has to have a task field");
     }
 
     BOOST_AUTO_TEST_CASE(graph_missing_algorithm)
@@ -188,8 +189,8 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         Document d = cr.load_json_conf(jsonfile);
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
-        BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "algorithm not found");
+        BOOST_CHECK_EQUAL(res[2].type, 2);
+        BOOST_CHECK_EQUAL(res[2].message, "Error: algorithm not found");
     }
 
     BOOST_AUTO_TEST_CASE(predecessor_not_found)
@@ -200,7 +201,7 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "predecessor does not exist");
+        BOOST_CHECK_EQUAL(res[0].message, "Error: predecessor does not exist");
     }
     BOOST_AUTO_TEST_CASE(number_of_successor_exceed)
     {
@@ -210,7 +211,7 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "number of successors of one node exceeds maximum value");
+        BOOST_CHECK_EQUAL(res[0].message, "Error: number of successors of one node exceeds maximum value");
     }
     BOOST_AUTO_TEST_CASE(mapping_error)
     {
@@ -220,7 +221,7 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "mapping error");
+        BOOST_CHECK_EQUAL(res[0].message, "Error: mapping error");
     }
     BOOST_AUTO_TEST_CASE(unfit_node)
     {
@@ -230,7 +231,7 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "two nodes are unfit");
+        BOOST_CHECK_EQUAL(res[0].message, "Error: two nodes are unfit");
     }
     BOOST_AUTO_TEST_CASE(invalid_data_type)
     {
@@ -240,6 +241,6 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         config_validator cv;
         vector<validation_result const> res = cv.validate(d);
         BOOST_CHECK_EQUAL(res[0].type, 2);
-        BOOST_CHECK_EQUAL(res[0].message, "invalid data type");
+        BOOST_CHECK_EQUAL(res[0].message, "Error: invalid data type");
     }
 BOOST_AUTO_TEST_SUITE_END()
