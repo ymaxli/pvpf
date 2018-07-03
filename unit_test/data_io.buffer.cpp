@@ -7,8 +7,8 @@
 #endif
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/data_io/buffer.h>
-#include <pvpf/utils/data_bucket.h>
+#include <pvpf/data_io/buffer.hpp>
+#include <pvpf/utils/data_bucket.hpp>
 #include <thread>
 #include <chrono>
 #include <iostream>

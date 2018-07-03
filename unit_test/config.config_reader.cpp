@@ -8,7 +8,7 @@
 
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/config/config_reader.h>
+#include <pvpf/config/config_reader.hpp>
 #include <rapidjson/document.h>
 
 using namespace std;

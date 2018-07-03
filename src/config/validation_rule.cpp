@@ -2,7 +2,7 @@
 // Created by Icay on 20/06/2018.
 //
 
-#include "pvpf/config/validation_rule.h"
+#include "pvpf/config/validation_rule.hpp"
 #include <iostream>
 #include <unordered_set>
 #include <unordered_map>

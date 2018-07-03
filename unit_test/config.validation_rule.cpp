@@ -9,7 +9,7 @@
 
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/config/validation_rule.h>
+#include <pvpf/config/validation_rule.hpp>
 #include <rapidjson/document.h>
 
 using namespace std;

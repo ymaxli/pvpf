@@ -2,8 +2,8 @@
 // Created by Icay on 20/06/2018.
 //
 
-#include "pvpf/config/config_validator.h"
-#include "pvpf/config/validation_rule.h"
+#include "pvpf/config/config_validator.hpp"
+#include "pvpf/config/validation_rule.hpp"
 #include <iostream>
 
 using namespace rapidjson;

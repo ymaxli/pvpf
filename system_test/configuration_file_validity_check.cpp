@@ -7,9 +7,9 @@
 #endif
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/config/config_reader.h>
+#include <pvpf/config/config_reader.hpp>
 #include <rapidjson/document.h>
-#include <pvpf/config/config_validator.h>
+#include <pvpf/config/config_validator.hpp>
 
 using namespace std;
 using namespace rapidjson;

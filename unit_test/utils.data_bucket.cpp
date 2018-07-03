@@ -6,7 +6,7 @@
 #endif
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/utils/data_bucket.h>
+#include <pvpf/utils/data_bucket.hpp>
 #include <iostream>
 #include <core/any.hpp>
 

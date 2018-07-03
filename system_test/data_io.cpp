@@ -7,9 +7,9 @@
 #endif
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/data_io/factory.h>
-#include <pvpf/data_io/io_pipe.h>
-#include <pvpf/utils/data_bucket.h>
+#include <pvpf/data_io/factory.hpp>
+#include <pvpf/data_io/io_pipe.hpp>
+#include <pvpf/utils/data_bucket.hpp>
 #include <thread>
 #include <chrono>
 #include "opencv2/core/core.hpp"

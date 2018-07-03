@@ -8,8 +8,8 @@
 
 #include <iostream>
 #include <rapidjson/document.h>
-#include "pvpf/pvpf.h"
-#include "config_validator.h"
+#include "pvpf/pvpf.hpp"
+#include "config_validator.hpp"
 
 PVPF_NAMESPACE_BEGIN
 
