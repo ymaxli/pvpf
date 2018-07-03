@@ -102,7 +102,7 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
 
         thread first([&]() -> void {
             int index = 0;
-            while (index < 1000) {
+            while (index < 600) {
                 data_bucket bucket;
                 bucket.put("index", index);
                 b.write(std::move(bucket));

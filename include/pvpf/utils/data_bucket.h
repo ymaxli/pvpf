@@ -7,17 +7,17 @@
 #pragma once
 
 #include <core/any.hpp>
-#include <map>
+#include <unordered_map>
 #include "pvpf/pvpf.h"
 
 PVPF_NAMESPACE_BEGIN
 
     class data_bucket {
     private:
-        std::map<std::string, std::shared_ptr<core::any>> *map;
+        std::unordered_map<std::string, std::shared_ptr<core::any>> *map;
     public:
         data_bucket() {
-            map = new std::map<std::string, std::shared_ptr<core::any>>();
+            map = new std::unordered_map<std::string, std::shared_ptr<core::any>>();
         }
 
         ~data_bucket() {
@@ -73,11 +73,11 @@ PVPF_NAMESPACE_BEGIN
             return this->map ? this->map->size() : 0;
         }
 
-        std::map<std::string, std::shared_ptr<core::any>>::iterator begin() {
+        std::unordered_map<std::string, std::shared_ptr<core::any>>::iterator begin() {
             return this->map->begin();
         }
 
-        std::map<std::string, std::shared_ptr<core::any>>::iterator end() {
+        std::unordered_map<std::string, std::shared_ptr<core::any>>::iterator end() {
             return this->map->end();
         }
     };
