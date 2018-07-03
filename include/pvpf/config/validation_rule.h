@@ -4,8 +4,6 @@
 
 #ifndef VALIDATION_RULE_H
 #define VALIDATION_RULE_H
-
-#endif //VALIDATION_RULE_H
 #pragma once
 
 #include <iostream>
@@ -15,55 +13,22 @@
 
 PVPF_NAMESPACE_BEGIN
 
-namespace config
-{
-    class validation_rule{
-    public:
-        virtual validation_result validate(rapidjson::Document &conf) = 0;
-    };
+    namespace config
+    {
+        typedef validation_result const (*validator)(rapidjson::Document const & conf);
 
-    // check the JSON format
-    class concrete_rule_format : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    class concrete_rule_source : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    class concrete_rule_graph : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    class concrete_rule_sink : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    class concrete_rule_duplicate_id : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    //TODO
-    class concrete_rule_library_search : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    class concrete_rule_predecessor_check : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-    class concrete_rule_successor_check : public validation_rule {
-    public:
-        validation_result validate(rapidjson::Document &conf) override;
-    };
-
-}
+        validation_result const concrete_rule_format(rapidjson::Document const & conf);
+        validation_result const concrete_rule_source(rapidjson::Document const & conf);
+        validation_result const concrete_rule_graph(rapidjson::Document const & conf);
+        validation_result const concrete_rule_sink(rapidjson::Document const & conf);
+        validation_result const concrete_rule_duplicate_id(rapidjson::Document const & conf);
+        //TODO
+        validation_result const concrete_rule_library_search(rapidjson::Document const & conf);
+        validation_result const concrete_rule_predecessor_check(rapidjson::Document const & conf);
+        validation_result const concrete_rule_successor_check(rapidjson::Document const & conf);
+    }
 
 PVPF_NAMESPACE_END
+
+#endif //VALIDATION_RULE_H
+
