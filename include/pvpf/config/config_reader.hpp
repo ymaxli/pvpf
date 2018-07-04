@@ -7,7 +7,7 @@
 #pragma once
 
 #include <rapidjson/document.h>
-#include "pvpf/pvpf.h"
+#include "pvpf/pvpf.hpp"
 
 PVPF_NAMESPACE_BEGIN
 

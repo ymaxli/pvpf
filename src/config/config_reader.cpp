@@ -2,7 +2,7 @@
 // Created by Icay on 20/06/2018.
 //
 
-#include "pvpf/config/config_reader.h"
+#include "pvpf/config/config_reader.hpp"
 #include <iostream>
 #include <rapidjson/istreamwrapper.h>
 #include <fstream>

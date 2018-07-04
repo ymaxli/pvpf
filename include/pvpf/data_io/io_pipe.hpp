@@ -7,9 +7,9 @@
 #pragma once
 
 #include <utility>
-#include "pvpf/pvpf.h"
-#include "pvpf/utils/data_bucket.h"
-#include "buffer.h"
+#include "pvpf/pvpf.hpp"
+#include "pvpf/utils/data_bucket.hpp"
+#include "buffer.hpp"
 
 PVPF_NAMESPACE_BEGIN
 

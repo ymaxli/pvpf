@@ -7,8 +7,8 @@
 #endif
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/data_io/buffer.h>
-#include <pvpf/utils/data_bucket.h>
+#include <pvpf/data_io/buffer.hpp>
+#include <pvpf/utils/data_bucket.hpp>
 #include <thread>
 #include <chrono>
 #include <iostream>
@@ -26,6 +26,8 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
         data_bucket bucket;
         bucket.put("abc", 111);
 
+        int flag = 0;
+
         thread first([&]() -> void {
             b.write(std::move(bucket));
             b.write(std::move(bucket));
@@ -33,16 +35,18 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
             b.write(std::move(bucket));
             b.write(std::move(bucket));
             b.write(std::move(bucket));
-            cout << "then write" << endl;
+            if (flag == 0) flag = 2;
         });
         thread second([&]() -> void {
             this_thread::sleep_for(chrono::milliseconds(THREAD_WAITING_TIME));
-            cout << "read first" << endl;
+            flag = 1;
             b.read();
         });
 
         first.join();
         second.join();
+
+        BOOST_CHECK_EQUAL(flag, 1);
     }
 
     BOOST_AUTO_TEST_CASE(write_non_blocking) {
@@ -50,6 +54,8 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
         data_bucket bucket;
         bucket.put("abc", 111);
 
+        int flag = 0;
+
         thread first([&]() -> void {
             b.write(std::move(bucket));
             b.write(std::move(bucket));
@@ -60,18 +66,22 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
             b.write(std::move(bucket));
             b.write(std::move(bucket));
             b.write(std::move(bucket));
-            cout << "write finished first" << endl;
+
+            if(flag == 0) flag = 1;
         });
         thread second([&]() -> void {
             this_thread::sleep_for(chrono::milliseconds(THREAD_WAITING_TIME));
             b.read();
             this_thread::sleep_for(chrono::milliseconds(THREAD_WAITING_TIME));
             b.read();
-            cout << "then read finished" << endl;
+
+            if(flag == 0) flag = 2;
         });
 
         first.join();
         second.join();
+
+        BOOST_CHECK_EQUAL(flag, 1);
     }
 
     BOOST_AUTO_TEST_CASE(read_waiting) {
@@ -79,19 +89,23 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
         data_bucket bucket;
         bucket.put("abc", 111);
 
+        int flag = 0;
+
         thread first([&]() -> void {
             this_thread::sleep_for(chrono::milliseconds(THREAD_WAITING_TIME));
-            cout << "write first" << endl;
+            flag = 1;
             b.write(std::move(bucket));
 
         });
         thread second([&]() -> void {
             b.read();
-            cout << "then read" << endl;
+            if(flag == 0) flag = 2;
         });
 
         first.join();
         second.join();
+
+        BOOST_CHECK_EQUAL(flag, 1);
     }
 
     BOOST_AUTO_TEST_CASE(frame_dropping) {
@@ -102,7 +116,7 @@ BOOST_AUTO_TEST_SUITE(data_io_buffer_suite)
 
         thread first([&]() -> void {
             int index = 0;
-            while (index < 1000) {
+            while (index < 600) {
                 data_bucket bucket;
                 bucket.put("index", index);
                 b.write(std::move(bucket));

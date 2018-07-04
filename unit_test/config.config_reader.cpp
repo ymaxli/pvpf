@@ -8,8 +8,9 @@
 
 
 #include <boost/test/unit_test.hpp>
-#include <pvpf/config/config_reader.h>
+#include <pvpf/config/config_reader.hpp>
 #include <rapidjson/document.h>
+#include <iostream>
 
 using namespace std;
 using namespace rapidjson;
@@ -27,10 +28,14 @@ BOOST_AUTO_TEST_SUITE(config_reader_test)
 
     BOOST_AUTO_TEST_CASE(reader_read_other_file)
     {
+        std::cerr.setstate(std::ios_base::failbit);
+
         config_reader cr;
         string jsonfile = "";
         Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(!d.IsObject());
+
+        std::cerr.clear();
     }
 
 

@@ -6,11 +6,12 @@
 #define DEV_ENV_BUFFER_H
 #pragma once
 
-#include "pvpf/pvpf.h"
+#include "pvpf/pvpf.hpp"
 #include <mutex>
 #include <thread>
 #include <chrono>
-#include "pvpf/utils/data_bucket.h"
+#include <condition_variable>
+#include "pvpf/utils/data_bucket.hpp"
 
 PVPF_NAMESPACE_BEGIN
 
@@ -32,38 +33,39 @@ PVPF_NAMESPACE_BEGIN
             }
 
             void write(data_bucket data) {
-                if(write_complete) return;
+                if (write_complete) return;
 
                 if (blocking) {
-                    while (buffer_array_read_available[write_index]) {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(BLOCK_INTERVAL));
-                    }
+                    std::unique_lock<std::mutex> lock(blocking_mutex);
+                    cv_write.wait(lock, [this]() -> auto { return !buffer_array_read_available[write_index]; });
                 }
 
                 if (write_index == read_index) {
-                    mutex.try_lock();
+                    std::lock_guard<std::mutex> lock(rw_mutex);
                     write_to_current_position(std::move(data));
-                    mutex.unlock();
                 } else {
                     write_to_current_position(std::move(data));
                 }
 
+                cv_read.notify_one();
             }
 
             data_bucket read() {
-                while (!buffer_array_read_available[read_index]) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(BLOCK_INTERVAL));
+                {
+                    std::unique_lock<std::mutex> lock(blocking_mutex);
+                    cv_read.wait(lock, [this]() -> auto { return buffer_array_read_available[read_index]; });
                 }
 
                 data_bucket result;
 
                 if (write_index == read_index) {
-                    mutex.try_lock();
+                    std::lock_guard<std::mutex> lock(rw_mutex);
                     result = read_from_current_position();
-                    mutex.unlock();
                 } else {
                     result = read_from_current_position();
                 }
+
+                if (blocking) cv_write.notify_one();
 
                 return result;
             }
@@ -78,14 +80,15 @@ PVPF_NAMESPACE_BEGIN
             }
 
         private:
-            const int BLOCK_INTERVAL = 100;
             int buffer_size;
             bool blocking;
             int write_index, read_index;
-            std::mutex mutex;
+            std::mutex rw_mutex, blocking_mutex;
+            std::condition_variable cv_read, cv_write;
             data_bucket *buffer_array; // use a dynamically-allocated array to contain buffer
             bool *buffer_array_read_available; // flag for buffer read availability
             bool write_complete;
+
             void write_to_current_position(data_bucket data) {
                 buffer_array[write_index] = std::move(data);
                 buffer_array_read_available[write_index] = true;
@@ -97,7 +100,6 @@ PVPF_NAMESPACE_BEGIN
                 buffer_array_read_available[read_index] = false;
                 data_bucket result = std::move(buffer_array[read_index]);
                 read_index = (read_index + 1) % buffer_size;
-
                 return result;
             }
         };
