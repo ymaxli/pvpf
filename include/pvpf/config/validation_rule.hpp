@@ -15,17 +15,17 @@ PVPF_NAMESPACE_BEGIN
 
     namespace config
     {
-        typedef validation_result const (*validator)(rapidjson::Document const & conf);
+        typedef validation_result (*validator)(rapidjson::Document const & conf);
 
-        validation_result const concrete_rule_format(rapidjson::Document const & conf);
-        validation_result const concrete_rule_source(rapidjson::Document const & conf);
-        validation_result const concrete_rule_graph(rapidjson::Document const & conf);
-        validation_result const concrete_rule_sink(rapidjson::Document const & conf);
-        validation_result const concrete_rule_duplicate_id(rapidjson::Document const & conf);
+        validation_result concrete_rule_format(rapidjson::Document const & conf);
+        validation_result concrete_rule_source(rapidjson::Document const & conf);
+        validation_result concrete_rule_graph(rapidjson::Document const & conf);
+        validation_result concrete_rule_sink(rapidjson::Document const & conf);
+        validation_result concrete_rule_duplicate_id(rapidjson::Document const & conf);
         //TODO
-        validation_result const concrete_rule_library_search(rapidjson::Document const & conf);
-        validation_result const concrete_rule_predecessor_check(rapidjson::Document const & conf);
-        validation_result const concrete_rule_successor_check(rapidjson::Document const & conf);
+        validation_result concrete_rule_library_search(rapidjson::Document const & conf);
+        validation_result concrete_rule_predecessor_check(rapidjson::Document const & conf);
+        validation_result concrete_rule_successor_check(rapidjson::Document const & conf);
     }
 
 PVPF_NAMESPACE_END

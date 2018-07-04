@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_SUITE(config_validator_test)
                       "}";
         Document d;
         d.Parse(json);
-        vector<validation_result const> res = cv.validate(d);
+        vector<validation_result> res = cv.validate(d);
 
         BOOST_CHECK_EQUAL(res[0].type, 0);
     }
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_SUITE(config_validator_test)
                            "";
         Document d;
         d.Parse(json);
-        vector<validation_result const> res = cv.validate(d);
+        vector<validation_result> res = cv.validate(d);
 
         //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.size(), 1);

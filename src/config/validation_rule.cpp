@@ -13,7 +13,7 @@ using namespace std;
 PVPF_NAMESPACE_BEGIN
 
     namespace config {
-        validation_result const concrete_rule_format(rapidjson::Document const &conf) {
+        validation_result concrete_rule_format(rapidjson::Document const &conf) {
             // rule 1.1: invalid JSON format
             if (!conf.IsObject()) {
                 return validation_result(2, "Error: invalid JSON file");
@@ -22,7 +22,7 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        validation_result const concrete_rule_source(rapidjson::Document const &conf) {
+        validation_result concrete_rule_source(rapidjson::Document const &conf) {
             // rule 1.2: check source field
             if (!conf.HasMember("source")) {
                 return validation_result(2, "Error: lack \"source\" field");
@@ -78,7 +78,7 @@ PVPF_NAMESPACE_BEGIN
 
         }
 
-        validation_result const concrete_rule_graph(rapidjson::Document const &conf) {
+        validation_result concrete_rule_graph(rapidjson::Document const &conf) {
             // rule 1.4: check graph field
             if (!conf.HasMember("graph")) {
                 return validation_result(2, "Error: lack \"graph\" field");
@@ -142,7 +142,7 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        validation_result const concrete_rule_sink(rapidjson::Document const &conf) {
+        validation_result concrete_rule_sink(rapidjson::Document const &conf) {
             // rule 1.6: check sink field
             if (!conf.HasMember("sink")) {
                 return validation_result(2, "Error: lack \"sink\" field");
@@ -209,7 +209,7 @@ PVPF_NAMESPACE_BEGIN
         // rule 9: check duplicate node
         // after check the other rules
 
-        validation_result const concrete_rule_duplicate_id(rapidjson::Document const &conf) {
+        validation_result concrete_rule_duplicate_id(rapidjson::Document const &conf) {
             unordered_set<string> id_set;
             //get id in sink
             const Value &sink = conf["sink"];
@@ -254,7 +254,7 @@ PVPF_NAMESPACE_BEGIN
 //    }
 
 
-        validation_result const concrete_rule_predecessor_check(rapidjson::Document const &conf) {
+        validation_result concrete_rule_predecessor_check(rapidjson::Document const &conf) {
 
             // collect sink id
             unordered_set<string> sink_id;
@@ -323,7 +323,7 @@ PVPF_NAMESPACE_BEGIN
         }
 
 
-        validation_result const concrete_rule_successor_check(rapidjson::Document const &conf) {
+        validation_result concrete_rule_successor_check(rapidjson::Document const &conf) {
             unordered_map<string, int> pre_map;
             const Value &sink = conf["sink"];
             const Value &graph = conf["graph"];

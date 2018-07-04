@@ -13,24 +13,36 @@
 
 PVPF_NAMESPACE_BEGIN
 
-namespace config
-{
-    struct validation_result {
-        int type; // type: int(0: pass, 1: warning, 2: error)
-        std::string message;
-        inline validation_result(int t, std::string m) : type(t), message(m) {};
-        inline validation_result(const validation_result &vr){
-            type = vr.type;
-            message = vr.message;
-        }
-    };
+    namespace config {
+        struct validation_result {
+        public:
+            validation_result(int t, std::string m) : type(t), message(m) {};
 
-    class config_validator {
-    public:
-        std::vector<const validation_result> validate(rapidjson::Document &conf);
-    };
+            validation_result(validation_result const &vr) {
+                type = vr.type;
+                message = vr.message;
+            }
 
-}
+            int get_type() {
+                return type;
+            }
+
+            std::string const &get_message() {
+                return message;
+            }
+
+        private:
+            int type; // type: int(0: pass, 1: warning, 2: error)
+            std::string message;
+        };
+
+
+        class config_validator {
+        public:
+            std::vector<validation_result> validate(rapidjson::Document const &conf);
+        };
+
+    }
 
 PVPF_NAMESPACE_END
 #endif //CONFIG_VALIDATOR_H

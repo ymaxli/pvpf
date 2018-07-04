@@ -13,8 +13,8 @@ PVPF_NAMESPACE_BEGIN
 
     namespace config {
 
-        vector<validation_result const> config_validator::validate(Document &conf) {
-            vector<validation_result const> res;
+        vector<validation_result> config_validator::validate(Document const &conf) {
+            vector<validation_result> res;
 
             vector<validator> rules;
             rules.push_back(concrete_rule_format);
