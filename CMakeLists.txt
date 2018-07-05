@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 # Definitions
 set(PROJECT_NAME_STR point_vision_pipeline_framework)
