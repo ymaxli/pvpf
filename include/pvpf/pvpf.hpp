@@ -15,8 +15,8 @@
 #define PVPF_NAMESPACE_END }
 #endif
 
-// development mode
-#define DEV_MODE
+//// development mode
+//#define DEV_MODE
 
 #ifdef DEV_MODE
 #define private public
