@@ -4,8 +4,11 @@
 
 #include "pvpf/config/config_reader.hpp"
 #include <iostream>
-#include <rapidjson/istreamwrapper.h>
-#include <fstream>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem.hpp>
+#include <sstream>
 
 using namespace rapidjson;
 using namespace std;
@@ -15,28 +18,36 @@ PVPF_NAMESPACE_BEGIN
 namespace config
 {
     Document config_reader::load_json_conf(const string &file) {
-        ifstream f;
+        boost::filesystem::path filePath(file);
+        Document d;
 
-        //prepare f to throw if failbit gets set
-        std::ios_base::iostate exceptionMask = f.exceptions() | std::ios::failbit;
-        f.exceptions(exceptionMask);
-
-        try {
-            f.open(file);
-        }
-        catch (std::ios_base::failure& e) {
-            if ( e.code() == std::make_error_condition(std::io_errc::stream) )
-                std::cerr << "Stream error!\n";
-            else
-                std::cerr << "Unknown failure opening file.\n";
-
-            //if cannot open file, return NULL
-            Document d = NULL;
+        if (!boost::filesystem::exists(filePath)) {
+            cerr << "Configuration file not found"<< endl;
             return d;
         }
-        IStreamWrapper isw(f);
-        Document d;
-        d.ParseStream(isw);
+        else if (boost::filesystem::is_regular_file(filePath)) {
+            string extension = filePath.extension().string();
+            if(extension != ".json") {
+                cerr << "Path shoud be a json file" << endl;
+                return d;
+            }
+        }
+        else {
+            cerr << "Path should be a json file" << endl;
+            return d;
+        }
+
+        boost::filesystem::ifstream inFile;
+        inFile.open(filePath);//open the input file
+
+        stringstream strStream;
+        strStream << inFile.rdbuf();//read the file
+        string str = strStream.str();//str holds the content of the file
+
+        char char_array[str.size()+1];
+        strcpy(char_array, str.c_str());
+
+        d.Parse(char_array);
 
         return d;
     }
