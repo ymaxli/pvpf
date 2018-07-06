@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 # Definitions
 set(PROJECT_NAME_STR point_vision_pipeline_framework)
@@ -23,7 +23,7 @@ file(GLOB_RECURSE SRC_FILES src/**/*.cpp)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
  find_package(TBB REQUIRED)
- find_package(Boost COMPONENTS unit_test_framework REQUIRED)
+ find_package(Boost COMPONENTS unit_test_framework system filesystem REQUIRED)
  find_package(OpenCV REQUIRED)
  find_package(rapidjson REQUIRED)
 
