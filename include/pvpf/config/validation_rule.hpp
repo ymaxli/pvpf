@@ -22,7 +22,6 @@ PVPF_NAMESPACE_BEGIN
         validation_result concrete_rule_graph(rapidjson::Document const & conf);
         validation_result concrete_rule_sink(rapidjson::Document const & conf);
         validation_result concrete_rule_duplicate_id(rapidjson::Document const & conf);
-        //TODO
         validation_result concrete_rule_library_search(rapidjson::Document const & conf);
         validation_result concrete_rule_predecessor_check(rapidjson::Document const & conf);
         validation_result concrete_rule_successor_check(rapidjson::Document const & conf);

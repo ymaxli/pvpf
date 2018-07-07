@@ -28,7 +28,7 @@ PVPF_NAMESPACE_BEGIN
             for (int i = 0; i < rules.size(); ++i) {
                 auto result = rules[i](conf);
                 res.push_back(result);
-                if (result.type == 2) {
+                if (result.get_type() == 2) {
                     break;
                 }
             }
