@@ -21,6 +21,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${UNIT_TESTS_INCLUDES})
 
 # Build unit tests
+add_definitions(-DDEV_MODE)
 add_definitions(-DBOOST_TEST_DYN_LINK)
 #add_executable(${PROJECT_UNIT_TESTS_NAME} ${UNIT_TESTS_SRC_FILES} $<TARGET_OBJECTS:demo_objects> )
 add_executable(${PROJECT_UNIT_TESTS_NAME} ${UNIT_TESTS_SRC_FILES} ${SRC_FILES})
