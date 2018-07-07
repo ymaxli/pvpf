@@ -5,11 +5,9 @@
 #ifndef POINT_VISION_PIPELINE_FRAMEWORK_SCHEDULER_HPP
 #define POINT_VISION_PIPELINE_FRAMEWORK_SCHEDULER_HPP
 
-#endif //POINT_VISION_PIPELINE_FRAMEWORK_SCHEDULER_HPP
 #include "pvpf/pvpf.hpp"
 #include <rapidjson/document.h>
 #include <tbb/flow_graph.h>
-
 
 PVPF_NAMESPACE_BEGIN
 namespace scheduler{
@@ -25,3 +23,5 @@ namespace scheduler{
 }
 
 PVPF_NAMESPACE_END
+
+#endif //POINT_VISION_PIPELINE_FRAMEWORK_SCHEDULER_HPP

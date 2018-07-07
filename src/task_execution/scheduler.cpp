@@ -4,6 +4,13 @@
 #include "pvpf/task_execution/scheduler.hpp"
 #include <pvpf/data_io>
 #include <pvpf/task_execution/body.hpp>
+#include <vector>
+#include <unordered_map>
+#include <pair>
+#include <string>
+#include <boost/algorithm/string.hpp>
+#include <pvpf/data_io/factory.hpp>
+
 #define BUFFER_SIZE 10
 
 using namespace tbb;
@@ -22,6 +29,7 @@ PVPF_NAMESPACE_BEGIN
             const Value& sink_json_list = conf["sink"];
 
             //generate source node
+
             for (Value::ConstValueIterator it = source_json_list.Begin(); it != source_json_list.End(); it ++){
                 auto pair;
                 if (it -> HasMember("control") && it["control"] -> HasMember("block") && (*it)["control"]["block"].GetBool() == false){
@@ -45,7 +53,7 @@ PVPF_NAMESPACE_BEGIN
                 }
                 string pre[0];
                 string succ[successors.size()];
-                unordered_map<string, tuple<int, string>> input;
+                unordered_map<string, vector<pair<int, string>>> input;
                 unordered_map<string, string> output;
                 if (successors.size() > 0){
                     //TODO add a split node
@@ -79,13 +87,18 @@ PVPF_NAMESPACE_BEGIN
                     //TODO add a join node and add edge with them
                 }
                 string succ[0];
-                unordered_map<string, tuple<int, string>> input;// some problem
+                unordered_map<string, vector<pair<int, string>>> input;
                 unordered_map<string, string> output;
                 const Value& input_list = (*it)["input"]["mapping"];
                 for (Value::ConstValueIterator input_it = input_list.MemberBegin(); input_it != input_list.MemberEnd(); input_it ++){
                     if (! input_it -> isArray()){
-                        if ()
-                        input[input_it -> name.GetString()] =
+                        vector<string> temp;
+                        split(temp, input_it -> value, boost::is_any_of("."));
+                        if (strcmp(temp[1], "all")){
+                            for (int i = 0; i < pre.length(); i ++){
+
+                            }
+                        }
                     } else {
 
                     }
