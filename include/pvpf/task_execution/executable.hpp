@@ -8,11 +8,13 @@
 #include <pvpf/pvpf.hpp>
 #include <pvpf/utils/data_bucket.hpp>
 
-namespace scheduler{
-    class executable{
-        virtual void exec() = 0;
-    };
-}
+PVPF_NAMESPACE_BEGIN
+    namespace scheduler {
+        class executable {
+            virtual void exec() = 0;
+        };
+    }
 
+PVPF_NAMESPACE_END
 #endif //POINT_VISION_PIPELINE_FRAMEWORK_EXECUTABLE_HPP
 
