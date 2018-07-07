@@ -10,7 +10,6 @@ using namespace rapidjson;
 using namespace std;
 
 PVPF_NAMESPACE_BEGIN
-
     namespace config {
 
         vector<validation_result> config_validator::validate(Document const &conf) {
