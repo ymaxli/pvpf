@@ -203,16 +203,18 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         BOOST_CHECK_EQUAL(res[5].get_type(), 2);
         BOOST_CHECK_EQUAL(res[5].get_message(), "Error: predecessor \"source-2\" does not exist");
     }
-//    BOOST_AUTO_TEST_CASE(number_of_successor_exceed)
-//    {
-//        config_reader cr;
-//        string jsonfile = "../../system_test/test_json/framework_configuration/number_of_successor_exceed.json";
-//        Document d = cr.load_json_conf(jsonfile);
-//        config_validator cv;
-//        vector<validation_result> res = cv.validate(d);
-//        BOOST_CHECK_EQUAL(res[0].get_type(), 2);
-//        BOOST_CHECK_EQUAL(res[0].get_message(), "Error: number of successors of one node exceeds maximum value");
-//    }
+
+    BOOST_AUTO_TEST_CASE(number_of_successor_exceed)
+    {
+        config_reader cr;
+        string jsonfile = "../../system_test/test_json/framework_configuration/number_of_successor_exceed.json";
+        Document d = cr.load_json_conf(jsonfile);
+        config_validator cv;
+        vector<validation_result> res = cv.validate(d);
+        BOOST_CHECK_EQUAL(res[6].get_type(), 2);
+        BOOST_CHECK_EQUAL(res[6].get_message(), "Error: number of successors of node \"source-1\" exceeds maximum value");
+    }
+
 //    BOOST_AUTO_TEST_CASE(mapping_error)
 //    {
 //        config_reader cr;
