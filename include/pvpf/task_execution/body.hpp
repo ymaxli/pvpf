@@ -17,12 +17,12 @@ PVPF_NAMESPACE_BEGIN
         struct context {
         public:
             std::string const node_id;
-            std::string pre[];
-            std::string succ[];
+            std::vector<std::string> pre;
+            std::vector<std::string> succ;
             std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input;
             std::unordered_map<std::string, std::string> output;
 
-            context(std::string id, std::string pre[], std::string succ[],
+            context(std::string id, std::vector<std::string> pre, std::vector<std::string> succ,
                     std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input,
                     std::unordered_map<std::string, std::string> output)
                     : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)) {}

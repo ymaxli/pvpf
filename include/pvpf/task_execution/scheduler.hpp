@@ -14,6 +14,10 @@
 
 PVPF_NAMESPACE_BEGIN
     namespace scheduler {
+        struct info_node{
+            std::shared_ptr<context> cont;
+            tbb::flow::graph_node node;
+        };
         class scheduler {
         public:
             void build_graph(rapidjson::Document &conf);

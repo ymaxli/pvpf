@@ -98,66 +98,52 @@ PVPF_NAMESPACE_BEGIN
         scheduler::create_context(const rapidjson::Value &obj, rapidjson::Document &conf) {
 
             string id = obj["id"].GetString();
+
+            const Value &graph_json_list = conf["graph"];
+            const Value &sink_json_list = conf["sink"];
+
+            //add to successors
             vector<string> successors;
             for (Value::ConstValueIterator node = graph_json_list.Begin(); node != graph_json_list.End(); node++) {
                 const Value &pre_list = (*node)["input"]["pre"];
                 for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
                     if (pre_it->GetString() == id) {
-                        successors.push_back((*node)["id"]);
+                        successors.push_back((*node)["id"].GetString());
                         break;
                     }
                 }
             }
-            string pre[0];
-            string succ[successors.size()];
+
+            for (Value::ConstValueIterator node = sink_json_list.Begin(); node != sink_json_list.End(); node++) {
+                const Value &pre_list = (*node)["input"]["pre"];
+                for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
+                    if (pre_it->GetString() == id) {
+                        successors.push_back((*node)["id"].GetString());
+                        break;
+                    }
+                }
+            }
+
+            //add to pre
+            const Value &pre_list = obj["input"]["pre"];
+            vector<string> pre;
+            for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
+                pre.push_back(pre_it->GetString());
+            }
+
+
             unordered_map<string, vector<pair<int, string>>> input;
             unordered_map<string, string> output;
-            if (successors.size() > 0) {
-                //TODO add a split node
-            }
-            const Value &data_list = (*it)["output"]["data"];
-            for (Value::ConstValueIterator data = data_list.MemberBegin(); data != data_list.MemberEnd(); data++) {
+            //TODO mapping between input and output
+
+            const Value &data_list = obj["output"]["data"];
+            for (Value::ConstMemberIterator data = data_list.MemberBegin(); data != data_list.MemberEnd(); data++) {
                 output[data->name.GetString()] = data->value.GetString();
             }
-            context context(id, pre, succ, input, output);
-            body body(context, exec);
-            //3. generate source node, add the source_node to the map
 
+            shared_ptr<context> context = make_shared<context>(id, pre, successors, input, output);
 
-
-            // 2. add information needed by context
-            string id = (*it)["id"];
-            vector<string> successors;
-            const Value &pre_list = (*it)["input"]["pre"];
-            string pre[pre_list.size()];
-            int index = 0;
-            for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
-                pre[index++] = pre_it->GetString();
-            }
-            if (pre_list.size() > 0) {
-                //TODO add a join node and add edge with them
-            }
-            string succ[0];
-            unordered_map<string, vector<pair<int, string>>> input;
-            unordered_map<string, string> output;
-            const Value &input_list = (*it)["input"]["mapping"];
-            for (Value::ConstValueIterator input_it = input_list.MemberBegin();
-                 input_it != input_list.MemberEnd(); input_it++) {
-                if (!input_it->isArray()) {
-                    vector<string> temp;
-                    split(temp, input_it->value, boost::is_any_of("."));
-                    if (strcmp(temp[1], "all")) {
-                        for (int i = 0; i < pre.length(); i++) {
-
-                        }
-                    }
-                } else {
-
-                }
-
-            }
-
-            return shared_ptr<context>();
+            return context;
 
         }
 
