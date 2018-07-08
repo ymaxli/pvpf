@@ -40,9 +40,9 @@ PVPF_NAMESPACE_BEGIN
         struct body {
         public:
             std::shared_ptr<context> cont;
-            executable exec;
+            std::unique_ptr<executable> exec;
 
-            body(std::shared_ptr<context> context, executable exec) : cont(context), exec(exec) {};
+            body(std::shared_ptr<context> context, std::unique_ptr<executable> exec) : cont(context), exec(std::move(exec)) {};
 
 
             void operator()();

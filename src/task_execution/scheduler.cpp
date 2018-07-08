@@ -2,7 +2,6 @@
 // Created by jiabei on 2018/7/5.
 //
 #include "pvpf/task_execution/scheduler.hpp"
-#include <pvpf/data_io>
 #include <pvpf/task_execution/body.hpp>
 #include <string>
 #include <boost/algorithm/string.hpp>
@@ -149,5 +148,4 @@ PVPF_NAMESPACE_BEGIN
 
     }
 
-};
 PVPF_NAMESPACE_END
