@@ -34,7 +34,7 @@ PVPF_NAMESPACE_BEGIN
 
             io_body(std::shared_ptr<context> context, data_io::io_pipe_for_source_node pipe) : cont(context),
                                                                                                pipe(std::move(pipe)) {};
-            void operator();
+            void operator()();
         };
 
         struct body {
@@ -45,7 +45,7 @@ PVPF_NAMESPACE_BEGIN
             body(std::shared_ptr<context> context, executable exec) : cont(context), exec(exec) {};
 
 
-            void operator();
+            void operator()();
         };
     }
 
