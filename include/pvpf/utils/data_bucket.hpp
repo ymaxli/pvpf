@@ -45,7 +45,7 @@ PVPF_NAMESPACE_BEGIN
         }
 
         template<typename T>
-        T get_copy(std::string const &key) {
+        T get_copy(std::string const &key) const {
             if (!(map->count(key))) throw std::logic_error(std::string("key:") + key + std::string(" does not exist"));
 
             std::weak_ptr<core::any> ptr = (*map)[key];
@@ -57,7 +57,7 @@ PVPF_NAMESPACE_BEGIN
         }
 
         template<typename T>
-        T *get_ptr(std::string const &key) {
+        T *get_ptr(std::string const &key) const {
             if (!(map->count(key))) throw std::logic_error(std::string("key:") + key + std::string(" does not exist"));
 
             std::weak_ptr<core::any> ptr = (*map)[key];
