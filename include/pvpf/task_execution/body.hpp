@@ -13,7 +13,7 @@
 #include <pvpf/task_execution/executable.hpp>
 
 PVPF_NAMESPACE_BEGIN
-    namespace scheduler {
+    namespace task_execution {
         struct context {
         public:
             std::string const node_id;
@@ -47,6 +47,7 @@ PVPF_NAMESPACE_BEGIN
 
             void operator()();
         };
+
     }
 
 PVPF_NAMESPACE_END
