@@ -10,31 +10,42 @@
 #include <pvpf/pvpf.hpp>
 #include <string>
 #include <pvpf/data_io/io_pipe.hpp>
-#include <executable.hpp>
-
-using namespace std;
+#include <pvpf/task_execution/executable.hpp>
 
 PVPF_NAMESPACE_BEGIN
-    namespace scheduler{
-        struct context{
+    namespace scheduler {
+        struct context {
         public:
-            string const node_id;
-            string pre[];
-            string succ[];
-            unordered_map<string, vector< pair<int, string> >> input;
-            unordered_map<string, string> output;
-            context(string id, string pre[], string succ[],
-                    unordered_map<string, vector< pair<int, string> >> input, unordered_map<string, string> output)
-                    : node_id(id), pre(pre), succ(succ), input(input), output(output){}
+            std::string const node_id;
+            std::vector<std::string> pre;
+            std::vector<std::string> succ;
+            std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input;
+            std::unordered_map<std::string, std::string> output;
+
+            context(std::string id, std::vector<std::string> pre, std::vector<std::string> succ,
+                    std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input,
+                    std::unordered_map<std::string, std::string> output)
+                    : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)) {}
         };
-        struct body{
-        public:
-            context context;
-            executable exec;
+
+        struct io_body {
+            std::shared_ptr<context> cont;
             data_io::io_pipe_for_source_node pipe;
-            body(context context, executable exec):context(context), exec(exec){};
-            body(context context, data_io::io_pipe_for_source_node pipe):context(context), pipe(pipe){};
-            void operator();
+
+            io_body(std::shared_ptr<context> context, data_io::io_pipe_for_source_node pipe) : cont(context),
+                                                                                               pipe(std::move(pipe)) {};
+            void operator()();
+        };
+
+        struct body {
+        public:
+            std::shared_ptr<context> cont;
+            std::unique_ptr<executable> exec;
+
+            body(std::shared_ptr<context> context, std::unique_ptr<executable> exec) : cont(context), exec(std::move(exec)) {};
+
+
+            void operator()();
         };
     }
 

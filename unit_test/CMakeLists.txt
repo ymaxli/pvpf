@@ -21,6 +21,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${UNIT_TESTS_INCLUDES})
 
 # Build unit tests
+add_definitions(-DDEV_MODE)
 add_definitions(-DBOOST_TEST_DYN_LINK)
 #add_executable(${PROJECT_UNIT_TESTS_NAME} ${UNIT_TESTS_SRC_FILES} $<TARGET_OBJECTS:demo_objects> )
 add_executable(${PROJECT_UNIT_TESTS_NAME} ${UNIT_TESTS_SRC_FILES} ${SRC_FILES})
@@ -29,3 +30,9 @@ target_link_libraries(${PROJECT_UNIT_TESTS_NAME} ${Boost_LIBRARIES})
 enable_testing()
 #add_test(RealTest second_test)
 add_test(UNITTEST ${PROJECT_UNIT_TESTS_NAME})
+
+# copy test data
+file(GLOB UNIT_TESTS_DATA_FILES ${PROJECT_SOURCE_DIR}/unit_test/test_json/*)
+file(COPY ${UNIT_TESTS_DATA_FILES}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test_json)
+
