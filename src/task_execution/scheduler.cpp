@@ -7,6 +7,7 @@
 #include <boost/algorithm/string.hpp>
 #include <pvpf/data_io/factory.hpp>
 #include <tbb/flow_graph.h>
+#include <iostream>
 
 #define BUFFER_SIZE 10
 
@@ -96,11 +97,13 @@ PVPF_NAMESPACE_BEGIN
         shared_ptr<context>
         scheduler::create_context(const rapidjson::Value &obj, rapidjson::Document &conf) {
 
+
             string id = obj["id"].GetString();
 
             const Value &graph_json_list = conf["graph"];
             const Value &sink_json_list = conf["sink"];
 
+//            cout<<"succesors"<<endl;
             //add to successors
             vector<string> successors;
             for (Value::ConstValueIterator node = graph_json_list.Begin(); node != graph_json_list.End(); node++) {
@@ -123,6 +126,7 @@ PVPF_NAMESPACE_BEGIN
                 }
             }
 
+//            cout<<"pre"<<endl;
             //add to pre
             const Value &pre_list = obj["input"]["pre"];
             vector<string> pre;
@@ -140,24 +144,27 @@ PVPF_NAMESPACE_BEGIN
                     const Value &key_list = input_it->value;
                     for (Value::ConstValueIterator key_it = key_list.Begin(); key_it != key_list.End(); key_it++) {
                         vector<std::pair<int, std::string>> result;
-                        result = analyze_mapping_value(input_it->value.GetString(), pre.size());
+                        result = analyze_mapping_value((*key_it).GetString(), pre.size());
                         value_list.insert(value_list.end(), result.begin(), result.end());
                     }
                 } else {
                     value_list = analyze_mapping_value(input_it->value.GetString(), pre.size());
                 }
+
                 input[input_it->name.GetString()] = move(value_list);
             }
 
+//            cout<<"output"<<endl;
             //add to output
             unordered_map<string, string> output;
-            const Value &data_list = obj["output"]["data"];
+            const Value &data_list = obj["output"]["mapping"];
             for (Value::ConstMemberIterator data = data_list.MemberBegin(); data != data_list.MemberEnd(); data++) {
                 output[data->name.GetString()] = data->value.GetString();
             }
 
             auto cont = make_shared<context>(id, pre, successors, input, output);
 
+//            cout<<"finish"<<endl;
             return cont;
         }
 
