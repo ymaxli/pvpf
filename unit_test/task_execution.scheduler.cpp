@@ -61,6 +61,20 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
         shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0], d);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).node_id,"node-1");
+        BOOST_CHECK_EQUAL((*cont_ptr).pre.size(),1);
+        BOOST_CHECK_EQUAL((*cont_ptr).pre[0],"source-1");
+        BOOST_CHECK_EQUAL((*cont_ptr).succ.size(),2);
+        BOOST_CHECK_EQUAL((*cont_ptr).succ[0],"sink-1");
+        BOOST_CHECK_EQUAL((*cont_ptr).succ[1],"sink-2");
+        BOOST_CHECK_EQUAL((*cont_ptr).input.size(),2);
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"].size(), 1);
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"][0].first, 0);
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"][0].second, "key1");
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"].size(), 2);
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][0].first, 0);
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][0].second, "key1");
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][1].first, 0);
+        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][1].second, "key1");
     }
 
 

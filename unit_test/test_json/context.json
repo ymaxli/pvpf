@@ -83,5 +83,32 @@
         "func": ""
       }
     }
-  }]
+  },
+    {
+      "id": "sink-2",
+      "input": {
+        "pre": [
+          "node-1"
+        ],
+        "pre_conf": [
+          {
+            "readonly": true
+          }
+        ],
+        "mapping": {
+          "image_arr": "key1.0",
+          "image_arr2": [
+            "key1.0",
+            "key1.0"
+          ]
+        }
+      },
+      "task": {
+        "dylib": {
+          "location": "",
+          "func": ""
+        }
+      }
+    }]
+
 }
