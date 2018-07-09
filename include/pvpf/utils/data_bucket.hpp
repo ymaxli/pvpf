@@ -24,7 +24,11 @@ PVPF_NAMESPACE_BEGIN
             delete map;
         }
 
-        data_bucket(const data_bucket &new_data_bucket) = delete;
+        data_bucket(std::unordered_map<std::string, std::shared_ptr<core::any>> *map): map(map){}
+
+        data_bucket(data_bucket const &new_data_bucket) noexcept : map(new_data_bucket.map) {
+            (const_cast<data_bucket &>(new_data_bucket)).map = nullptr;
+        };
 
         data_bucket(data_bucket &&new_data_bucket) noexcept : map(new_data_bucket.map) {
             new_data_bucket.map = nullptr;
@@ -37,6 +41,22 @@ PVPF_NAMESPACE_BEGIN
             }
 
             return *this;
+        }
+
+        data_bucket &operator=(data_bucket const &new_data_bucket) noexcept {
+            if (this != &new_data_bucket) {
+                map = new_data_bucket.map;
+                (const_cast<data_bucket &> (new_data_bucket)).map = nullptr;
+            }
+
+            return *this;
+        }
+
+        data_bucket clone() noexcept {
+            auto new_map = new std::unordered_map<std::string, std::shared_ptr<core::any>>();
+            *new_map = std::unordered_map<std::string, std::shared_ptr<core::any>>(*(this->map));
+            data_bucket result(new_map);
+            return result;
         }
 
         template<typename T>

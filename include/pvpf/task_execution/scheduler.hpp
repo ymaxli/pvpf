@@ -6,18 +6,23 @@
 #define POINT_VISION_PIPELINE_FRAMEWORK_SCHEDULER_HPP
 
 #include "pvpf/pvpf.hpp"
-#include "body.hpp"
+#include "pvpf/task_execution/body.hpp"
 #include <rapidjson/document.h>
 #include <tbb/flow_graph.h>
 #include <unordered_map>
 #include <string>
+#include <pvpf/utils/data_bucket.hpp>
+
 
 PVPF_NAMESPACE_BEGIN
-    namespace scheduler {
-        struct info_node{
+    namespace task_execution {
+        struct logical_node {
             std::shared_ptr<context> cont;
-            tbb::flow::graph_node node;
+            tbb::flow::graph_node *node;
+            tbb::flow::split_node<data_bucket> *split;
+            tbb::flow::join_node<data_bucket> *join;
         };
+
         class scheduler {
         public:
             void build_graph(rapidjson::Document &conf);
@@ -28,25 +33,27 @@ PVPF_NAMESPACE_BEGIN
             tbb::flow::graph graph;
 
             void source_node_list(std::unordered_map<std::string, tbb::flow::graph_node> &nodes,
-                                  tbb::flow::graph &graph, const rapidjson::Value &conf);
+                                  tbb::flow::graph &graph, rapidjson::Value const &conf);
 
             void graph_node_list(std::unordered_map<std::string, tbb::flow::graph_node> &nodes,
-                                 tbb::flow::graph &graph, const rapidjson::Value &conf);
+                                 tbb::flow::graph &graph, rapidjson::Value const &conf);
 
             void sink_node_list(std::unordered_map<std::string, tbb::flow::graph_node> &nodes,
-                                tbb::flow::graph &graph, const rapidjson::Value &conf);
+                                tbb::flow::graph &graph, rapidjson::Value const &conf);
 
-            std::unique_ptr<tbb::flow::source_node>
-            generate_source_node(tbb::flow::graph &graph, const rapidjson::Value &conf, context &context);
+            std::unique_ptr<tbb::flow::source_node<data_bucket>>
+            generate_source_node(tbb::flow::graph &graph, rapidjson::Value const &conf, context &context);
 
-            std::unique_ptr<tbb::flow::function_node>
-            generate_graph_node(tbb::flow::graph &graph, const rapidjson::Value &conf, context &context);
+            std::unique_ptr<tbb::flow::function_node<data_bucket>>
+            generate_graph_node(tbb::flow::graph &graph, rapidjson::Value const &conf, context &context);
 
-            std::unique_ptr<tbb::flow::function_node>
-            generate_sink_node(tbb::flow::graph &graph, const rapidjson::Value &conf, context &context);
+            std::unique_ptr<tbb::flow::function_node<data_bucket>>
+            generate_sink_node(tbb::flow::graph &graph, rapidjson::Value const &conf, context &context);
 
             std::shared_ptr<context>
-            create_context(const rapidjson::Value &obj, rapidjson::Document &conf);
+            create_context(rapidjson::Value const &obj, rapidjson::Document &conf);
+
+            std::vector<std::pair<int, std::string>> analyze_mapping_value(std::string value, int size);
         };
 
 

@@ -9,7 +9,7 @@
 using namespace std;
 
 PVPF_NAMESPACE_BEGIN
-    namespace scheduler {
+    namespace task_execution {
         void dynamic_library_func::exec(data_bucket &data, data_bucket const &params) {
 
         }

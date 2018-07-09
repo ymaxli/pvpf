@@ -10,7 +10,7 @@
 #include <vector>
 
 PVPF_NAMESPACE_BEGIN
-    namespace scheduler {
+    namespace task_execution {
         class executable {
             virtual void exec(data_bucket &data, data_bucket const &params) = 0;
         };
