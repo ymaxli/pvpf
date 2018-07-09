@@ -2197,4 +2197,69 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.get_message(), "Pass: successors number check");
     }
 
+    BOOST_AUTO_TEST_CASE(rule_library_source_no_path)
+    {
+        const char* json = "{\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"graph\": [\n"
+                           "        {\n"
+                           "            \"id\": \"node-1\",\n"
+                           "            \"input\": {\n"
+                           "                \"pre\": \"source-1\"\n"
+                           "            },\n"
+                           "            \"task\": {\n"
+                           "                \"algorithm\": \"algorithm_1\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ],\n"
+                           "    \"sink\": [\n"
+                           "        {\n"
+                           "            \"id\": \"sink-1\",\n"
+                           "            \"input\": { \n"
+                           "                \"pre\": \"node-1\"\n"
+                           "            },\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"./write.so\",\n"
+                           "                    \"func\": \"writer\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = concrete_rule_library_search(d);
+
+        BOOST_CHECK_EQUAL(res.get_type(), 2);
+        BOOST_CHECK_EQUAL(res.get_message(), "Error: dylib not found in source node \"source-1\"");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_library_source_no_file)
+    {
+        const char* json = "";
+        Document d;
+        d.Parse(json);
+        validation_result res = concrete_rule_library_search(d);
+
+        BOOST_CHECK_EQUAL(res.get_type(), 2);
+        BOOST_CHECK_EQUAL(res.get_message(), "Error: dylib not found in source node \"source-1\"");
+    }
+
+
 BOOST_AUTO_TEST_SUITE_END()

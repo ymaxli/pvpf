@@ -6,6 +6,10 @@
 #include <iostream>
 #include <unordered_set>
 #include <unordered_map>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem.hpp>
 
 using namespace rapidjson;
 using namespace std;
@@ -131,12 +135,6 @@ PVPF_NAMESPACE_BEGIN
                                graph[i]["task"]["algorithm"].GetStringLength() == 0) {
                         return validation_result(2, "Error: graph node task algorithm should be nonempty string");
                     }
-                    // rule 1.16: check algorithm of graph node
-//                else {
-//                    if (graph[i]["task"].HasMember("algorithm")) {
-//                        return validation_result(2, "Error: algorithm not found");
-//                    }
-//                }
                 }
                 return validation_result(0, "Pass: graph field check");
             }
@@ -206,9 +204,6 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        // rule 9: check duplicate node
-        // after check the other rules
-
         validation_result concrete_rule_duplicate_id(rapidjson::Document const &conf) {
             unordered_set<string> id_set;
             //get id in sink
@@ -241,18 +236,6 @@ PVPF_NAMESPACE_BEGIN
 
             return validation_result(0, "Pass: no duplicate node id");
         }
-
-//    validation_result concrete_rule_library_search::validate(Document &conf) {
-//        const Value& sink = conf["sink"];
-//        for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
-//            string task = sink[i]["task"].GetString();
-////            if(!boost::filesystem::exists(task))
-////                return validation_result(2, "Error: dylib");
-//            //TODO
-//
-//        }
-//    }
-
 
         validation_result concrete_rule_predecessor_check(rapidjson::Document const &conf) {
 
@@ -321,7 +304,6 @@ PVPF_NAMESPACE_BEGIN
 
 
         }
-
 
         validation_result concrete_rule_successor_check(rapidjson::Document const &conf) {
             unordered_map<string, int> pre_map;
@@ -414,8 +396,88 @@ PVPF_NAMESPACE_BEGIN
             return validation_result(0, "Pass: successors number check");
         }
 
+        validation_result concrete_rule_library_search(rapidjson::Document const &conf) {
+            const Value &source = conf["source"];
+            const Value &sink = conf["sink"];
+            const Value &graph = conf["graph"];
 
+            //check dylib in source nodes
+            for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
+                string file = source[i]["task"]["dylib"]["location"].GetString();
+                string id = source[i]["id"].GetString();
+
+                boost::filesystem::path filePath(file);
+
+                if (!boost::filesystem::exists(filePath)) {
+                    return validation_result(2, "Error: dylib not found in source node \"" + id + "\"");
+                }
+                else if (boost::filesystem::is_regular_file(filePath)) {
+                    string extension = filePath.extension().string();
+                    if (extension != ".dll" || extension != ".so" || extension != ".dylib") {
+                        return validation_result(2, "Error: dylib format incorrect in source node \"" + id + "\"");
+                    }
+                }
+                else {
+                    return validation_result(2, "Error: dylib not found in source node \"" + id + "\"");
+                }
+            }
+
+            //check dylib in sink nodes
+            for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
+                string file = sink[i]["task"]["dylib"]["location"].GetString();
+                string id = sink[i]["id"].GetString();
+
+                boost::filesystem::path filePath(file);
+
+                if (!boost::filesystem::exists(filePath)) {
+                    return validation_result(2, "Error: dylib not found in sink node \"" + id + " \"");
+                } else if (boost::filesystem::is_regular_file(filePath)) {
+                    string extension = filePath.extension().string();
+                    if (extension != ".dll" || extension != ".so" || extension != ".dylib") {
+                        return validation_result(2, "Error: dylib format incorrect in sink node \"" + id + " \"");
+                    }
+                }
+            }
+
+            //check algorithm in graph nodes
+            for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
+                string file = graph[i]["task"]["algorithm"].GetString();
+                string id = graph[i]["id"].GetString();
+
+
+                #ifdef _WIN32
+                string defaultPath = ".\algorithms\";
+                #else
+                string defaultPath = "./algorithms/";
+                #endif
+
+                boost::filesystem::path filePath(file);
+                boost::filesystem::path filePath2(defaultPath+file);
+
+                if (!boost::filesystem::exists(filePath) || !boost::filesystem::exists(filePath2)) {
+                    return validation_result(2, "Error: algorithm not found in sink node \"" + id + " \"");
+                }
+                else if (boost::filesystem::exists(filePath) && boost::filesystem::is_regular_file(filePath)) {
+                    string extension = filePath.extension().string();
+                    if (extension != ".dll" || extension != ".so" || extension != ".dylib") {
+                        return validation_result(2, "Error: dylib format incorrect in sink node \"" + id + " \"");
+                    }
+                }
+                else if (boost::filesystem::exists(filePath2) && boost::filesystem::is_regular_file(filePath2)) {
+                    string extension = filePath.extension().string();
+                    if (extension != ".dll" || extension != ".so" || extension != ".dylib") {
+                        return validation_result(2, "Error: dylib format incorrect in sink node \"" + id + " \"");
+                    }
+                }
+            }
+
+            //TODO   func check
+
+            return validation_result(0, "Pass: library location check");
+
+        }
     }
+
 
 
 PVPF_NAMESPACE_END

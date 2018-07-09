@@ -21,7 +21,7 @@ BOOST_AUTO_TEST_SUITE(config_reader_test)
     BOOST_AUTO_TEST_CASE(reader_read_json)
     {
         config_reader cr;
-        string jsonfile = "../../unit_test/test_json/read_json.json";
+        string jsonfile = "./test_json/read_json.json";
         Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(d.IsObject());
     }
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_SUITE(config_reader_test)
         std::cerr.setstate(std::ios_base::failbit);
 
         config_reader cr;
-        string jsonfile = "../../unit_test/test_json";
+        string jsonfile = "./test_json";
         Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(!d.IsObject());
 
@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_SUITE(config_reader_test)
         std::cerr.setstate(std::ios_base::failbit);
 
         config_reader cr;
-        string jsonfile = "../../unit_test/not_json.txt";
+        string jsonfile = "./not_json.txt";
         Document d = cr.load_json_conf(jsonfile);
         BOOST_CHECK(!d.IsObject());
 
