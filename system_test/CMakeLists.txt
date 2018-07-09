@@ -30,3 +30,11 @@ target_link_libraries(${PROJECT_SYSTEM_TESTS_NAME} ${Boost_LIBRARIES} ${OpenCV_L
 enable_testing()
 add_test(SYSTEMTEST ${PROJECT_SYSTEM_TESTS_NAME})
 
+# copy test data
+file(GLOB SYSTEM_TESTS_JSON_FILES ${PROJECT_SOURCE_DIR}/system_test/test_json/*)
+file(COPY ${SYSTEM_TESTS_JSON_FILES}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test_json)
+
+file(GLOB SYSTEM_TESTS_IMAGE_FILES ${PROJECT_SOURCE_DIR}/system_test/test_images/*)
+file(COPY ${SYSTEM_TESTS_IMAGE_FILES}
+        DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/test_images)
