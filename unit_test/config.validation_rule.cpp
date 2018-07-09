@@ -2250,16 +2250,16 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.get_message(), "Error: dylib not found in source node \"source-1\"");
     }
 
-    BOOST_AUTO_TEST_CASE(rule_library_source_no_file)
-    {
-        const char* json = "";
-        Document d;
-        d.Parse(json);
-        validation_result res = concrete_rule_library_search(d);
-
-        BOOST_CHECK_EQUAL(res.get_type(), 2);
-        BOOST_CHECK_EQUAL(res.get_message(), "Error: dylib not found in source node \"source-1\"");
-    }
+//    BOOST_AUTO_TEST_CASE(rule_library_source_no_file)
+//    {
+//        const char* json = "";
+//        Document d;
+//        d.Parse(json);
+//        validation_result res = concrete_rule_library_search(d);
+//
+//        BOOST_CHECK_EQUAL(res.get_type(), 2);
+//        BOOST_CHECK_EQUAL(res.get_message(), "Error: dylib not found in source node \"source-1\"");
+//    }
 
 
 BOOST_AUTO_TEST_SUITE_END()
