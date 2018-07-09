@@ -19,6 +19,5 @@
 #define private public
 #endif
 
-#define MAX_SUCCESSOR 8
 
 #endif //PVPF_H

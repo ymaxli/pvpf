@@ -22,12 +22,13 @@ PVPF_NAMESPACE_BEGIN
             rules.push_back(concrete_rule_sink);
             rules.push_back(concrete_rule_duplicate_id);
             rules.push_back(concrete_rule_predecessor_check);
+            rules.push_back(concrete_rule_successor_check);
 
 
             for (int i = 0; i < rules.size(); ++i) {
                 auto result = rules[i](conf);
                 res.push_back(result);
-                if (result.type == 2) {
+                if (result.get_type() == 2) {
                     break;
                 }
             }

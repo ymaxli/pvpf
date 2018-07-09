@@ -325,19 +325,66 @@ PVPF_NAMESPACE_BEGIN
 
         validation_result concrete_rule_successor_check(rapidjson::Document const &conf) {
             unordered_map<string, int> pre_map;
+            const Value &source = conf["source"];
             const Value &sink = conf["sink"];
             const Value &graph = conf["graph"];
+
+            //check max successor of source nodes
+            for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
+                if(source[i]["output"].HasMember("conf")) {
+                    if(!source[i]["output"]["conf"].IsObject()) {
+                        return validation_result(2, "Error: source node output conf should be an object");
+                    }
+                    else if(source[i]["output"]["conf"].HasMember("output_port_num")) {
+                        if(!source[i]["output"]["conf"]["output_port_num"].IsInt()) {
+                            return validation_result(2, "Error: source node output_port_num should be integer");
+                        }
+                        else if(source[i]["output"]["conf"]["output_port_num"].GetInt() < 0) {
+                            return validation_result(2, "Error: source node output_port_num should not be negative");
+                        }
+                        string id = source[i]["id"].GetString();
+                        pre_map[id] = source[i]["output"]["conf"]["output_port_num"].GetInt();
+                    }
+                }
+            }
+
+            //check max successor of graph nodes
+            for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
+                if(graph[i]["output"].HasMember("conf")) {
+                    if(!graph[i]["output"]["conf"].IsObject()) {
+                        return validation_result(2, "Error: graph node output conf should be an object");
+                    }
+                    else if(graph[i]["output"]["conf"].HasMember("output_port_num")) {
+                        if(!graph[i]["output"]["conf"]["output_port_num"].IsInt()) {
+                            return validation_result(2, "Error: graph node output_port_num should be integer");
+                        }
+                        else if(graph[i]["output"]["conf"]["output_port_num"].GetInt() < 0) {
+                            return validation_result(2, "Error: graph node output_port_num should not be negative");
+                        }
+                        string id = graph[i]["id"].GetString();
+                        pre_map[id] = graph[i]["output"]["conf"]["output_port_num"].GetInt();
+                    }
+                }
+            }
 
             // check predecessors in graph
             for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
                 const Value &pre = graph[i]["input"]["pre"];
                 if (!pre.IsArray()) {
                     string pre_id = pre.GetString();
-                    pre_map[pre_id]++;
+                    if(pre_map.count(pre_id) != 0) {
+                        pre_map[pre_id]--;
+                        if(pre_map[pre_id] < 0)
+                            return validation_result(2, "Error: number of successors of node \"" + pre_id + "\" exceeds maximum value");
+                    }
                 } else {
                     for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
                         string pre_id = pre[j].GetString();
-                        pre_map[pre_id]++;
+                        if(pre_map.count(pre_id) != 0) {
+                            pre_map[pre_id]--;
+                            if(pre_map[pre_id] < 0)
+                                return validation_result(2, "Error: number of successors of node \"" + pre_id + "\" exceeds maximum value");
+                        }
                     }
                 }
             }
@@ -347,20 +394,20 @@ PVPF_NAMESPACE_BEGIN
                 const Value &pre = sink[i]["input"]["pre"];
                 if (!pre.IsArray()) {
                     string pre_id = pre.GetString();
-                    pre_map[pre_id]++;
+                    if(pre_map.count(pre_id) != 0) {
+                        pre_map[pre_id]--;
+                        if(pre_map[pre_id] < 0)
+                            return validation_result(2, "Error: number of successors of node \"" + pre_id + "\" exceeds maximum value");
+                    }
                 } else {
                     for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
                         string pre_id = pre[j].GetString();
-                        pre_map[pre_id]++;
+                        if(pre_map.count(pre_id) != 0) {
+                            pre_map[pre_id]--;
+                            if(pre_map[pre_id] < 0)
+                                return validation_result(2, "Error: number of successors of node \"" + pre_id + "\" exceeds maximum value");
+                        }
                     }
-                }
-            }
-
-            // count successors
-            for (auto &it : pre_map) {
-                if (it.second > MAX_SUCCESSOR) {
-                    return validation_result(2, "Error: number of successors of one node exceeds maximum value \"" +
-                                                it.first + "\"");
                 }
             }
 
