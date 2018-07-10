@@ -25,6 +25,8 @@ PVPF_NAMESPACE_BEGIN
         validation_result concrete_rule_library_search(rapidjson::Document const & conf);
         validation_result concrete_rule_predecessor_check(rapidjson::Document const & conf);
         validation_result concrete_rule_successor_check(rapidjson::Document const & conf);
+        validation_result concrete_rule_data_type(rapidjson::Document const & conf);
+        validation_result concrete_rule_mapping_check(rapidjson::Document const & conf);
     }
 
 PVPF_NAMESPACE_END

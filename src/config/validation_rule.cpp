@@ -73,7 +73,12 @@ PVPF_NAMESPACE_BEGIN
                         return validation_result(2, "Error: source node output should be an object");
                     } else if (!source[i]["output"].HasMember("data")) {
                         return validation_result(2, "Error: source node output should have a data field");
+                    } else if (!source[i]["output"]["data"].IsObject()) {
+                        return validation_result(2, "Error: source node output data should be an object");
+                    } else if (source[i]["output"]["data"].ObjectEmpty()) {
+                        return validation_result(2, "Error: source node output data cannot be empty");
                     }
+
                 }
 
                 return validation_result(0, "Pass: source field check");
@@ -411,14 +416,14 @@ PVPF_NAMESPACE_BEGIN
                 if (!boost::filesystem::exists(filePath)) {
                     return validation_result(2, "Error: dylib not found in source node \"" + id + "\"");
                 }
-                else if (boost::filesystem::is_regular_file(filePath)) {
+                else if (!boost::filesystem::is_regular_file(filePath)) {
+                    return validation_result(2, "Error: dylib not found in source node \"" + id + "\"");
+                }
+                else {
                     string extension = filePath.extension().string();
                     if (extension != ".dll" || extension != ".so" || extension != ".dylib") {
                         return validation_result(2, "Error: dylib format incorrect in source node \"" + id + "\"");
                     }
-                }
-                else {
-                    return validation_result(2, "Error: dylib not found in source node \"" + id + "\"");
                 }
             }
 
@@ -431,7 +436,11 @@ PVPF_NAMESPACE_BEGIN
 
                 if (!boost::filesystem::exists(filePath)) {
                     return validation_result(2, "Error: dylib not found in sink node \"" + id + " \"");
-                } else if (boost::filesystem::is_regular_file(filePath)) {
+                }
+                else if( !boost::filesystem::is_regular_file(filePath)) {
+                    return validation_result(2, "Error: dylib not found in sink node \"" + id + "\"");
+                }
+                else {
                     string extension = filePath.extension().string();
                     if (extension != ".dll" || extension != ".so" || extension != ".dylib") {
                         return validation_result(2, "Error: dylib format incorrect in sink node \"" + id + " \"");
@@ -476,6 +485,31 @@ PVPF_NAMESPACE_BEGIN
             return validation_result(0, "Pass: library location check");
 
         }
+
+        validation_result concrete_rule_data_type(rapidjson::Document const & conf) {
+            const unordered_set<string> types = {"any", "int", "string", "double"};
+            const Value &source = conf["source"];
+
+            //check dylib in source nodes
+            for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
+                const Value &data = source[i]["output"]["data"];
+                for (Value::ConstMemberIterator itr = data.MemberBegin(); itr != data.MemberEnd(); ++itr) {
+                    string type = itr->value.GetString();
+                    if(types.find(type) == types.end()) {
+                        return validation_result(2, "Error: data type \"" +type + "\" unsupported");
+                    }
+                }
+            }
+            return validation_result(0, "Pass: data type check");
+        }
+
+        validation_result concrete_rule_mapping_check(rapidjson::Document const & conf) {
+            const Value &sink = conf["sink"];
+            const Value &source = conf["source"];
+            const Value &graph = conf["graph"];
+        }
+
+
     }
 
 

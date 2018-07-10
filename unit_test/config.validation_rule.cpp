@@ -457,6 +457,58 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.get_message(), "Error: source node output should have a data field");
     }
 
+    BOOST_AUTO_TEST_CASE(rule_source_output_data_not_object)
+    {
+        const char* json = "{\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"./test_dylib/source1.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": \"\"\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = concrete_rule_source(d);
+
+        BOOST_CHECK_EQUAL(res.get_type(), 2);
+        BOOST_CHECK_EQUAL(res.get_message(), "Error: source node output data should be an object");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_source_output_data_empty)
+    {
+        const char* json = "{\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"./test_dylib/source1.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {}\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = concrete_rule_source(d);
+
+        BOOST_CHECK_EQUAL(res.get_type(), 2);
+        BOOST_CHECK_EQUAL(res.get_message(), "Error: source node output data cannot be empty");
+    }
+
 
 
     BOOST_AUTO_TEST_CASE(rule_valid_source)
@@ -2197,6 +2249,8 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
         BOOST_CHECK_EQUAL(res.get_message(), "Pass: successors number check");
     }
 
+
+    //////////dylib check
     BOOST_AUTO_TEST_CASE(rule_library_source_no_path)
     {
         const char* json = "{\n"
@@ -2260,6 +2314,65 @@ BOOST_AUTO_TEST_SUITE(config_validation_rule_test)
 //        BOOST_CHECK_EQUAL(res.get_type(), 2);
 //        BOOST_CHECK_EQUAL(res.get_message(), "Error: dylib not found in source node \"source-1\"");
 //    }
+
+
+    //////// data type check
+
+    BOOST_AUTO_TEST_CASE(rule_data_unsupported)
+    {
+        const char* json = "{\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"./test_dylib/source1.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"aaaa\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = concrete_rule_data_type(d);
+
+        BOOST_CHECK_EQUAL(res.get_type(), 2);
+        BOOST_CHECK_EQUAL(res.get_message(), "Error: data type \"aaaa\" unsupported");
+    }
+
+    BOOST_AUTO_TEST_CASE(rule_data_pass)
+    {
+        const char* json = "{\n"
+                           "    \"source\": [\n"
+                           "        {\n"
+                           "            \"id\": \"source-1\",\n"
+                           "            \"task\": {\n"
+                           "                \"dylib\": {\n"
+                           "                    \"location\": \"./test_dylib/source1.so\",\n"
+                           "                    \"func\": \"func1\"\n"
+                           "                }\n"
+                           "            },\n"
+                           "            \"output\": {\n"
+                           "                \"data\": {\n"
+                           "                    \"image\": \"any\"\n"
+                           "                }\n"
+                           "            }\n"
+                           "        }\n"
+                           "    ]\n"
+                           "}";
+        Document d;
+        d.Parse(json);
+        validation_result res = concrete_rule_data_type(d);
+
+        BOOST_CHECK_EQUAL(res.get_type(), 0);
+        BOOST_CHECK_EQUAL(res.get_message(), "Pass: data type check");
+    }
 
 
 BOOST_AUTO_TEST_SUITE_END()
