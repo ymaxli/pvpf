@@ -47,7 +47,6 @@ BOOST_AUTO_TEST_SUITE(config_validator_test)
         d.Parse(json);
         vector<validation_result> res = cv.validate(d);
 
-        //for now we have 4 rules
         BOOST_CHECK_EQUAL(res.size(), 1);
         BOOST_CHECK_EQUAL(res[0].get_type(), 2);
     }

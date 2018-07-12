@@ -79,8 +79,8 @@
     },
     "task": {
       "dylib": {
-        "location": "",
-        "func": ""
+        "location": "test",
+        "func": "test"
       }
     }
   }]

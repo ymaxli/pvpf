@@ -401,6 +401,7 @@ PVPF_NAMESPACE_BEGIN
             return validation_result(0, "Pass: successors number check");
         }
 
+        //TODO unittest
         validation_result concrete_rule_library_search(rapidjson::Document const &conf) {
             const Value &source = conf["source"];
             const Value &sink = conf["sink"];
@@ -507,6 +508,180 @@ PVPF_NAMESPACE_BEGIN
             const Value &sink = conf["sink"];
             const Value &source = conf["source"];
             const Value &graph = conf["graph"];
+
+            unordered_map<string, vector<string>> output;
+
+            //source output key
+            for (rapidjson::SizeType i = 0; i < source.Size(); i++) {
+                const Value &data = source[i]["output"]["data"];
+                string id = source[i]["id"].GetString();
+                for (Value::ConstMemberIterator itr = data.MemberBegin(); itr != data.MemberEnd(); ++itr) {
+                    string key = itr->name.GetString();
+                    output[id].push_back(key);
+                }
+            }
+
+            //graph output key
+            for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
+                if(graph[i]["output"].HasMember("mapping")) {
+                    string id = graph[i]["id"].GetString();
+                    const Value &mapping = graph[i]["output"]["mapping"];
+                    if(!mapping.IsObject()) {
+                        return validation_result(2, "Error: mapping field should be an object \"" + id + "\"");
+                    }
+
+                    for (Value::ConstMemberIterator itr = mapping.MemberBegin(); itr != mapping.MemberEnd(); ++itr) {
+                        if(!itr->value.IsString())
+                            return validation_result(2, "Error: values in mapping field should be string \"" + id + "\"");
+                        string key = itr->name.GetString();
+                        output[id].push_back(key);
+                    }
+                }
+            }
+
+
+            //graph input key
+            for (rapidjson::SizeType i = 0; i < graph.Size(); i++) {
+                if(graph[i]["input"].HasMember("mapping")) {
+
+                    string id = graph[i]["id"].GetString();
+                    const Value &mapping = graph[i]["input"]["mapping"];
+                    if(!mapping.IsObject()) {
+                        return validation_result(2, "Error: mapping field should be an object \"" + id + "\"");
+                    }
+
+                    // check predecessor for graph
+                    unordered_multiset<string> pre_keys;
+                    const Value &pre = graph[i]["input"]["pre"];
+                    if (!pre.IsArray()) {
+                        for(auto mm : output[pre.GetString()])
+                            pre_keys.insert(mm);
+                    }
+                    else {
+                        for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                            for(auto mm : output[pre[j].GetString()])
+                                pre_keys.insert(mm);
+                        }
+                    }
+
+                    for (Value::ConstMemberIterator itr = mapping.MemberBegin(); itr != mapping.MemberEnd(); ++itr) {
+                        if(itr->value.IsArray()) {
+                            for (rapidjson::SizeType j = 0; j < (itr->value).Size(); j++) {
+                                if(!(itr->value)[j].IsString())
+                                    return validation_result(2, "Error: values in mapping field should be string \"" + id + "\"");
+                                string value = (itr->value)[j].GetString();
+                                if(value.find_last_of(".") == string::npos) {
+                                    return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                                }
+                                size_t pos = value.find_last_of(".");
+                                string cnt = value.substr(pos+1);
+                                string pre_key = value.substr(0, pos);
+                                if(!all_of(cnt.begin(), cnt.end(), ::isdigit) && cnt != "all") {
+                                    return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                                }
+
+                                if(cnt != "all" && (atoi(cnt.c_str()) > pre_keys.count(pre_key) || pre_keys.count(pre_key) == 0)) {
+                                    return validation_result(2, "Error: mapping key unfit \"" + id + "\"");
+                                }
+                            }
+                        }
+                        else {
+                            if(!itr->value.IsString())
+                                return validation_result(2, "Error: values in mapping field should be string \"" + id + "\"");
+                            string value = itr->value.GetString();
+                            if(value.find_last_of(".") == string::npos) {
+                                return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                            }
+                            size_t pos = value.find_last_of(".");
+                            string cnt = value.substr(pos+1);
+                            string pre_key = value.substr(0, pos);
+                            if(!all_of(cnt.begin(), cnt.end(), ::isdigit) && cnt != "all") {
+                                return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                            }
+
+                            if(cnt != "all" && (atoi(cnt.c_str()) > pre_keys.count(pre_key) || pre_keys.count(pre_key) == 0))  {
+                                return validation_result(2, "Error: mapping key unfit \"" + id + "\"");
+                            }
+                        }
+
+                    }
+                }
+
+            }
+
+            //sink input key
+            for (rapidjson::SizeType i = 0; i < sink.Size(); i++) {
+                if(sink[i]["input"].HasMember("mapping")) {
+
+                    string id = sink[i]["id"].GetString();
+                    const Value &mapping = sink[i]["input"]["mapping"];
+                    if(!mapping.IsObject()) {
+                        return validation_result(2, "Error: mapping field should be an object \"" + id + "\"");
+                    }
+
+                    // check predecessor for sink
+                    unordered_multiset<string> pre_keys;
+                    const Value &pre = sink[i]["input"]["pre"];
+                    if (!pre.IsArray()) {
+                        for(auto mm : output[pre.GetString()])
+                            pre_keys.insert(mm);
+                    }
+                    else {
+                        for (rapidjson::SizeType j = 0; j < pre.Size(); j++) {
+                            for(auto mm : output[pre[j].GetString()])
+                                pre_keys.insert(mm);
+                        }
+                    }
+
+                    for (Value::ConstMemberIterator itr = mapping.MemberBegin(); itr != mapping.MemberEnd(); ++itr) {
+                        if((itr->value).IsArray()) {
+                            for (rapidjson::SizeType j = 0; j < (itr->value).Size(); j++) {
+                                if(!(itr->value)[j].IsString())
+                                    return validation_result(2, "Error: values in mapping field should be string \"" + id + "\"");
+                                string value = (itr->value)[j].GetString();
+                                if(value.find_last_of(".") == string::npos) {
+                                    return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                                }
+                                size_t pos = value.find_last_of(".");
+                                string cnt = value.substr(pos+1);
+                                string pre_key = value.substr(0, pos);
+                                if(!all_of(cnt.begin(), cnt.end(), ::isdigit) && cnt != "all") {
+                                    return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                                }
+
+                                if(cnt != "all" && (atoi(cnt.c_str()) > pre_keys.count(pre_key) || pre_keys.count(pre_key) == 0))  {
+                                    return validation_result(2, "Error: mapping key unfit \"" + id + "\"");
+                                }
+                            }
+                        }
+                        else {
+
+                            if(!(itr->value).IsString())
+                                return validation_result(2, "Error: values in mapping field should be string \"" + id + "\"");
+                            string value = itr->value.GetString();
+
+                            if(value.find_last_of(".") == string::npos) {
+                                return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                            }
+                            size_t pos = value.find_last_of(".");
+                            string cnt = value.substr(pos+1);
+                            string pre_key = value.substr(0, pos);
+
+                            if(!all_of(cnt.begin(), cnt.end(), ::isdigit) && cnt != "all") {
+                                return validation_result(2, "Error: mapping wrong format \"" + id + "\"");
+                            }
+
+                            if(cnt != "all" && (atoi(cnt.c_str()) > pre_keys.count(pre_key) || pre_keys.count(pre_key) == 0))  {
+                                return validation_result(2, "Error: mapping key unfit \"" + id + "\"");
+                            }
+                        }
+
+                    }
+                }
+
+            }
+
+            return validation_result(0, "Pass: mapping field check");
         }
 
 

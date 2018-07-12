@@ -215,34 +215,36 @@ BOOST_AUTO_TEST_SUITE(fr01_configuration_file_validity_check_test)
         BOOST_CHECK_EQUAL(res[6].get_message(), "Error: number of successors of node \"source-1\" exceeds maximum value");
     }
 
-//    BOOST_AUTO_TEST_CASE(mapping_error)
-//    {
-//        config_reader cr;
-//        string jsonfile = "../../system_test/test_json/framework_configuration/mapping_error.json";
-//        Document d = cr.load_json_conf(jsonfile);
-//        config_validator cv;
-//        vector<validation_result> res = cv.validate(d);
-//        BOOST_CHECK_EQUAL(res[0].get_type(), 2);
-//        BOOST_CHECK_EQUAL(res[0].get_message(), "Error: mapping error");
-//    }
-//    BOOST_AUTO_TEST_CASE(unfit_node)
-//    {
-//        config_reader cr;
-//        string jsonfile = "../../system_test/test_json/framework_configuration/unfit_node.json";
-//        Document d = cr.load_json_conf(jsonfile);
-//        config_validator cv;
-//        vector<validation_result> res = cv.validate(d);
-//        BOOST_CHECK_EQUAL(res[0].get_type(), 2);
-//        BOOST_CHECK_EQUAL(res[0].get_message(), "Error: two nodes are unfit");
-//    }
-//    BOOST_AUTO_TEST_CASE(invalid_data_type)
-//    {
-//        config_reader cr;
-//        string jsonfile = "../../system_test/test_json/framework_configuration/invalid_data_type.json";
-//        Document d = cr.load_json_conf(jsonfile);
-//        config_validator cv;
-//        vector<validation_result> res = cv.validate(d);
-//        BOOST_CHECK_EQUAL(res[0].get_type(), 2);
-//        BOOST_CHECK_EQUAL(res[0].get_message(), "Error: invalid data type");
-//    }
+    BOOST_AUTO_TEST_CASE(mapping_error)
+    {
+        config_reader cr;
+        string jsonfile = "../../system_test/test_json/framework_configuration/mapping_error.json";
+        Document d = cr.load_json_conf(jsonfile);
+        config_validator cv;
+        vector<validation_result> res = cv.validate(d);
+        BOOST_CHECK_EQUAL(res[8].get_type(), 2);
+        BOOST_CHECK_EQUAL(res[8].get_message(), "Error: mapping wrong format \"node-1\"");
+    }
+
+    BOOST_AUTO_TEST_CASE(unfit_node)
+    {
+        config_reader cr;
+        string jsonfile = "../../system_test/test_json/framework_configuration/unfit_node.json";
+        Document d = cr.load_json_conf(jsonfile);
+        config_validator cv;
+        vector<validation_result> res = cv.validate(d);
+        BOOST_CHECK_EQUAL(res[8].get_type(), 2);
+        BOOST_CHECK_EQUAL(res[8].get_message(), "Error: mapping key unfit \"node-1\"");
+    }
+
+    BOOST_AUTO_TEST_CASE(invalid_data_type)
+    {
+        config_reader cr;
+        string jsonfile = "../../system_test/test_json/framework_configuration/invalid_data_type.json";
+        Document d = cr.load_json_conf(jsonfile);
+        config_validator cv;
+        vector<validation_result> res = cv.validate(d);
+        BOOST_CHECK_EQUAL(res[7].get_type(), 2);
+        BOOST_CHECK_EQUAL(res[7].get_message(), "Error: data type \"lalalla\" unsupported");
+    }
 BOOST_AUTO_TEST_SUITE_END()
