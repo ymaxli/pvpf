@@ -27,9 +27,9 @@ PVPF_NAMESPACE_BEGIN
             context(std::string id, std::vector<std::string> pre, std::vector<std::string> succ,
                     std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input,
                     std::unordered_map<std::string, std::string> output,
-                    std::unordered_map<std::string, std::string> data)
+                    std::unordered_map<std::string, std::string> data, bool read)
                     : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)),
-                      data(std::move(data)) {}
+                      data(std::move(data), read_only(read)) {}
         };
 
         struct io_body {
