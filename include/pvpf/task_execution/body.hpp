@@ -29,7 +29,9 @@ PVPF_NAMESPACE_BEGIN
                     std::unordered_map<std::string, std::string> output,
                     std::unordered_map<std::string, std::string> data, bool read)
                     : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)),
-                      data(std::move(data), read_only(read)) {}
+                      data(std::move(data)) {
+                    read_only = read;
+            }
         };
 
         struct io_body {
