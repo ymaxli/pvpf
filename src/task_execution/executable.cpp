@@ -10,6 +10,8 @@ using namespace std;
 
 PVPF_NAMESPACE_BEGIN
     namespace task_execution {
+        executable::~executable() {}
+
         void dynamic_library_func::exec(data_bucket &data, data_bucket const &params) {
 
         }

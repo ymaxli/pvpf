@@ -12,11 +12,16 @@
 PVPF_NAMESPACE_BEGIN
     namespace task_execution {
         class executable {
+        public:
             virtual void exec(data_bucket &data, data_bucket const &params) = 0;
+
+            virtual ~executable() = 0;
         };
 
         class dynamic_library_func : public executable {
             void exec(data_bucket &data, data_bucket const &params) override;
+
+            ~dynamic_library_func() override {}
         };
 
         class abstract_algorithm : public executable {
@@ -26,10 +31,14 @@ PVPF_NAMESPACE_BEGIN
 
         class normal_algorithm : public abstract_algorithm {
             void exec(data_bucket &data, data_bucket const &params) override;
+
+            ~normal_algorithm() override {}
         };
 
         class loop_algorithm : public abstract_algorithm {
             void exec(data_bucket &data, data_bucket const &params) override;
+
+            ~loop_algorithm() override {}
         };
     }
 
