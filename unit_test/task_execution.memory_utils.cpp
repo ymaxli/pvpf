@@ -26,8 +26,9 @@ BOOST_AUTO_TEST_SUITE(memory_utils_test)
         shared_ptr<core::any> new_cpu_ptr = copy_cpu(cpu_ptr);
 //        BOOST_CHECK_NE(new_cpu_ptr, cpu_ptr);
 //        BOOST_CHECK_NE(*new_cpu_ptr, *cpu_ptr);
-        BOOST_CHECK_EQUAL(*new_cpu_ptr, *cpu_ptr);
-//        BOOST_CHECK_EQUAL((vector<int>)(*new_cpu_ptr)[1], 12);
+//        BOOST_CHECK_EQUAL(*new_cpu_ptr, *cpu_ptr);
+//        vector<int> new_data = core::any_cast<vector<int>>(cpu_ptr);
+//        BOOST_CHECK_EQUAL(new_data[0], 12);
 
     }
 
