@@ -9,6 +9,7 @@
 #include <pvpf/utils/data_bucket.hpp>
 #include <iostream>
 #include <core/any.hpp>
+#include <vector>
 
 using namespace std;
 using namespace pvpf;
@@ -24,7 +25,7 @@ public:
     string id;
     int content;
 
-    A(bool out, string &&id = "a", int content = 0) :
+    explicit A(bool out, string &&id = "a", int content = 0) noexcept :
             output(out), id(id), content(content) {
         constructor_count++;
         print("constructor");
@@ -40,16 +41,16 @@ public:
         print("copy constructor");
     }
 
-    A(A &&a) : output(a.output), id(a.id + ".move"), content(a.content) {
+    A(A &&a) noexcept : output(a.output), id(a.id + ".move"), content(a.content) {
         move_count++;
         print("move constructor");
     }
 
 private:
 
-    void print(string &&str) {
+    void print(string const &str) {
         if (output) {
-            cout << id + " " + str << endl;
+            cout << (id + string(" ") + str) << endl;
         }
     }
 };
@@ -226,8 +227,8 @@ BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
             try {
                 bucket.get_copy<float>("ac");
                 BOOST_TEST(false);
-            } catch (std::exception& e) {
-                BOOST_TEST(!string("key:ac does not exist").compare(e.what()));
+            } catch (std::exception &e) {
+                BOOST_TEST(string("key:ac does not exist") == string(e.what()));
             }
         }
     }
@@ -242,9 +243,107 @@ BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
             try {
                 bucket.get_ptr<float>("acd");
                 BOOST_TEST(false);
-            } catch (std::exception& e) {
-                BOOST_TEST(!string("key:acd does not exist").compare(e.what()));
+            } catch (std::exception &e) {
+                BOOST_TEST(string("key:acd does not exist") == string(e.what()));
             }
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE(put_collection_by_move) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            vector<A> vec;
+            vec.emplace_back(false, "a", 11);
+            vec.emplace_back(false, "c", 13);
+            bucket.put_collection_by_move("abc", vec);
+
+            A *result = bucket.get_item_in_collection<A>("abc", 1);
+
+            BOOST_TEST(result->content == 13);
+        }
+
+        BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+        BOOST_TEST(copy_count == 0);
+    }
+
+    BOOST_AUTO_TEST_CASE(iterate_through_collection) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            vector<A> vec;
+            vec.emplace_back(false, "a", 11);
+            vec.emplace_back(false, "b", 13);
+            vec.emplace_back(false, "c", 15);
+            bucket.put_collection_by_move("abc", vec);
+
+            int index = 11;
+            for (int i = 0; i < bucket.get_collection_size("abc"); i++) {
+                A *result = bucket.get_item_in_collection<A>("abc", i);
+                BOOST_TEST(index == result->content);
+                index += 2;
+            }
+        }
+
+        BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+        BOOST_TEST(copy_count == 0);
+    }
+
+    BOOST_AUTO_TEST_CASE(access_collection_out_of_bounds) {
+        reset_counters();
+
+        data_bucket bucket;
+        vector<A> vec;
+        vec.emplace_back(false, "a", 11);
+        vec.emplace_back(false, "b", 13);
+        vec.emplace_back(false, "c", 15);
+        bucket.put_collection_by_move("abc", vec);
+
+        try {
+            bucket.get_item_in_collection<A>("abc", 5);
+
+        } catch (utils::pvpf_exception &e) {
+            BOOST_TEST(string("index out of bounds") == string(e.what()));
+            return;
+        }
+
+        BOOST_TEST(false);
+    }
+
+    BOOST_AUTO_TEST_CASE(put_collection_by_copy) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            vector<A> vec;
+            vec.emplace_back(false, "a", 11);
+            vec.emplace_back(false, "c", 13);
+            bucket.put_collection_by_copy("abc", vec);
+
+            A *result = bucket.get_item_in_collection<A>("abc", 1);
+
+            BOOST_TEST(result->content == 13);
+        }
+
+        BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+        BOOST_TEST(copy_count == 2);
+    }
+
+    BOOST_AUTO_TEST_CASE(remove_entry) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            bucket.put("a", 1);
+            bucket.put("b", 2);
+            bucket.put("c", 3);
+
+            BOOST_TEST(bucket.remove("b"));
+            BOOST_TEST(!bucket.remove("b"));
+
+            BOOST_TEST(bucket.size() == 2);
         }
     }
 

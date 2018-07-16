@@ -21,14 +21,19 @@ PVPF_NAMESPACE_BEGIN
             std::vector<std::string> succ;
             std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input;
             std::unordered_map<std::string, std::string> output;
+
             std::vector<bool> read_only;
             std::vector<bool> pre_is_cpu;
             bool is_cpu;
 
             context(std::string id, std::vector<std::string> pre, std::vector<std::string> succ,
                     std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input,
-                    std::unordered_map<std::string, std::string> output)
-                    : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)) {}
+                    std::unordered_map<std::string, std::string> output,
+                    std::unordered_map<std::string, std::string> data, bool read)
+                    : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)),
+                      data(std::move(data)) {
+                    read_only = read;
+            }
         };
 
         struct io_body {
@@ -37,6 +42,7 @@ PVPF_NAMESPACE_BEGIN
 
             io_body(std::shared_ptr<context> context, data_io::io_pipe_for_source_node pipe) : cont(context),
                                                                                                pipe(std::move(pipe)) {};
+
             void operator()();
         };
 
@@ -45,10 +51,16 @@ PVPF_NAMESPACE_BEGIN
             std::shared_ptr<context> cont;
             std::unique_ptr<executable> exec;
 
-            body(std::shared_ptr<context> context, std::unique_ptr<executable> exec) : cont(context), exec(std::move(exec)) {};
+            body(std::shared_ptr<context> context, std::unique_ptr<executable> exec) : cont(context),
+                                                                                       exec(std::move(exec)) {};
 
+            body(const body &b) : exec(b.exec.get()){
+                this->cont = b.cont;
+            };
 
-            void operator()();
+            void operator()(const data_bucket& db) {
+                return;
+            };
         };
 
     }
