@@ -136,6 +136,18 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
+        core::any *get_core_any_ptr(std::string const &key) const {
+            if (!(map->count(key)))
+                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
+
+            std::weak_ptr<core::any> ptr = (*map)[key];
+            if (auto spt = ptr.lock()) {
+                return spt.get();
+            } else {
+                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
+            }
+        }
+
         bool remove(std::string const &key) {
             if (!(map->count(key))) return false;
             map->erase(key);
