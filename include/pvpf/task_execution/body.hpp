@@ -32,8 +32,9 @@ PVPF_NAMESPACE_BEGIN
                     std::unordered_map<std::string, std::string> output,
                     std::unordered_map<std::string, std::string> data, std::vector<bool> read_only,
                     std::vector<bool> pre_is_cpu, bool is_cpu)
-                    : node_id(id), pre(pre), succ(succ), input(std::move(input)), output(std::move(output)),
-                      data(std::move(data)), read_only(read_only), pre_is_cpu(pre_is_cpu), is_cpu(is_cpu) {
+                    : node_id(id), pre(std::move(pre)), succ(std::move(succ)), input(std::move(input)), output(std::move(output)),
+                      data(std::move(data)), read_only(std::move(read_only)), pre_is_cpu(std::move(pre_is_cpu)),
+                      is_cpu(is_cpu) {
             }
         };
 
