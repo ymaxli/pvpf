@@ -47,9 +47,9 @@ PVPF_NAMESPACE_BEGIN
             for(auto const &p : context.output) {
                 data.put(p.first, data.get_ptr(p.second));
             }
-            for(auto const &p : data) {
-                if(context.output.count(p.first) == 0) {
-
+            for(auto itr = data.begin(); itr != data.end(); ++itr) {
+                if(context.output.count(itr->first) == 0) {
+                    data.remove(itr->first);
                 }
             }
 
