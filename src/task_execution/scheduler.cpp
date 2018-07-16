@@ -138,19 +138,19 @@ PVPF_NAMESPACE_BEGIN
             return unique_ptr<logical_node>();
         }
 
-        void scheduler::figure_out_json_object(Document &conf) {
+        void scheduler::figure_out_json_object(rapidjson::Document &conf) {
             for (Value::ConstValueIterator source = conf["source"].Begin();
                  source != conf["source"].End(); source++) {
-                json_object_map[(*source)["id"].GetString()] = (*source);
+                json_object_map[(*source)["id"].GetString()] = const_cast<Value *>(source);
             }
 
             for (Value::ConstValueIterator node = conf["graph"].Begin();
                  node != conf["graph"].End(); node++) {
-                json_object_map[(*node)["id"].GetString()] = (*node);
+                json_object_map[(*node)["id"].GetString()] = const_cast<Value *>(node);
             }
 
             for (Value::ConstValueIterator sink = conf["sink"].Begin(); sink != conf["sink"].End(); sink++) {
-                json_object_map[(*sink)["id"].GetString()] = (*sink);
+                json_object_map[(*sink)["id"].GetString()] = const_cast<Value *>(sink);
             }
         }
 
@@ -204,8 +204,8 @@ PVPF_NAMESPACE_BEGIN
                 for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
                     string id = pre_it->GetString();
                     pre.push_back(move(id));
-                    if (json_object_map[id]["task"].HasMember("algorithm")) {
-                        pre_is_cpu.push_back(is_cpu(json_object_map[id]["task"]["algorithm"].GetString()));
+                    if ((*json_object_map[id])["task"].HasMember("algorithm")) {
+                        pre_is_cpu.push_back(is_cpu((*json_object_map[id])["task"]["algorithm"].GetString()));
                     } else {
                         pre_is_cpu.push_back(true);
                     }

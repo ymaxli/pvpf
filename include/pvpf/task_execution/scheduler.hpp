@@ -40,7 +40,7 @@ PVPF_NAMESPACE_BEGIN
             void run();
 
         private:
-            std::unordered_map<std::string, rapidjson::Value> json_object_map;
+            std::unordered_map<std::string, rapidjson::Value*> json_object_map;
 
             tbb::flow::graph graph;
 
