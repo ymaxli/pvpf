@@ -21,6 +21,9 @@ PVPF_NAMESPACE_BEGIN
             std::vector<std::string> succ;
             std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input;
             std::unordered_map<std::string, std::string> output;
+            std::vector<bool> read_only;
+            std::vector<bool> pre_is_cpu;
+            bool is_cpu;
 
             context(std::string id, std::vector<std::string> pre, std::vector<std::string> succ,
                     std::unordered_map<std::string, std::vector<std::pair<int, std::string> >> input,
