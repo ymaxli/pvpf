@@ -32,7 +32,7 @@ PVPF_NAMESPACE_BEGIN
             delete map;
         }
 
-        explicit data_bucket(std::unordered_map<std::string, std::shared_ptr<core::any>> *map) : map(map) {}
+        data_bucket(std::unordered_map<std::string, std::shared_ptr<core::any>> *map) : map(map) {}
 
         data_bucket(data_bucket const &new_data_bucket) noexcept : map(new_data_bucket.map) {
             (const_cast<data_bucket &>(new_data_bucket)).map = nullptr;

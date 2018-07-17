@@ -46,6 +46,11 @@ PVPF_NAMESPACE_BEGIN
 
         }
 
+        void copy_gpu(data_bucket& data){
+
+        }
+
+
         void copy_gpu_to_put(data_bucket& data){
 
         }

@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "name": "a",
+    "version": "1.1.1",
+    "gpu": false,
+    "loop": {
+      "input": "key1",
+      "output": "key1"
+    }
+  },
+  "input": {
+    "key1": "any",
+    "key2": "int"
+  },
+  "output": {
+    "key1": "any",
+    "key2": "int"
+  },
+  "body": [
+    {
+      "type": "dylib",
+      "location": "",
+      "func": ""
+    },
+    {
+      "type": "algorithm",
+      "algorithm": ""
+    },
+    {
+      "type": "dylib",
+      "location": "",
+      "func": ""
+    }
+  ]
+}
