@@ -144,9 +144,9 @@ PVPF_NAMESPACE_BEGIN
                 json_object_map[(*sink)["id"].GetString()] = const_cast<Value *>(sink);
             }
 
-            for (auto obj = json_object_map.begin(); obj != json_object_map.end(); obj++) {
-                cout << obj->first << endl;
-            }
+//            for (auto obj = json_object_map.begin(); obj != json_object_map.end(); obj++) {
+//                cout << obj->first << endl;
+//            }
         }
 
         shared_ptr<context>
@@ -316,12 +316,12 @@ PVPF_NAMESPACE_BEGIN
         bool scheduler::is_cpu(std::string algorithm_name) {
             config::config_reader cr;
             Document d = cr.load_json_conf("./pvpf_algorithm/" + algorithm_name + ".json");
-            cout << "get json" << endl;
+//            cout << "get json" << endl;
             const Value &meta = d["meta"];
             if (meta.HasMember("gpu")) {
                 return !meta["gpu"].GetBool();
             }
-            cout << "I will return" << endl;
+//            cout << "I will return" << endl;
             return true;
         }
     }
