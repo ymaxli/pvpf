@@ -347,4 +347,68 @@ BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
         }
     }
 
+    BOOST_AUTO_TEST_CASE(rename_entry) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            A a(false, "a", 12);
+            bucket.put("a", std::move(a));
+
+            bucket.rename("a", "c");
+
+            BOOST_TEST(bucket.get_ptr<A>("c")->content == 12);
+
+            try {
+                bucket.get_ptr<A>("a");
+                BOOST_TEST(false);
+            } catch(exception & e) {
+                BOOST_TEST(string("key:a does not exist") == string(e.what()));
+            }
+        }
+
+        BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+        BOOST_TEST(copy_count == 0);
+    }
+
+    BOOST_AUTO_TEST_CASE(rename_entry_exception_1) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            A a(false, "a", 12);
+            bucket.put("a", std::move(a));
+
+            try {
+                bucket.rename("c", "k");
+            } catch(exception & e) {
+                BOOST_TEST(string("key:c does not exist") == string(e.what()));
+                return;
+            }
+
+            BOOST_TEST(false);
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE(rename_entry_exception_2) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            A a(false, "a", 12);
+            A b(false, "c", 12);
+            bucket.put("a", std::move(a));
+            bucket.put("b", std::move(b));
+
+            try {
+                bucket.rename("a", "b");
+            } catch(exception & e) {
+                BOOST_TEST(string("key:b already exists") == string(e.what()));
+                return;
+            }
+
+            BOOST_TEST(false);
+        }
+    }
+
 BOOST_AUTO_TEST_SUITE_END()
