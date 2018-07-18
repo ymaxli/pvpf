@@ -16,7 +16,7 @@ PVPF_NAMESPACE_BEGIN
     namespace data_io {
         class source_io_pipe {
         public:
-            explicit source_io_pipe(std::shared_ptr<buffer> b) : buffer(b) {}
+            explicit source_io_pipe(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
 
             template<typename T>
             void source_write(std::string const &key, T &&obj) {
@@ -40,7 +40,7 @@ PVPF_NAMESPACE_BEGIN
 
         class io_pipe_for_source_node {
         public:
-            explicit io_pipe_for_source_node(std::shared_ptr<buffer> b) : buffer(b) {}
+            explicit io_pipe_for_source_node(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
 
             bool is_empty() {
                 return buffer->is_empty();
@@ -56,7 +56,7 @@ PVPF_NAMESPACE_BEGIN
 
         class sink_io_pipe {
         public:
-            explicit sink_io_pipe(std::shared_ptr<buffer> b) : buffer(b) {}
+            explicit sink_io_pipe(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
 
             data_bucket sink_read() {
                 return buffer->read();
@@ -72,7 +72,7 @@ PVPF_NAMESPACE_BEGIN
 
         class io_pipe_for_sink_node {
         public:
-            explicit io_pipe_for_sink_node(std::shared_ptr<buffer> b) : buffer(b) {}
+            explicit io_pipe_for_sink_node(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
 
             void write(data_bucket data) {
                 buffer->write(std::move(data));
