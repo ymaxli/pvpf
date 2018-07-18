@@ -49,6 +49,10 @@ PVPF_NAMESPACE_BEGIN
 
             std::unordered_map<std::string, std::unique_ptr<tbb::flow::source_node<pvpf::data_bucket>>> source_node_map;
 
+            std::unordered_map<int, std::unique_ptr<data_io::source_io_pipe>> source_pipe_map;
+
+            std::vector<std::thread> thread_vector;
+
             void source_node_list(tbb::flow::graph &graph, rapidjson::Value const &conf);
 
             std::unique_ptr<executable> graph_node_list(std::unordered_map<std::string, logical_node> &nodes,
@@ -81,6 +85,8 @@ PVPF_NAMESPACE_BEGIN
             void figure_out_json_object(rapidjson::Document &conf);
 
             std::unique_ptr<executable> generate_executable(rapidjson::Value const&obj);
+
+            void start_source_functions();
         };
     }
 

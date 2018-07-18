@@ -16,6 +16,7 @@
 using namespace tbb;
 using namespace std;
 using namespace rapidjson;
+using namespace os_agnostic;
 
 
 PVPF_NAMESPACE_BEGIN
@@ -35,20 +36,54 @@ PVPF_NAMESPACE_BEGIN
         }
 
         void scheduler::source_node_list(flow::graph &graph, const Value &conf) {
+            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
 //                auto pair;
+                string id = (*it)["id"].GetString();
+                bool flag;
                 if ((*it).HasMember("control") && (*it)["control"].HasMember("block") &&
                     (*it)["control"]["block"].GetBool() == false) {
-                    auto pair = pvpf::data_io::create_source(BUFFER_SIZE, false);
+                    flag = false;
                 } else {
-                    auto pair = pvpf::data_io::create_source(BUFFER_SIZE, true);
+                    flag = true;
                 }
+
+                tuple<unique_ptr<data_io::source_io_pipe>, unique_ptr<data_io::io_pipe_for_source_node>> pair = pvpf::data_io::create_source(
+                        BUFFER_SIZE, flag);
+
+                shared_ptr<context> c = create_context((*it));
+
+                io_body ib(c, std::move(get<1>(pair)));
+
+                unique_ptr<flow::source_node<pvpf::data_bucket>> node(
+                        new flow::source_node<pvpf::data_bucket>(graph, ib, true));
+
+                source_node_map[id] = std::move(node);
+
+                path location((*it)["task"]["dylib"]["location"].GetString());
+
+                string name = ((*it)["task"]["dylib"]["func"].GetString());
+
+                int func_id = manager.load_input_func(location, name);
+
+                source_pipe_map[func_id] = std::move(get<0>(pair));
+
                 //3. generate sink node, add the sink_node to the map
             }
 
         }
 
-        std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj) {
+        void scheduler::start_source_functions() {
+            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+            for (auto it = source_pipe_map.begin(); it != source_pipe_map.end(); it++){
+                thread t([&]() -> void {
+                    manager.invoke_io_func((*it).first, (*(*it).second.get()));
+                });
+                thread_vector.push_back(std::move(t));
+            }
+        }
+
+        std::unique_ptr<executable> scheduler::generate_executable(rapidjson::Value const &obj) {
 
         }
 

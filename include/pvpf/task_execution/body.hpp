@@ -40,12 +40,18 @@ PVPF_NAMESPACE_BEGIN
 
         struct io_body {
             std::shared_ptr<context> cont;
-            data_io::io_pipe_for_source_node pipe;
+            std::unique_ptr<data_io::io_pipe_for_source_node> pipe;
 
-            io_body(std::shared_ptr<context> context, data_io::io_pipe_for_source_node pipe) : cont(context),
+            io_body(std::shared_ptr<context> context, std::unique_ptr<data_io::io_pipe_for_source_node> pipe) : cont(context),
                                                                                                pipe(std::move(pipe)) {};
 
-            void operator()();
+            io_body(const io_body &b) : pipe(b.pipe.get()) {
+                this -> cont = b.cont;
+            }
+
+            bool operator()(const data_bucket &db) {
+                return true;
+            };
         };
 
         struct body {
