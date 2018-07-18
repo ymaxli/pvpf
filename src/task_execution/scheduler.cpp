@@ -36,39 +36,15 @@ PVPF_NAMESPACE_BEGIN
         }
 
         void scheduler::source_node_list(flow::graph &graph, const Value &conf) {
-            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+
             for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
 //                auto pair;
+                shared_ptr<context> c = create_context(*(it));
                 string id = (*it)["id"].GetString();
-                bool flag;
-                if ((*it).HasMember("control") && (*it)["control"].HasMember("block") &&
-                    (*it)["control"]["block"].GetBool() == false) {
-                    flag = false;
-                } else {
-                    flag = true;
-                }
 
-                tuple<unique_ptr<data_io::source_io_pipe>, unique_ptr<data_io::io_pipe_for_source_node>> pair = pvpf::data_io::create_source(
-                        BUFFER_SIZE, flag);
+                unique_ptr<logical_source_node> logi_source = move(generate_source_node((*it),c));
 
-                shared_ptr<context> c = create_context((*it));
-
-                io_body ib(c, std::move(get<1>(pair)));
-
-                unique_ptr<flow::source_node<pvpf::data_bucket>> node(
-                        new flow::source_node<pvpf::data_bucket>(graph, ib, true));
-
-                source_node_map[id] = std::move(node);
-
-                path location((*it)["task"]["dylib"]["location"].GetString());
-
-                string name = ((*it)["task"]["dylib"]["func"].GetString());
-
-                int func_id = manager.load_input_func(location, name);
-
-                source_pipe_map[func_id] = std::move(get<0>(pair));
-
-                //3. generate sink node, add the sink_node to the map
+                source_node_map[id] = std::move(logi_source);
             }
 
         }
@@ -102,10 +78,37 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        unique_ptr<logical_node>
-        scheduler::generate_source_node(flow::graph &graph, const Value &conf, shared_ptr<context> context) {
+        unique_ptr<pvpf::task_execution::logical_source_node>
+        scheduler::generate_source_node(const Value &obj, shared_ptr<context> cont) {
+            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+            bool flag;
+            if (obj.HasMember("control") && obj["control"].HasMember("block") &&
+                obj["control"]["block"].GetBool() == false) {
+                flag = false;
+            } else {
+                flag = true;
+            }
 
-            return unique_ptr<logical_node>();
+            tuple<unique_ptr<data_io::source_io_pipe>, unique_ptr<data_io::io_pipe_for_source_node>> pair = pvpf::data_io::create_source(
+                    BUFFER_SIZE, flag);
+
+            io_body ib(cont, std::move(get<1>(pair)));
+
+            unique_ptr<flow::source_node<pvpf::data_bucket>> node(
+                    new flow::source_node<pvpf::data_bucket>(graph, ib, false));
+
+            unique_ptr<logical_source_node> logi_source(new logical_source_node(node.get(), cont));
+
+            path location(obj["task"]["dylib"]["location"].GetString());
+
+            string name = (obj["task"]["dylib"]["func"].GetString());
+
+            int func_id = manager.load_input_func(location, name);
+
+            source_pipe_map[func_id] = std::move(get<0>(pair));
+
+            //3. generate sink node, add the sink_node to the map
+            return logi_source;
         }
 
         unique_ptr<logical_node>
