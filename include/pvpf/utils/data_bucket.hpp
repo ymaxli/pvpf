@@ -6,10 +6,8 @@
 #define DEV_ENV_DATA_BUCKET_H
 #pragma once
 
-#ifndef DEV_MODE
-
+#ifdef DEV_MODE
 #include <iostream>
-
 #endif
 
 #include <core/any.hpp>
@@ -19,11 +17,15 @@
 #include <pvpf/utils/exception.hpp>
 
 PVPF_NAMESPACE_BEGIN
+    namespace task_execution {
+        class loop_algorithm;
+    }
 
     class data_bucket {
-    private:
-        std::unordered_map<std::string, std::shared_ptr<core::any>> *map;
+        friend class task_execution::loop_algorithm;
+
     public:
+
         data_bucket() {
             map = new std::unordered_map<std::string, std::shared_ptr<core::any>>();
         }
@@ -136,16 +138,16 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        core::any *get_core_any_ptr(std::string const &key) const {
+        void rename(std::string const &key, std::string const &new_key) {
             if (!(map->count(key)))
                 throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
 
-            std::weak_ptr<core::any> ptr = (*map)[key];
-            if (auto spt = ptr.lock()) {
-                return spt.get();
-            } else {
-                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
-            }
+            if (map->count(new_key))
+                throw pvpf::utils::pvpf_exception(
+                        (std::string("key:") + new_key + std::string(" already exists")).c_str());
+
+            (*map)[new_key] = std::move((*map)[key]);
+            remove(key);
         }
 
         bool remove(std::string const &key) {
@@ -164,6 +166,21 @@ PVPF_NAMESPACE_BEGIN
 
         std::unordered_map<std::string, std::shared_ptr<core::any>>::iterator end() {
             return this->map->end();
+        }
+
+    private:
+        std::unordered_map<std::string, std::shared_ptr<core::any>> *map;
+
+        core::any *get_core_any_ptr(std::string const &key) const {
+            if (!(map->count(key)))
+                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
+
+            std::weak_ptr<core::any> ptr = (*map)[key];
+            if (auto spt = ptr.lock()) {
+                return spt.get();
+            } else {
+                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
+            }
         }
     };
 

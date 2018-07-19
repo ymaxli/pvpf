@@ -42,6 +42,8 @@ PVPF_NAMESPACE_BEGIN
                 const shared_ptr<core::any> cpu_ptr = itr.second;
                 itr.second = copy_cpu(cpu_ptr);
             }
+//            data = data.clone();
+
         }
 
         shared_ptr<core::any> copy_gpu(const shared_ptr<core::any> &gpu_ptr){
@@ -50,10 +52,6 @@ PVPF_NAMESPACE_BEGIN
         }
 
         void copy_gpu(data_bucket& data){
-            //TODO
-        }
-
-        void copy_gpu_to_put(data_bucket& data){
             //TODO
         }
 

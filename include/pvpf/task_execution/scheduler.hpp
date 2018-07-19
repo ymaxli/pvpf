@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <string>
 #include <pvpf/utils/data_bucket.hpp>
+#include <map>
 
 
 PVPF_NAMESPACE_BEGIN
@@ -40,15 +41,18 @@ PVPF_NAMESPACE_BEGIN
             void run();
 
         private:
-            std::unordered_map<std::string, rapidjson::Value*> json_object_map;
+            std::map<std::string, rapidjson::Value*> json_object_map;
 
             tbb::flow::graph graph;
 
-            void source_node_list(std::unordered_map<std::string, logical_node> &nodes,
-                                  tbb::flow::graph &graph, rapidjson::Value const &conf);
+            std::unordered_map<std::string, std::unique_ptr<logical_node>> node_map;
 
-            void graph_node_list(std::unordered_map<std::string, logical_node> &nodes,
-                                 tbb::flow::graph &graph, rapidjson::Value const &conf);
+            std::unordered_map<std::string, std::unique_ptr<tbb::flow::source_node<pvpf::data_bucket>>> source_node_map;
+
+            void source_node_list(tbb::flow::graph &graph, rapidjson::Value const &conf);
+
+            std::unique_ptr<executable> graph_node_list(std::unordered_map<std::string, logical_node> &nodes,
+                                                        tbb::flow::graph &graph, rapidjson::Value const &conf);
 
             void sink_node_list(std::unordered_map<std::string, logical_node> &nodes,
                                 tbb::flow::graph &graph, rapidjson::Value const &conf);
@@ -66,7 +70,7 @@ PVPF_NAMESPACE_BEGIN
                                std::shared_ptr<context> context);
 
             std::shared_ptr<context>
-            create_context(rapidjson::Value const &obj, rapidjson::Document &conf);
+            create_context(rapidjson::Value const &obj);
 
             std::vector<std::pair<int, std::string>> analyze_mapping_value(std::string value, int size);
 
@@ -75,9 +79,9 @@ PVPF_NAMESPACE_BEGIN
             bool is_cpu(std::string algorithm_name);
 
             void figure_out_json_object(rapidjson::Document &conf);
+
+            std::unique_ptr<executable> generate_executable(rapidjson::Value const&obj);
         };
-
-
     }
 
 PVPF_NAMESPACE_END

@@ -34,7 +34,7 @@ PVPF_NAMESPACE_BEGIN
 
                     //gpu to gpu
                     if(!context.pre_is_cpu[i] && !context.is_cpu) {
-                        copy_gpu(data[i]);
+//                        copy_gpu(data[i]);
                     }
 
                 }
@@ -42,16 +42,19 @@ PVPF_NAMESPACE_BEGIN
 
         }
 
+        //generate output data_bucket
         void memory_manager::post_process(data_bucket & data, context const & context) {
 
-            for(auto const &p : context.output) {
-                data.put(p.first, data.get_core_any_ptr(p.second));
-            }
             for(auto itr = data.begin(); itr != data.end(); ++itr) {
-                if(context.output.count(itr->first) == 0) {
+                auto context_itr = context.output.find(itr->first);
+                if(context_itr == context.output.end()) {
                     data.remove(itr->first);
                 }
+                else {
+                    data.rename(context_itr->second, context_itr->first);
+                }
             }
+
 
         }
 

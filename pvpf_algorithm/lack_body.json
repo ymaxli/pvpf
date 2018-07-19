@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "name": "a",
+    "version": "1.1.1",
+    "gpu": true,
+    "loop": {
+      "input": "key1",
+      "output": "key1"
+    },
+  },
+  "input": {
+    "key1": "any",
+    "key2": "int"
+  },
+  "output": {
+    "key1": "any",
+    "key2": "int"
+  }
+}

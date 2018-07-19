@@ -22,15 +22,9 @@ PVPF_NAMESPACE_BEGIN
     namespace task_execution {
         void scheduler::build_graph(rapidjson::Document &conf) {
 
-            unordered_map<string, unique_ptr<logical_node>> node_map;
-
-            vector<flow::source_node<data_bucket>> sources;
             const Value &source_json_list = conf["source"];
             const Value &graph_json_list = conf["graph"];
             const Value &sink_json_list = conf["sink"];
-
-
-
 
             //generate source node
             /* construct the rules
@@ -38,31 +32,28 @@ PVPF_NAMESPACE_BEGIN
              * traversal the list to generate a list of nodes that predecessor is this node if the size of the list is greater than 1
              * add a new split node
              * */
-
-
         }
 
-        void scheduler::source_node_list(unordered_map<string, logical_node> &nodes,
-                                         flow::graph &graph, const Value &conf) {
-            // TODO 1. generate source/sink threads calling the source/sink library and pass io pipe to the library.
-//            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
+        void scheduler::source_node_list(flow::graph &graph, const Value &conf) {
+            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
 //                auto pair;
-//                if (it->HasMember("control") && it["control"]->HasMember("block") &&
-//                    (*it)["control"]["block"].GetBool() == false) {
-//                    pair = pvpf::data_io::create_source(BUFFER_SIZE, false);
-//                } else {
-//                    pair = pvpf::data_io::create_source(BUFFER_SIZE, true);
-//                }
-//
-//
-//                body body(context, exec);
-//                //3. generate sink node, add the sink_node to the map
-//            }
+                if ((*it).HasMember("control") && (*it)["control"].HasMember("block") &&
+                    (*it)["control"]["block"].GetBool() == false) {
+                    auto pair = pvpf::data_io::create_source(BUFFER_SIZE, false);
+                } else {
+                    auto pair = pvpf::data_io::create_source(BUFFER_SIZE, true);
+                }
+                //3. generate sink node, add the sink_node to the map
+            }
 
         }
 
-        void scheduler::graph_node_list(unordered_map<string, logical_node> &nodes,
-                                        flow::graph &graph, const Value &conf) {
+        std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj) {
+
+        }
+
+        unique_ptr<executable> scheduler::graph_node_list(unordered_map<string, logical_node> &nodes,
+                                                          flow::graph &graph, const Value &conf) {
 
         }
 
@@ -152,40 +143,35 @@ PVPF_NAMESPACE_BEGIN
             for (Value::ConstValueIterator sink = conf["sink"].Begin(); sink != conf["sink"].End(); sink++) {
                 json_object_map[(*sink)["id"].GetString()] = const_cast<Value *>(sink);
             }
+
+//            for (auto obj = json_object_map.begin(); obj != json_object_map.end(); obj++) {
+//                cout << obj->first << endl;
+//            }
         }
 
         shared_ptr<context>
-        scheduler::create_context(const rapidjson::Value &obj, rapidjson::Document &conf) {
+        scheduler::create_context(rapidjson::Value const &obj) {
 
 
             string id = obj["id"].GetString();
 
-            const Value &graph_json_list = conf["graph"];
-            const Value &sink_json_list = conf["sink"];
-
-//            cout<<"succesors"<<endl;
+//            cout << "succesors" << endl;
             //add to successors
             vector<string> successors;
-            for (Value::ConstValueIterator node = graph_json_list.Begin(); node != graph_json_list.End(); node++) {
-                const Value &pre_list = (*node)["input"]["pre"];
-                for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
-                    if (pre_it->GetString() == id) {
-                        successors.push_back(move((*node)["id"].GetString()));
-                        break;
+            for (auto node = json_object_map.begin(); node != json_object_map.end(); node++) {
+                Value *to_check = node->second;
+                if ((*to_check).HasMember("input")) {
+                    const Value &pre_list = (*to_check)["input"]["pre"];
+                    for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
+                        if (pre_it->GetString() == id) {
+                            successors.push_back(move((*to_check)["id"].GetString()));
+                            break;
+                        }
                     }
                 }
             }
 
-            for (Value::ConstValueIterator node = sink_json_list.Begin(); node != sink_json_list.End(); node++) {
-                const Value &pre_list = (*node)["input"]["pre"];
-                for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
-                    if (pre_it->GetString() == id) {
-                        successors.push_back(move((*node)["id"].GetString()));
-                        break;
-                    }
-                }
-            }
-
+//            cout << "is_cpu" << endl;
             //add is_cpu to context;
             bool this_is_cpu = false;
             if (obj["task"].HasMember("algorithm")) {
@@ -193,67 +179,72 @@ PVPF_NAMESPACE_BEGIN
             }
 
 
-//          cout<<"pre"<<endl;
+//            cout << "pre" << endl;
 //          add to pre{}
             //add pre list and configure for pre.
 
             vector<string> pre;
             vector<bool> pre_is_cpu;
+            vector<bool> read_only;
             if (obj.HasMember("input")) {
                 const Value &pre_list = obj["input"]["pre"];
                 for (Value::ConstValueIterator pre_it = pre_list.Begin(); pre_it != pre_list.End(); pre_it++) {
                     string id = pre_it->GetString();
-                    pre.push_back(move(id));
-                    if ((*json_object_map[id])["task"].HasMember("algorithm")) {
-                        pre_is_cpu.push_back(is_cpu((*json_object_map[id])["task"]["algorithm"].GetString()));
-                    } else {
-                        pre_is_cpu.push_back(true);
-                    }
-                }
-            }
-
-            vector<bool> read_only;
-            if (obj["input"].HasMember("pre_conf")) {
-                for (Value::ConstValueIterator conf_it = obj["input"]["pre_conf"].Begin();
-                     conf_it != obj["input"]["pre_conf"].End(); conf_it++) {
-                    read_only.push_back((*conf_it)["readonly"].GetBool());
-                }
-            } else {
-                for (int i = 0; i < pre.size(); i++) {
-                    read_only.push_back(true);
-                }
-            }
-
-
-
-
-
-
-
-            //add to input mapping
-            unordered_map<string, vector<pair<int, string>>> input;
-            if (obj["input"].HasMember("mapping")) {
-                const Value &input_list = obj["input"]["mapping"];
-                for (Value::ConstMemberIterator input_it = input_list.MemberBegin();
-                     input_it != input_list.MemberEnd(); input_it++) {
-                    vector<pair<int, string>> value_list;
-                    if (input_it->value.IsArray()) {
-                        const Value &key_list = input_it->value;
-                        for (Value::ConstValueIterator key_it = key_list.Begin(); key_it != key_list.End(); key_it++) {
-                            vector<std::pair<int, std::string>> result;
-                            result = analyze_mapping_value((*key_it).GetString(), pre.size());
-                            value_list.insert(value_list.end(), result.begin(), result.end());
+                    pre.push_back(id);
+                    if (json_object_map.count(id) > 0) {
+                        if ((*(json_object_map[id]))["task"].HasMember("algorithm")) {
+                            pre_is_cpu.push_back(is_cpu((*json_object_map[id])["task"]["algorithm"].GetString()));
+                        } else {
+                            pre_is_cpu.push_back(true);
                         }
                     } else {
-                        value_list = analyze_mapping_value(input_it->value.GetString(), pre.size());
+                        cout << "there is no such predecessor" << endl;
+                        cout << id << endl;
                     }
+                }
 
-                    input[input_it->name.GetString()] = move(value_list);
+
+                if (obj["input"].HasMember("pre_conf") && obj["input"]["pre_conf"].GetArray().Size() > 0) {
+                    for (Value::ConstValueIterator conf_it = obj["input"]["pre_conf"].Begin();
+                         conf_it != obj["input"]["pre_conf"].End(); conf_it++) {
+                        read_only.push_back((*conf_it)["readonly"].GetBool());
+                    }
+                } else {
+                    for (int i = 0; i < pre.size(); i++) {
+                        read_only.push_back(true);
+                    }
                 }
             }
 
 
-//            cout<<"output"<<endl;
+//            cout << "input" << endl;
+            //add to input mapping
+            unordered_map<string, vector<pair<int, string>>> input;
+            if (obj.HasMember("input")) {
+                if (obj["input"].HasMember("mapping")) {
+                    const Value &input_list = obj["input"]["mapping"];
+                    for (Value::ConstMemberIterator input_it = input_list.MemberBegin();
+                         input_it != input_list.MemberEnd(); input_it++) {
+                        vector<pair<int, string>> value_list;
+                        if (input_it->value.IsArray()) {
+                            const Value &key_list = input_it->value;
+                            for (Value::ConstValueIterator key_it = key_list.Begin();
+                                 key_it != key_list.End(); key_it++) {
+                                vector<std::pair<int, std::string>> result;
+                                result = analyze_mapping_value((*key_it).GetString(), pre.size());
+                                value_list.insert(value_list.end(), result.begin(), result.end());
+                            }
+                        } else {
+                            value_list = analyze_mapping_value(input_it->value.GetString(), pre.size());
+                        }
+
+                        input[input_it->name.GetString()] = move(value_list);
+                    }
+                }
+            }
+
+
+//            cout << "output" << endl;
             //add to output
             unordered_map<string, string> output;
             unordered_map<string, string> data;
@@ -267,19 +258,20 @@ PVPF_NAMESPACE_BEGIN
                 }
 
                 if (obj["output"].HasMember("data")) {
-                    const Value &data_list = obj["output"]["mapping"];
+                    const Value &data_list = obj["output"]["data"];
                     for (Value::ConstMemberIterator data_it = data_list.MemberBegin();
                          data_it != data_list.MemberEnd(); data_it++) {
                         data[data_it->name.GetString()] = data_it->value.GetString();
                     }
                 }
             }
+//            cout << "gather all" << endl;
 
 
             auto cont = make_shared<context>(id, pre, successors, input, output, data, read_only, pre_is_cpu,
                                              this_is_cpu);
 
-//            cout<<"finish"<<endl;
+//            cout << "finish" << endl;
             return cont;
         }
 
@@ -323,12 +315,13 @@ PVPF_NAMESPACE_BEGIN
 
         bool scheduler::is_cpu(std::string algorithm_name) {
             config::config_reader cr;
-            Document d = cr.load_json_conf("algorithm_name");
-            //TODO change algorithm name to real name;
+            Document d = cr.load_json_conf("./pvpf_algorithm/" + algorithm_name + ".json");
+//            cout << "get json" << endl;
             const Value &meta = d["meta"];
             if (meta.HasMember("gpu")) {
                 return !meta["gpu"].GetBool();
             }
+//            cout << "I will return" << endl;
             return true;
         }
     }
