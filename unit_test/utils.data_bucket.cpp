@@ -411,4 +411,53 @@ BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
         }
     }
 
+    BOOST_AUTO_TEST_CASE(clone) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            A a(false, "a", 12);
+            A b(false, "c", 12);
+            bucket.put("a", std::move(a));
+            bucket.put("b", std::move(b));
+
+            A c(false, "d", 200);
+            data_bucket bucket2 = bucket.clone();
+
+            bucket2.put("a", std::move(c));
+
+            BOOST_TEST(bucket2.get_ptr<A>("a")->content == 200);
+            BOOST_TEST(bucket.get_ptr<A>("a")->content == 12);
+        }
+
+        BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+        BOOST_TEST(copy_count == 2);
+    }
+
+    BOOST_AUTO_TEST_CASE(copy_constructor_and_assignment) {
+        reset_counters();
+
+        {
+            data_bucket bucket;
+            A a(false, "a", 12);
+            A b(false, "c", 12);
+            bucket.put("a", std::move(a));
+            bucket.put("b", std::move(b));
+
+            // operator
+            data_bucket bucket2;
+            bucket2 = bucket;
+            // copy constructor
+            data_bucket bucket3(bucket);
+
+            bucket2.get_ptr<A>("a")->content = 200;
+            BOOST_TEST(bucket.get_ptr<A>("a")->content == 200);
+            bucket3.get_ptr<A>("a")->content = 400;
+            BOOST_TEST(bucket.get_ptr<A>("a")->content == 400);
+        }
+
+        BOOST_TEST(constructor_count + copy_count + move_count == destructor_count);
+        BOOST_TEST(copy_count == 0);
+    }
+
 BOOST_AUTO_TEST_SUITE_END()
