@@ -20,11 +20,9 @@ using namespace pvpf;
 using namespace pvpf::os_agnostic;
 using namespace boost::filesystem;
 
-string const &TEST_IMAGE_DIR("./test_images/");
-
-
 BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
 
+    string const &TEST_IMAGE_DIR("./test_images/");
     dynamic_lib_func_manager &manager = dynamic_lib_func_manager::get_instance();
 
     BOOST_AUTO_TEST_CASE(load_algorithm_dylib) {
@@ -59,9 +57,10 @@ BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
         bool isEqual = (cv::sum(image != data.get_copy<cv::Mat>("result")) == cv::Scalar(0, 0, 0, 0));
         BOOST_TEST(isEqual);
 
-        params.put("p", 5);
+        params.put("p", 10);
         ptr2(data, params);
-        BOOST_TEST(data.get_copy<int>("result") == 5);
+        int a = data.get_copy<int>("result");
+        BOOST_TEST(a == 10);
 
         ptr3(data, params);
         isEqual = (cv::sum(image != data.get_copy<cv::Mat>("result")) == cv::Scalar(0, 0, 0, 0));
