@@ -14,55 +14,55 @@
 using namespace std;
 using namespace pvpf;
 
-int constructor_count = 0;
-int destructor_count = 0;
-int copy_count = 0;
-int move_count = 0;
-
-class A {
-public:
-    bool output;
-    string id;
-    int content;
-
-    explicit A(bool out, string &&id = "a", int content = 0) noexcept :
-            output(out), id(id), content(content) {
-        constructor_count++;
-        print("constructor");
-    }
-
-    ~A() {
-        destructor_count++;
-        print("destructor");
-    }
-
-    A(const A &a) : output(a.output), id(a.id + ".copy"), content(a.content) {
-        copy_count++;
-        print("copy constructor");
-    }
-
-    A(A &&a) noexcept : output(a.output), id(a.id + ".move"), content(a.content) {
-        move_count++;
-        print("move constructor");
-    }
-
-private:
-
-    void print(string const &str) {
-        if (output) {
-            cout << (id + string(" ") + str) << endl;
-        }
-    }
-};
-
-void reset_counters() {
-    constructor_count = 0;
-    destructor_count = 0;
-    copy_count = 0;
-    move_count = 0;
-}
-
 BOOST_AUTO_TEST_SUITE(utils_data_bucket_suite)
+
+    int constructor_count = 0;
+    int destructor_count = 0;
+    int copy_count = 0;
+    int move_count = 0;
+
+    class A {
+    public:
+        bool output;
+        string id;
+        int content;
+
+        explicit A(bool out, string &&id = "a", int content = 0) noexcept :
+                output(out), id(id), content(content) {
+            constructor_count++;
+            print("constructor");
+        }
+
+        ~A() {
+            destructor_count++;
+            print("destructor");
+        }
+
+        A(const A &a) : output(a.output), id(a.id + ".copy"), content(a.content) {
+            copy_count++;
+            print("copy constructor");
+        }
+
+        A(A &&a) noexcept : output(a.output), id(a.id + ".move"), content(a.content) {
+            move_count++;
+            print("move constructor");
+        }
+
+    private:
+
+        void print(string const &str) {
+            if (output) {
+                cout << (id + string(" ") + str) << endl;
+            }
+        }
+    };
+
+    void reset_counters() {
+        constructor_count = 0;
+        destructor_count = 0;
+        copy_count = 0;
+        move_count = 0;
+    }
 
     BOOST_AUTO_TEST_CASE(copy_put) {
         reset_counters();
