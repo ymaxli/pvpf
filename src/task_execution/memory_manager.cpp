@@ -42,16 +42,19 @@ PVPF_NAMESPACE_BEGIN
 
         }
 
+        //generate output data_bucket
         void memory_manager::post_process(data_bucket & data, context const & context) {
 
-//            for(auto const &p : context.output) {
-//                data.put(p.first, data.get_ptr(p.second));
-//            }
-//            for(auto const &p : data) {
-//                if(context.output.count(p.first) == 0) {
-//
-//                }
-//            }
+            for(auto itr = data.begin(); itr != data.end(); ++itr) {
+                auto context_itr = context.output.find(itr->first);
+                if(context_itr == context.output.end()) {
+                    data.remove(itr->first);
+                }
+                else {
+                    data.rename(context_itr->second, context_itr->first);
+                }
+            }
+
 
         }
 

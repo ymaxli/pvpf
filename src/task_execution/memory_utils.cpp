@@ -14,19 +14,21 @@ PVPF_NAMESPACE_BEGIN
     namespace task_execution {
 
         shared_ptr<core::any> copy_cpu_to_gpu(const shared_ptr<core::any> &cpu_ptr) {
-
+            //TODO
+            return NULL;
         }
 
         void copy_cpu_to_gpu(data_bucket& data){
-
+            //TODO
         }
 
         shared_ptr<core::any> copy_gpu_to_cpu(const shared_ptr<core::any> &gpu_ptr) {
-
+            //TODO
+            return NULL;
         }
 
         void copy_gpu_to_cpu(data_bucket& data){
-
+            //TODO
         }
 
         shared_ptr<core::any> copy_cpu(const shared_ptr<core::any> &cpu_ptr){
@@ -36,31 +38,29 @@ PVPF_NAMESPACE_BEGIN
         }
 
         void copy_cpu(data_bucket& data){
-            for(auto itr: data) {
+            for(auto &itr: data) {
                 const shared_ptr<core::any> cpu_ptr = itr.second;
                 itr.second = copy_cpu(cpu_ptr);
             }
+//            data = data.clone();
+
         }
 
         shared_ptr<core::any> copy_gpu(const shared_ptr<core::any> &gpu_ptr){
-
+            //TODO
+            return NULL;
         }
 
         void copy_gpu(data_bucket& data){
-
-        }
-
-
-        void copy_gpu_to_put(data_bucket& data){
-
+            //TODO
         }
 
         void free_cpu(std::shared_ptr<core::any> cpu_ptr){
-
+            //TODO
         }
 
         void free_gpu(std::shared_ptr<core::any> gpu_ptr){
-
+            //TODO
         }
 
 
