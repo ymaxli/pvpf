@@ -22,9 +22,10 @@ using namespace boost::filesystem;
 
 string const &TEST_IMAGE_DIR("./test_images/");
 
-dynamic_lib_func_manager &manager = dynamic_lib_func_manager::get_instance();
 
 BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
+
+    dynamic_lib_func_manager &manager = dynamic_lib_func_manager::get_instance();
 
     BOOST_AUTO_TEST_CASE(load_algorithm_dylib) {
         path p("./test_dylib/algorithm.dylib");
