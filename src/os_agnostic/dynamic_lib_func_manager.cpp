@@ -180,8 +180,10 @@ PVPF_NAMESPACE_BEGIN
 
         void *dynamic_lib_func_manager::open_linux_dylib_handle(std::string const &lib_location) {
             void *handle = dlopen(lib_location.c_str(), RTLD_NOW);
-            if (!handle) {
-                throw utils::pvpf_exception((string("could not open library: ") + lib_location).c_str());
+
+            char * err = dlerror();
+            if (!handle || err) {
+                throw utils::pvpf_exception((string("could not open library: ") + lib_location + (err ? string(err) : "")).c_str());
             }
 
             return handle;

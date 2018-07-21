@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
             manager.load_algorithm(p, "test1");
 
         } catch (utils::pvpf_exception &e) {
-            BOOST_TEST(string("could not open library: ./test_dylib/algor.dylib") == string(e.what()));
+            BOOST_TEST(string(e.what()).rfind("could not open library: ./test_dylib/algor.dylib", 0) == 0);
             return;
         }
 
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
             manager.load_algorithm(p, "tes");
 
         } catch (utils::pvpf_exception &e) {
-            BOOST_TEST(string("could not find function: tes") == string(e.what()));
+            BOOST_TEST(string(e.what()).rfind("could not find function: tes", 0) == 0);
             return;
         }
 
@@ -146,7 +146,7 @@ BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
             manager.load_input_func(p, "test1");
 
         } catch (utils::pvpf_exception &e) {
-            BOOST_TEST(string("could not open library: ./test_dylib/algor.dylib") == string(e.what()));
+            BOOST_TEST(string(e.what()).rfind("could not open library: ./test_dylib/algor.dylib", 0) == 0);
             return;
         }
 
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_SUITE(os_agnostic_dynamic_lib_func_manager_suite)
             manager.load_output_func(p, "test1");
 
         } catch (utils::pvpf_exception &e) {
-            BOOST_TEST(string("could not open library: ./test_dylib/algor.dylib") == string(e.what()));
+            BOOST_TEST(string(e.what()).rfind("could not open library: ./test_dylib/algor.dylib", 0) == 0);
             return;
         }
 
