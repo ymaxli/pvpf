@@ -18,22 +18,14 @@ PVPF_NAMESPACE_BEGIN
 
 namespace task_execution {
 
-    std::shared_ptr<core::any> copy_cpu_to_gpu(const std::shared_ptr<core::any> &cpu_ptr);
     void copy_cpu_to_gpu(data_bucket& data);
 
-    std::shared_ptr<core::any> copy_gpu_to_cpu(const std::shared_ptr<core::any> &gpu_ptr);
     void copy_gpu_to_cpu(data_bucket& data);
 
-    std::shared_ptr<core::any> copy_cpu(const std::shared_ptr<core::any> &cpu_ptr);
     void copy_cpu(data_bucket& data);
 
-    std::shared_ptr<core::any> copy_gpu(const std::shared_ptr<core::any> &gpu_ptr);
     void copy_gpu(data_bucket& data);
 
-    void free_cpu(std::shared_ptr<core::any> cpu_ptr);
-
-
-    void free_gpu(std::shared_ptr<core::any> gpu_ptr);
 
 }
 
