@@ -36,8 +36,8 @@ PVPF_NAMESPACE_BEGIN
 
         explicit data_bucket(std::unordered_map<std::string, std::shared_ptr<core::any>> *map) : map(map) {}
 
-        data_bucket(data_bucket const &new_data_bucket) noexcept : map(new_data_bucket.map) {
-            (const_cast<data_bucket &>(new_data_bucket)).map = nullptr;
+        data_bucket(data_bucket const &new_data_bucket) noexcept {
+            map = new std::unordered_map<std::string, std::shared_ptr<core::any>>(*new_data_bucket.map);
         };
 
         data_bucket(data_bucket &&new_data_bucket) noexcept : map(new_data_bucket.map) {
@@ -55,8 +55,7 @@ PVPF_NAMESPACE_BEGIN
 
         data_bucket &operator=(data_bucket const &new_data_bucket) noexcept {
             if (this != &new_data_bucket) {
-                map = new_data_bucket.map;
-                (const_cast<data_bucket &> (new_data_bucket)).map = nullptr;
+                map = new std::unordered_map<std::string, std::shared_ptr<core::any>>(*new_data_bucket.map);
             }
 
             return *this;
@@ -64,7 +63,9 @@ PVPF_NAMESPACE_BEGIN
 
         data_bucket clone() noexcept {
             auto new_map = new std::unordered_map<std::string, std::shared_ptr<core::any>>();
-            *new_map = std::unordered_map<std::string, std::shared_ptr<core::any>>(*(this->map));
+            for (auto it = begin(); it != end(); it++) {
+                (*new_map)[it->first] = std::make_shared<core::any>(*(it->second));
+            }
             data_bucket result(new_map);
             return result;
         }
@@ -169,7 +170,7 @@ PVPF_NAMESPACE_BEGIN
         }
 
     private:
-        std::unordered_map<std::string, std::shared_ptr<core::any>> *map;
+        std::unordered_map<std::string, std::shared_ptr<core::any>> *map{};
 
         core::any *get_core_any_ptr(std::string const &key) const {
             if (!(map->count(key)))
