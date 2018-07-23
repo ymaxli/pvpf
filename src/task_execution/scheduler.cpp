@@ -71,20 +71,20 @@ PVPF_NAMESPACE_BEGIN
 
         }
 
-        unique_ptr<executable> scheduler::graph_node_list(unordered_map<string, logical_node> &nodes,
-                                                          flow::graph &graph, const Value &conf) {
-
-        }
-
-        void scheduler::sink_node_list(unordered_map<std::string, logical_node> &nodes,
-                                       flow::graph &graph, const Value &conf) {
-            //generate sink node
-            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
-                auto pair = pvpf::data_io::create_sink(BUFFER_SIZE, true);
-
-                // TODO 1. generate source/sink threads calling the source/sink library and pass io pipe to the library.
-            }
-        }
+//        unique_ptr<executable> scheduler::graph_node_list(unordered_map<string, logical_node> &nodes,
+//                                                          flow::graph &graph, const Value &conf) {
+//
+//        }
+//
+//        void scheduler::sink_node_list(unordered_map<std::string, logical_node> &nodes,
+//                                       flow::graph &graph, const Value &conf) {
+//            //generate sink node
+//            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
+//                auto pair = pvpf::data_io::create_sink(BUFFER_SIZE, true);
+//
+//                // TODO 1. generate source/sink threads calling the source/sink library and pass io pipe to the library.
+//            }
+//        }
 
         unique_ptr<pvpf::task_execution::logical_source_node>
         scheduler::generate_source_node(const Value &obj, shared_ptr<context> cont) {
@@ -133,61 +133,61 @@ PVPF_NAMESPACE_BEGIN
             return logi_source;
         }
 
-        unique_ptr<logical_node>
-        scheduler::generate_graph_node(flow::graph &graph, const Value &conf, shared_ptr<context> context) {
+//        unique_ptr<logical_node>
+//        scheduler::generate_graph_node(flow::graph &graph, const Value &conf, shared_ptr<context> context) {
+//
+//            unique_ptr<executable> exec(new normal_algorithm);
+//
+//            body b(context, std::move(exec));
+//
+//            unique_ptr<flow::function_node<data_bucket>> temp(
+//                    new flow::function_node<data_bucket>(graph, flow::unlimited, b));
+//
+//            unique_ptr<logical_node> result(new logical_node(temp.get(), context));
+//
+//            int join_size = context.get()->succ.size();
+//
+//            result->join_size = join_size;
+//
+//            if (join_size > 1 && join_size < JOIN_SIZE) {
+//                unique_ptr<flow::join_node<array<data_bucket, 1>>> join = create_join_node(graph, join_size);
+//
+//                result->join = std::move(join);
+//
+//            }
+//
+//            int split_size = context.get()->pre.size();
+//
+//            result->split_size = split_size;
+//
+//            if (split_size > 1) {
+//                unique_ptr<flow::split_node<array<data_bucket, 1>>> split(
+//                        new flow::split_node<array<data_bucket, 1>>(graph));
+//            }
+//
+//
+//
+//
+//
+////            flow::split_node
+//
+////            result -> source()
+//
+//            return result;
+//        }
 
-            unique_ptr<executable> exec(new normal_algorithm);
-
-            body b(context, std::move(exec));
-
-            unique_ptr<flow::function_node<data_bucket>> temp(
-                    new flow::function_node<data_bucket>(graph, flow::unlimited, b));
-
-            unique_ptr<logical_node> result(new logical_node(temp.get(), context));
-
-            int join_size = context.get()->succ.size();
-
-            result->join_size = join_size;
-
-            if (join_size > 1 && join_size < JOIN_SIZE) {
-                unique_ptr<flow::join_node<array<data_bucket, 1>>> join = create_join_node(graph, join_size);
-
-                result->join = std::move(join);
-
-            }
-
-            int split_size = context.get()->pre.size();
-
-            result->split_size = split_size;
-
-            if (split_size > 1) {
-                unique_ptr<flow::split_node<array<data_bucket, 1>>> split(
-                        new flow::split_node<array<data_bucket, 1>>(graph));
-            }
-
-
-
-
-
-//            flow::split_node
-
-//            result -> source()
-
-            return result;
-        }
-
-        unique_ptr<logical_node>
-        scheduler::generate_sink_node(flow::graph &graph, const Value &conf, shared_ptr<context> context) {
-            //2. generate func_node
-
-            //add context of the source node to the system
-
-            //find the algorithm to build up the executable
-
-            //construct body use context and executable
-
-            return unique_ptr<logical_node>();
-        }
+//        unique_ptr<logical_node>
+//        scheduler::generate_sink_node(flow::graph &graph, const Value &conf, shared_ptr<context> context) {
+//            //2. generate func_node
+//
+//            //add context of the source node to the system
+//
+//            //find the algorithm to build up the executable
+//
+//            //construct body use context and executable
+//
+//            return unique_ptr<logical_node>();
+//        }
 
 
         std::unique_ptr<tbb::flow::join_node<std::array<data_bucket, 1>>>
