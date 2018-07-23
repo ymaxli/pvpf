@@ -55,7 +55,7 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        void run_source_func(int id, std::unique_ptr<pvpf::data_io::sink_io_pipe> pipe) {
+        void run_source_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe) {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             manager.invoke_io_func(id, *(pipe.get()));
         };
@@ -67,7 +67,7 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        void run_sink_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe) {
+        void run_sink_func(int id, std::unique_ptr<pvpf::data_io::sink_io_pipe> pipe) {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             manager.invoke_io_func(id, *(pipe.get()));
         };
