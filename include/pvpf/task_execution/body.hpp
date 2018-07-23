@@ -58,6 +58,24 @@ PVPF_NAMESPACE_BEGIN
             };
         };
 
+        struct sink_body {
+            std::shared_ptr<context> cont;
+            std::unique_ptr<data_io::io_pipe_for_sink_node> pipe;
+
+            sink_body(std::shared_ptr<context> context, std::unique_ptr<data_io::io_pipe_for_sink_node> pipe) : cont(
+            context),
+            pipe(std::move(
+            pipe)) {};
+
+            sink_body(const sink_body &b) : cont(b.cont) {
+                pipe = std::move(const_cast<sink_body&>(b).pipe);
+            }
+
+            bool operator()(const data_bucket &db) {
+                return true;
+            };
+        };
+
         struct body {
         public:
             std::shared_ptr<context> cont;

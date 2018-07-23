@@ -252,6 +252,6 @@ BOOST_AUTO_TEST_SUITE(source_node)
         sch.source_node_list(g,d["source"]);
         cout<<"here is the start"<<endl;
         sch.start_source_functions();
-        sch.stop_source_functions();
+        sch.stop_io_threads();
     }
 BOOST_AUTO_TEST_SUITE_END()

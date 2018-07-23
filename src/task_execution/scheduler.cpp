@@ -28,12 +28,6 @@ PVPF_NAMESPACE_BEGIN
             const Value &graph_json_list = conf["graph"];
             const Value &sink_json_list = conf["sink"];
 
-            //generate source node
-            /* construct the rules
-             * check if it is multi pre, if so, add a join node
-             * traversal the list to generate a list of nodes that predecessor is this node if the size of the list is greater than 1
-             * add a new split node
-             * */
         }
 
         void scheduler::source_node_list(flow::graph &graph, const Value &conf) {
@@ -56,15 +50,26 @@ PVPF_NAMESPACE_BEGIN
 
         void scheduler::start_source_functions() {
             for (auto &it : source_pipe_map) {
-                thread t(run_io_func, it.first, move(it.second));
+                thread t(run_source_func, it.first, move(it.second));
                 thread_vector.push_back(std::move(t));
             }
         }
 
-        void run_io_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe) {
+        void run_source_func(int id, std::unique_ptr<pvpf::data_io::sink_io_pipe> pipe) {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             manager.invoke_io_func(id, *(pipe.get()));
-//            std::terminate();
+        };
+
+        void scheduler::start_sink_functions() {
+            for (auto &it : sink_pipe_map) {
+                thread t(run_sink_func, it.first, move(it.second));
+                thread_vector.push_back(std::move(t));
+            }
+        }
+
+        void run_sink_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe) {
+            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+            manager.invoke_io_func(id, *(pipe.get()));
         };
 
         std::unique_ptr<executable> scheduler::generate_executable(rapidjson::Value const &obj) {
@@ -76,15 +81,23 @@ PVPF_NAMESPACE_BEGIN
 //
 //        }
 //
-//        void scheduler::sink_node_list(unordered_map<std::string, logical_node> &nodes,
-//                                       flow::graph &graph, const Value &conf) {
-//            //generate sink node
-//            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
-//                auto pair = pvpf::data_io::create_sink(BUFFER_SIZE, true);
-//
-//                // TODO 1. generate source/sink threads calling the source/sink library and pass io pipe to the library.
-//            }
-//        }
+        void scheduler::sink_node_list(unordered_map<std::string, logical_node> &nodes,
+                                       flow::graph &graph, const Value &conf) {
+            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
+//                auto pair;
+                shared_ptr<context> c = create_context(*(it), *this);
+                string id = (*it)["id"].GetString();
+
+                unique_ptr<logical_node> logi_sink = generate_sink_node(graph, (*it), c);
+
+                cout << logi_sink.get() << endl;
+
+                node_map[id] = std::move(logi_sink);
+
+                cout << "logical_node is in the map now" << endl;
+            }
+            cout << "sink node generate finish" << endl;
+        }
 
         unique_ptr<pvpf::task_execution::logical_source_node>
         scheduler::generate_source_node(const Value &obj, shared_ptr<context> cont) {
@@ -128,7 +141,6 @@ PVPF_NAMESPACE_BEGIN
             source_pipe_map[func_id] = std::move(get<0>(pair));
 
             cout << "generate node is good" << endl;
-            //3. generate sink node, add the sink_node to the map
 
             return logi_source;
         }
@@ -176,45 +188,107 @@ PVPF_NAMESPACE_BEGIN
 //            return result;
 //        }
 
-//        unique_ptr<logical_node>
-//        scheduler::generate_sink_node(flow::graph &graph, const Value &conf, shared_ptr<context> context) {
-//            //2. generate func_node
-//
-//            //add context of the source node to the system
-//
-//            //find the algorithm to build up the executable
-//
-//            //construct body use context and executable
-//
-//            return unique_ptr<logical_node>();
-//        }
-
-
-        std::unique_ptr<tbb::flow::join_node<std::array<data_bucket, 1>>>
-        scheduler::create_join_node(tbb::flow::graph &graph, int size) {
-//            switch (size) {
-//                case 1:
-//                    return unique_ptr<flow::join_node<std::array<data_bucket, 1>>>(
-//                            new flow::join_node<std::array<data_bucket, 1>>(graph));
-//                case 2:
-//                    return unique_ptr<flow::join_node<std::array<data_bucket, 1>>>(
-//                            new flow::join_node<std::array<data_bucket, 2>>(graph));
-//                case 3:
-//                    return unique_ptr<flow::join_node<std::array<data_bucket, 1>>>(
-//                            new flow::join_node<std::array<data_bucket, 3>>(graph));
-//                case 4:
-//                    return unique_ptr<flow::join_node<std::array<data_bucket, 1>>>(
-//                            new flow::join_node<std::array<data_bucket, 4>>(graph));
-//                case 5:
-//                    return unique_ptr<flow::join_node<std::array<data_bucket, 1>>>(
-//                            new flow::join_node<std::array<data_bucket, 5>>(graph));
-//            }
-        }
-
-        void scheduler::stop_source_functions() {
+        void scheduler::stop_io_threads() {
             for (int i = 0; i < thread_vector.size(); i++) {
                 thread_vector[i].join();
             }
+        }
+
+        std::unique_ptr<pvpf::task_execution::logical_node>
+        scheduler::generate_sink_node(tbb::flow::graph &graph, rapidjson::Value const &obj,
+                                      std::shared_ptr<context> cont) {
+            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+
+            cout << "generate pipe" << endl;
+
+            tuple<unique_ptr<data_io::sink_io_pipe>, unique_ptr<data_io::io_pipe_for_sink_node>> pair = pvpf::data_io::create_sink(
+                    BUFFER_SIZE, true);
+
+            cout << "generate body" << endl;
+            sink_body sb(cont, std::move(get<1>(pair)));
+
+            cout << "generate node" << endl;
+
+            unique_ptr<flow::function_node<pvpf::data_bucket>> node(
+                    new flow::function_node<pvpf::data_bucket>(graph, flow::unlimited, sb));
+
+            path location(obj["task"]["dylib"]["location"].GetString());
+
+            cout << "location is " << location << endl;
+
+            string name = (obj["task"]["dylib"]["func"].GetString());
+
+            cout << "function name is " << name << endl;
+
+            int func_id = manager.load_input_func(location, name);
+
+            cout << "function load finish, id is " << func_id << endl;
+
+            sink_pipe_map[func_id] = std::move(get<0>(pair));
+
+            cout << "generate logical_source_node" << endl;
+
+            logical_node ln = {};
+
+            switch ((int)cont.get()->pre.size()) {
+
+                case 1:{
+                    auto func1 = std::make_unique<function_node<data_bucket>>(graph, flow::unlimited,
+                                                                                  [](const data_bucket &t) {
+
+                                                                                  });
+                    ln.wrap.size_1 = {
+                            .cont = cont,
+                            .func_node = std::move(func1),
+                    };
+                    break;
+
+                }
+
+                case 2:{
+                    auto func2 = std::make_unique<function_node<array<data_bucket, 2>>>(graph, flow::unlimited,
+                                                                                        [](const array<data_bucket, 2> &t) {
+
+                                                                                        });
+                    auto join2 = std::make_unique<join_node<array<data_bucket, 2>>>(graph);
+                    ln.wrap.size_2 = {
+                            .cont = cont,
+                            .func_node = std::move(func2),
+                            .join_node = std::move(join2)
+
+                    };
+                    break;
+                }
+                case 3: {
+                    auto func3 = std::make_unique<function_node<array<data_bucket, 3>>>(graph, flow::unlimited,
+                                                                                        [](const array<data_bucket, 3> &t) {
+
+                                                                                        });
+                    auto join3 = std::make_unique<join_node<array<data_bucket, 3>>>(graph);
+                    ln.wrap.size_3 = {
+                            .cont = cont,
+                            .func_node = std::move(func3),
+                            .join_node = std::move(join3)
+
+                    };
+                    break;
+                }
+                default:{
+                    auto func4 = std::make_unique<function_node<data_bucket>>(graph, flow::unlimited,
+                                                                              [](const data_bucket &t) {
+
+                                                                              });
+                    ln.wrap.size_1 = {
+                            .cont = cont,
+                            .func_node = std::move(func4),
+                    };
+                }
+            }
+
+
+            cout << "generate node is good" << endl;
+
+            return unique_ptr<logical_node>();
         }
 
 
