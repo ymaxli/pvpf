@@ -17,20 +17,7 @@
 
 PVPF_NAMESPACE_BEGIN
     namespace task_execution {
-        struct logical_node {
-            int join_size = 0;
-            int join_ind = 0;
-            int split_size = 0;
-            int split_ind = 0;
-            std::shared_ptr<context> cont;
 
-            std::unique_ptr<tbb::flow::function_node<data_bucket>> node;
-            std::unique_ptr<tbb::flow::join_node<std::array<data_bucket, 1>>> join;
-
-            logical_node(tbb::flow::function_node<data_bucket> *node, std::shared_ptr<context> cont) : cont(cont),
-                                                                                                       node(node),
-                                                                                                       join() {};
-        };
 
         struct logical_source_node {
             std::shared_ptr<context> cont;
@@ -51,7 +38,7 @@ PVPF_NAMESPACE_BEGIN
 
             tbb::flow::graph graph;
 
-            std::unordered_map<std::string, std::unique_ptr<logical_node>> node_map;
+//            std::unordered_map<std::string, std::unique_ptr<logical_node>> node_map;
 
             std::unordered_map<std::string, std::unique_ptr<logical_source_node>> source_node_map;
 
@@ -61,22 +48,22 @@ PVPF_NAMESPACE_BEGIN
 
             void source_node_list(tbb::flow::graph &graph, rapidjson::Value const &conf);
 
-            std::unique_ptr<executable> graph_node_list(std::unordered_map<std::string, logical_node> &nodes,
-                                                        tbb::flow::graph &graph, rapidjson::Value const &conf);
+//            std::unique_ptr<executable> graph_node_list(std::unordered_map<std::string, logical_node> &nodes,
+//                                                        tbb::flow::graph &graph, rapidjson::Value const &conf);
 
-            void sink_node_list(std::unordered_map<std::string, logical_node> &nodes,
-                                tbb::flow::graph &graph, rapidjson::Value const &conf);
+//            void sink_node_list(std::unordered_map<std::string, logical_node> &nodes,
+//                                tbb::flow::graph &graph, rapidjson::Value const &conf);
 
             std::unique_ptr<pvpf::task_execution::logical_source_node>
             generate_source_node(const rapidjson::Value &obj, std::shared_ptr<context> cont);
 
-            std::unique_ptr<logical_node>
-            generate_graph_node(tbb::flow::graph &graph, rapidjson::Value const &conf,
-                                std::shared_ptr<context> context);
-
-            std::unique_ptr<logical_node>
-            generate_sink_node(tbb::flow::graph &graph, rapidjson::Value const &conf,
-                               std::shared_ptr<context> context);
+//            std::unique_ptr<logical_node>
+//            generate_graph_node(tbb::flow::graph &graph, rapidjson::Value const &conf,
+//                                std::shared_ptr<context> context);
+//
+//            std::unique_ptr<logical_node>
+//            generate_sink_node(tbb::flow::graph &graph, rapidjson::Value const &conf,
+//                               std::shared_ptr<context> context);
 
             std::shared_ptr<context>
             create_context(rapidjson::Value const &obj);
