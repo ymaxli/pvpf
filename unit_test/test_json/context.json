@@ -7,8 +7,8 @@
     "id": "source-1",
     "task": {
       "dylib": {
-        "location": "file location",
-        "func": "function name"
+        "location": "./test_dylib/io_lib.dylib",
+        "func": "input"
       }
     },
     "output": {

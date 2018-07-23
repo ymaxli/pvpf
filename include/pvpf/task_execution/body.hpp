@@ -33,7 +33,8 @@ PVPF_NAMESPACE_BEGIN
                     std::unordered_map<std::string, std::string> output,
                     std::unordered_map<std::string, std::string> data, std::vector<bool> read_only,
                     std::vector<bool> pre_is_cpu, bool is_cpu)
-                    : node_id(id), pre(std::move(pre)), succ(std::move(succ)), input(std::move(input)), output(std::move(output)),
+                    : node_id(id), pre(std::move(pre)), succ(std::move(succ)), input(std::move(input)),
+                      output(std::move(output)),
                       data(std::move(data)), read_only(std::move(read_only)), pre_is_cpu(std::move(pre_is_cpu)),
                       is_cpu(is_cpu) {
             }
@@ -43,11 +44,13 @@ PVPF_NAMESPACE_BEGIN
             std::shared_ptr<context> cont;
             std::unique_ptr<data_io::io_pipe_for_source_node> pipe;
 
-            io_body(std::shared_ptr<context> context, std::unique_ptr<data_io::io_pipe_for_source_node> pipe) : cont(context),
-                                                                                               pipe(std::move(pipe)) {};
+            io_body(std::shared_ptr<context> context, std::unique_ptr<data_io::io_pipe_for_source_node> pipe) : cont(
+                    context),
+                                                                                                                pipe(std::move(
+                                                                                                                        pipe)) {};
 
-            io_body(const io_body &b) : pipe(b.pipe.get()) {
-                this -> cont = b.cont;
+            io_body(const io_body &b) : cont(b.cont) {
+                pipe = std::move(const_cast<io_body&>(b).pipe);
             }
 
             bool operator()(const data_bucket &db) {

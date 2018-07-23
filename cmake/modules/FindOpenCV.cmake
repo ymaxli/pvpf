@@ -108,6 +108,7 @@ if(NOT OpenCV_CONFIG_MODE)
 ##====================================================
 ## Find OpenCV libraries
 ##----------------------------------------------------
+
 if(EXISTS "${OpenCV_DIR}")
 
     #When its possible to use the Config script use it.

@@ -13,53 +13,59 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
+#include <pvpf/task_execution/context_generator.hpp>
 
-using namespace std;
-using namespace pvpf;
-using namespace rapidjson;
 
-Document load_json_conf(const string &file) {
-    boost::filesystem::path filePath(file);
-    Document d;
 
-    if (!boost::filesystem::exists(filePath)) {
-        cerr << "Configuration file not found"<< endl;
-        return d;
-    }
-    else if (boost::filesystem::is_regular_file(filePath)) {
-        string extension = filePath.extension().string();
-        if(extension != ".json") {
-            cerr << "Path shoud be a json file" << endl;
-            return d;
-        }
-    }
-    else {
-        cerr << "Path should be a json file" << endl;
-        return d;
-    }
 
-    boost::filesystem::ifstream inFile;
-    inFile.open(filePath);//open the input file
-
-    stringstream strStream;
-    strStream << inFile.rdbuf();//read the file
-    string str = strStream.str();//str holds the content of the file
-
-    char char_array[str.size()+1];
-    strcpy(char_array, str.c_str());
-
-    d.Parse(char_array);
-
-    return d;
-}
 
 BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
+
+    using namespace std;
+    using namespace pvpf;
+    using namespace rapidjson;
+    using namespace pvpf::os_agnostic;
+
+    Document load_json_conf(const string &file) {
+        boost::filesystem::path filePath(file);
+        Document d;
+
+        if (!boost::filesystem::exists(filePath)) {
+            cerr << "Configuration file not found"<< endl;
+            return d;
+        }
+        else if (boost::filesystem::is_regular_file(filePath)) {
+            string extension = filePath.extension().string();
+            if(extension != ".json") {
+                cerr << "Path shoud be a json file" << endl;
+                return d;
+            }
+        }
+        else {
+            cerr << "Path should be a json file" << endl;
+            return d;
+        }
+
+        boost::filesystem::ifstream inFile;
+        inFile.open(filePath);//open the input file
+
+        stringstream strStream;
+        strStream << inFile.rdbuf();//read the file
+        string str = strStream.str();//str holds the content of the file
+
+        char char_array[str.size()+1];
+        strcpy(char_array, str.c_str());
+
+        d.Parse(char_array);
+
+        return d;
+    }
 
     BOOST_AUTO_TEST_CASE(node_id) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).node_id,"node-1");
     }
@@ -67,8 +73,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(pre) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).pre.size(),1);
         BOOST_CHECK_EQUAL((*cont_ptr).pre[0],"source-1");
@@ -77,8 +83,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(successor) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).succ.size(),2);
         BOOST_CHECK_EQUAL((*cont_ptr).succ[0], "sink-1");
@@ -88,8 +94,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(input) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).input.size(),2);
         BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"].size(), 1);
@@ -106,8 +112,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(is_cpu_set_gpu_true) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).is_cpu, false);
     }
@@ -115,8 +121,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(is_cpu_set_gpu_false) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][1]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][1], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).is_cpu, true);
     }
@@ -124,8 +130,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(is_cpu_not_set_gpu) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][2]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][2], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).is_cpu, true);
     }
@@ -133,8 +139,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(pre_is_cpu) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).pre_is_cpu.size(), 1);
         BOOST_CHECK_EQUAL((*cont_ptr).pre_is_cpu[0], true);
@@ -143,8 +149,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(read_only_set_to) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).read_only.size(), 1);
         BOOST_CHECK_EQUAL((*cont_ptr).read_only[0], true);
@@ -153,8 +159,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(read_only_not_set) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][1]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][1], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).read_only.size(), 1);
         BOOST_CHECK_EQUAL((*cont_ptr).read_only[0], true);
@@ -163,8 +169,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(read_only_set_false) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][2]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][2], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).read_only.size(), 2);
         BOOST_CHECK_EQUAL((*cont_ptr).read_only[0], true);
@@ -174,8 +180,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(output) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["graph"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).output.size(), 2);
         BOOST_CHECK_EQUAL((*cont_ptr).output["result_key"],"output_key");
@@ -185,11 +191,67 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
     BOOST_AUTO_TEST_CASE(data) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
-        sch.figure_out_json_object(d);
-        shared_ptr<task_execution::context> cont = sch.create_context(d["source"][0]);
+        task_execution::figure_out_json_object(d, sch);
+        shared_ptr<task_execution::context> cont = task_execution::create_context(d["source"][0], sch);
         task_execution::context* cont_ptr = cont.get();
         BOOST_CHECK_EQUAL((*cont_ptr).data["key1"],"any");
         BOOST_CHECK_EQUAL((*cont_ptr).data["key2"],"int");
     }
 
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(source_node)
+
+    using namespace std;
+    using namespace pvpf;
+    using namespace rapidjson;
+    using namespace pvpf::os_agnostic;
+
+    dynamic_lib_func_manager &manager = dynamic_lib_func_manager::get_instance();
+
+    Document load_json_conf(const string &file) {
+        boost::filesystem::path filePath(file);
+        Document d;
+
+        if (!boost::filesystem::exists(filePath)) {
+            cerr << "Configuration file not found"<< endl;
+            return d;
+        }
+        else if (boost::filesystem::is_regular_file(filePath)) {
+            string extension = filePath.extension().string();
+            if(extension != ".json") {
+                cerr << "Path shoud be a json file" << endl;
+                return d;
+            }
+        }
+        else {
+            cerr << "Path should be a json file" << endl;
+            return d;
+        }
+
+        boost::filesystem::ifstream inFile;
+        inFile.open(filePath);//open the input file
+
+        stringstream strStream;
+        strStream << inFile.rdbuf();//read the file
+        string str = strStream.str();//str holds the content of the file
+
+        char char_array[str.size()+1];
+        strcpy(char_array, str.c_str());
+
+        d.Parse(char_array);
+
+        return d;
+    }
+
+    BOOST_AUTO_TEST_CASE(start) {
+        Document d = load_json_conf("./test_json/context.json");
+        task_execution::scheduler sch;
+        task_execution::figure_out_json_object(d, sch);
+        tbb::flow::graph g;
+        sch.source_node_list(g,d["source"]);
+        cout<<"here is the start"<<endl;
+        sch.start_source_functions();
+        sch.stop_source_functions();
+    }
 BOOST_AUTO_TEST_SUITE_END()
