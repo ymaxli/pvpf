@@ -18,6 +18,7 @@ using namespace tbb;
 using namespace std;
 using namespace rapidjson;
 using namespace os_agnostic;
+using namespace config;
 
 
 PVPF_NAMESPACE_BEGIN
@@ -51,6 +52,7 @@ PVPF_NAMESPACE_BEGIN
         void scheduler::start_source_functions() {
             for (auto &it : source_pipe_map) {
                 thread t(run_source_func, it.first, move(it.second));
+                cout << "start one thread" << endl;
                 thread_vector.push_back(std::move(t));
             }
         }
@@ -73,7 +75,45 @@ PVPF_NAMESPACE_BEGIN
         };
 
         std::unique_ptr<executable> scheduler::generate_executable(rapidjson::Value const &obj) {
-
+            os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+            config_reader cr;
+            unique_ptr<abstract_algorithm> result;
+            if (obj.HasMember("meta") && obj["meta"].HasMember("loop")) {
+                cout<<"it is a loop"<<endl;
+                unordered_map<string, string> loop_key_map;
+                for (Value::ConstMemberIterator it = obj["meta"]["loop"].MemberBegin();
+                     it != obj["meta"]["loop"].MemberEnd(); it++){
+                    loop_key_map[it->name.GetString()] = it->value.GetString();
+                }
+                result = make_unique<loop_algorithm>(loop_key_map);
+            } else {
+                cout<<"it is a normal library"<<endl;
+                result = make_unique<normal_algorithm>();
+            }
+            cout<<"main executable is ready"<<endl;
+            for (Value::ConstValueIterator it = obj["body"].Begin(); it != obj["body"].End(); it++) {
+                string type = (*it)["type"].GetString();
+                if (type == "dylib") {
+                    cout<<"it is dylib"<<endl;
+                    string location = (*it)["location"].GetString();
+                    string func = (*it)["func"].GetString();
+                    dylib_func_ptr ptr = manager.load_algorithm(location, func);
+                    unique_ptr<executable> temp = make_unique<dynamic_library_func>(ptr);
+                    (*result.get()).add_executable(std::move(temp));
+                } else if (type == "algorithm") {
+                    cout<<"it is an algorithm"<<endl;
+                    string path = "";
+                    path = path + "./pvpf_algorithm/" + (*it)["algorithm"].GetString() + ".json";
+                    Document d = cr.load_json_conf(path);
+                    unique_ptr<executable> temp = generate_executable(d);
+                    cout<<"algorithm generated"<<endl;
+                    (*result.get()).add_executable(std::move(temp));
+                    cout<<"move finished"<<endl;
+                } else {
+                    cout << "wrong type" << endl;
+                }
+            }
+            return result;
         }
 
 //        unique_ptr<executable> scheduler::graph_node_list(unordered_map<string, logical_node> &nodes,
@@ -230,13 +270,13 @@ PVPF_NAMESPACE_BEGIN
 
             logical_node ln = {};
 
-            switch ((int)cont.get()->pre.size()) {
+            switch ((int) cont.get()->pre.size()) {
 
-                case 1:{
+                case 1: {
                     auto func1 = std::make_unique<function_node<data_bucket>>(graph, flow::unlimited,
-                                                                                  [](const data_bucket &t) {
+                                                                              [](const data_bucket &t) {
 
-                                                                                  });
+                                                                              });
                     ln.wrap.size_1 = {
                             .cont = cont,
                             .func_node = std::move(func1),
@@ -245,7 +285,7 @@ PVPF_NAMESPACE_BEGIN
 
                 }
 
-                case 2:{
+                case 2: {
                     auto func2 = std::make_unique<function_node<array<data_bucket, 2>>>(graph, flow::unlimited,
                                                                                         [](const array<data_bucket, 2> &t) {
 
@@ -273,7 +313,7 @@ PVPF_NAMESPACE_BEGIN
                     };
                     break;
                 }
-                default:{
+                default: {
                     auto func4 = std::make_unique<function_node<data_bucket>>(graph, flow::unlimited,
                                                                               [](const data_bucket &t) {
 

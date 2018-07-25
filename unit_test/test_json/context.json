@@ -153,8 +153,8 @@
     },
     "task": {
       "dylib": {
-        "location": "file location",
-        "func": ""
+        "location": "./test_dylib/io_lib.dylib",
+        "func": "output"
       }
     }
   },
@@ -180,8 +180,8 @@
       },
       "task": {
         "dylib": {
-          "location": "file location",
-          "func": ""
+          "location": "./test_dylib/io_lib.dylib",
+          "func": "output"
         }
       }
     }]

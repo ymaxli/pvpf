@@ -200,7 +200,7 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(source_node)
+BOOST_AUTO_TEST_SUITE(io_node)
 
     using namespace std;
     using namespace pvpf;
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_SUITE(source_node)
         return d;
     }
 
-    BOOST_AUTO_TEST_CASE(start) {
+    BOOST_AUTO_TEST_CASE(source) {
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
         task_execution::figure_out_json_object(d, sch);
@@ -254,4 +254,16 @@ BOOST_AUTO_TEST_SUITE(source_node)
         sch.start_source_functions();
         sch.stop_io_threads();
     }
+
+    BOOST_AUTO_TEST_CASE(sink) {
+        Document d = load_json_conf("./test_json/context.json");
+        task_execution::scheduler sch;
+        task_execution::figure_out_json_object(d, sch);
+        tbb::flow::graph g;
+        sch.source_node_list(g,d["source"]);
+        cout<<"here is the start"<<endl;
+        sch.start_source_functions();
+        sch.stop_io_threads();
+    }
+
 BOOST_AUTO_TEST_SUITE_END()
