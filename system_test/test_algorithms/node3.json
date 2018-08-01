@@ -1,0 +1,20 @@
+{
+    "meta": {
+        "name": "node3",
+        "version": "0.1",
+        "gpu": false
+    },
+    "input": {
+        "n3_matrix": "any"
+    },
+    "output": {
+        "n3_omatrix": "any"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "",
+            "func": "node3"
+        }
+    ]
+}

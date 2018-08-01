@@ -1,0 +1,17 @@
+{
+    "meta": {
+        "name": "source1",
+        "version": "0.1",
+        "gpu": false
+    },
+    "output": {
+        "n1_matrix": "any"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "",
+            "func": "source1"
+        }
+    ]
+}

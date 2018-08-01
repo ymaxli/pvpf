@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "name": "node1",
+        "version": "0.1",
+        "gpu": false
+    },
+    "input": {
+        "n1_matrix": "any",
+        "n1_row": "int"
+    },
+    "output": {
+        "n1_omatrix": "any"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "",
+            "func": "node1"
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "name": "node4",
+        "version": "0.1",
+        "gpu": false
+    },
+    "input": {
+        "n4_matrix": "any",
+        "n4_int": "int"
+    },
+    "output": {
+        "n4_o1": "int"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "",
+            "func": "node4"
+        }
+    ]
+}

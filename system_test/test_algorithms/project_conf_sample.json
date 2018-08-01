@@ -1,0 +1,210 @@
+{
+    "meta": {
+        "name": "simple_arimetic_config",
+        "version": "0.0.1"
+    },
+    "source": [
+        {
+            "id": "source-1",
+            "task": {
+                "dylib": {
+                    "location": "",
+                    "func": ""
+                }
+            },
+            "output": {
+                "data": {
+                    "s1": "any",
+                },
+                "conf": {
+                    "output_port_num": 1
+                }
+            }
+        },
+        {
+            "id": "source-2",
+            "task": {
+                "dylib": {
+                    "location": "",
+                    "func": ""
+                }
+            },
+            "output": {
+                "data": {
+                    "s2": "int",
+                },
+                "conf": {
+                    "output_port_num": 1
+                }
+            }
+        }
+    ],
+    "graph": [
+        {
+            "id": "node-1",
+            "meta": {
+                "frame_dropping": true
+            },
+            "input": {
+                "pre": [
+                    "source-1",
+                    "source-2"
+                ],
+                "mapping": {
+                    "n1_matrix": "s1.all",
+                    "n1_row": "s2.all",
+                }
+            },
+            "task": {
+                "algorithm": "",
+                "params": {}
+            },
+            "output": {
+                "mapping": {
+                    "n1_o1": "n1_omatrix",
+                },
+                "conf": {
+                    "output_port_num": 2
+                }
+            }
+        },
+        {
+            "id": "node-2",
+            "meta": {
+                "frame_dropping": true
+            },
+            "input": {
+                "pre": [
+                    "node-1"
+                ],
+                "mapping": {
+                    "n2_matrix": "n1_o1.all"
+                }
+            },
+            "task": {
+                "algorithm": "",
+                "params": {"n2_increment"}
+            },
+            "output": {
+                "mapping": {
+                    "n2_o1": "n2_omatrix",
+                    "n2_o2": "n2_osum"
+                },
+                "conf": {
+                    "output_port_num": 2
+                }
+            }
+        },
+        {
+            "id": "node-3",
+            "meta": {
+                "frame_dropping": true
+            },
+            "input": {
+                "pre": [
+                    "node-2"
+                ],
+                "mapping": {
+                    "n3_matrix": "n2_o1.all"
+                }
+            },
+            "task": {
+                "algorithm": "",
+                "params": {}
+            },
+            "output": {
+                "mapping": {
+                    "n3_o1": "n3_omatrix"
+                },
+                "conf": {
+                    "output_port_num": 2
+                }
+            }
+        },
+        {
+            "id": "node-4",
+            "meta": {
+                "frame_dropping": true
+            },
+            "input": {
+                "pre": [
+                    "node-2"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ],
+                "mapping": {
+                    "n4_matrix": "n2_o1.all",
+                    "n4_int": "n2_o2.all"
+                }
+            },
+            "task": {
+                "algorithm": "",
+                "params": {}
+            },
+            "output": {
+                "mapping": {
+                    "n4_o1": "n4_o1"
+                },
+                "conf": {
+                    "output_port_num": 2
+                }
+            }
+        },
+        {
+            "id": "node-5",
+            "meta": {
+                "frame_dropping": true
+            },
+            "input": {
+                "pre": [
+                    "node-3",
+                    "node-4"
+                ],
+                "mapping": {
+                    "n5_matrix": "n3_o1.all",
+                    "n5_value": "n4_o1.all"
+                }
+            },
+            "task": {
+                "algorithm": "",
+                "params": {}
+            },
+            "output": {
+                "mapping": {
+                    "n5_o1": "n5_omatrix"
+                },
+                "conf": {
+                    "output_port_num": 2
+                }
+            }
+        }
+    ],
+    "sink": [
+        {
+            "id": "sink-1",
+            "input": {
+                "pre": [
+                    "node-5"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ],
+                "mapping": {
+                    "output": "n5_o1.all",
+
+                }
+            },
+            "task": {
+                "dylib": {
+                    "location": "",
+                    "func": ""
+                }
+            }
+        }
+    ]
+}
