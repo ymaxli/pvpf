@@ -14,7 +14,7 @@
 #include <string>
 #include <pvpf/utils/data_bucket.hpp>
 #include <map>
-
+#include <utility>
 
 PVPF_NAMESPACE_BEGIN
     namespace task_execution {
@@ -24,8 +24,10 @@ PVPF_NAMESPACE_BEGIN
             std::shared_ptr<context> cont;
             std::unique_ptr<tbb::flow::source_node<data_bucket>> source;
 
-            logical_source_node(std::unique_ptr<tbb::flow::source_node<data_bucket>> source, std::shared_ptr<context> cont) : cont(
-                    cont), source(std::move(source)){};
+            logical_source_node(std::unique_ptr<tbb::flow::source_node<data_bucket>> source,
+                                std::shared_ptr<context> cont) : cont(
+                    std::move(
+                            cont)), source(std::move(source)) {};
         };
 
         class scheduler {

@@ -46,8 +46,8 @@ PVPF_NAMESPACE_BEGIN
         void memory_manager::post_process(data_bucket & data, context const & context) {
 
             for(auto itr = data.begin(); itr != data.end(); ++itr) {
-                auto context_itr = context.output.find(itr->first);
-                if(context_itr == context.output.end()) {
+                auto context_itr = context.output_mapping.find(itr->first);
+                if(context_itr == context.output_mapping.end()) {
                     data.remove(itr->first);
                 }
                 else {

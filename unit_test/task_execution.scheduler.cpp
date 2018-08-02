@@ -97,15 +97,15 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
         task_execution::figure_out_json_object(d, sch);
         shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
-        BOOST_CHECK_EQUAL((*cont_ptr).input.size(),2);
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"].size(), 1);
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"][0].first, 0);
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr"][0].second, "key1");
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"].size(), 2);
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][0].first, 0);
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][0].second, "key1");
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][1].first, 0);
-        BOOST_CHECK_EQUAL((*cont_ptr).input["image_arr2"][1].second, "key1");
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping.size(),2);
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr"].size(), 1);
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr"][0].first, 0);
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr"][0].second, "key1");
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr2"].size(), 2);
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr2"][0].first, 0);
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr2"][0].second, "key1");
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr2"][1].first, 0);
+        BOOST_CHECK_EQUAL((*cont_ptr).input_mapping["image_arr2"][1].second, "key1");
 
     }
 
@@ -183,9 +183,9 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
         task_execution::figure_out_json_object(d, sch);
         shared_ptr<task_execution::context> cont = task_execution::create_context(d["graph"][0], sch);
         task_execution::context* cont_ptr = cont.get();
-        BOOST_CHECK_EQUAL((*cont_ptr).output.size(), 2);
-        BOOST_CHECK_EQUAL((*cont_ptr).output["result_key"],"output_key");
-        BOOST_CHECK_EQUAL((*cont_ptr).output["key1"],"hea");
+        BOOST_CHECK_EQUAL((*cont_ptr).output_mapping.size(), 2);
+        BOOST_CHECK_EQUAL((*cont_ptr).output_mapping["result_key"],"output_key");
+        BOOST_CHECK_EQUAL((*cont_ptr).output_mapping["key1"],"hea");
     }
 
     BOOST_AUTO_TEST_CASE(data) {
@@ -194,8 +194,8 @@ BOOST_AUTO_TEST_SUITE(task_execution_scheduler_suite)
         task_execution::figure_out_json_object(d, sch);
         shared_ptr<task_execution::context> cont = task_execution::create_context(d["source"][0], sch);
         task_execution::context* cont_ptr = cont.get();
-        BOOST_CHECK_EQUAL((*cont_ptr).data["key1"],"any");
-        BOOST_CHECK_EQUAL((*cont_ptr).data["key2"],"int");
+        BOOST_CHECK_EQUAL((*cont_ptr).output_data["key1"],"any");
+        BOOST_CHECK_EQUAL((*cont_ptr).output_data["key2"],"int");
     }
 
 BOOST_AUTO_TEST_SUITE_END()

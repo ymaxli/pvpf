@@ -79,36 +79,36 @@ PVPF_NAMESPACE_BEGIN
             config_reader cr;
             unique_ptr<abstract_algorithm> result;
             if (obj.HasMember("meta") && obj["meta"].HasMember("loop")) {
-                cout<<"it is a loop"<<endl;
+                cout << "it is a loop" << endl;
                 unordered_map<string, string> loop_key_map;
                 for (Value::ConstMemberIterator it = obj["meta"]["loop"].MemberBegin();
-                     it != obj["meta"]["loop"].MemberEnd(); it++){
+                     it != obj["meta"]["loop"].MemberEnd(); it++) {
                     loop_key_map[it->name.GetString()] = it->value.GetString();
                 }
                 result = make_unique<loop_algorithm>(loop_key_map);
             } else {
-                cout<<"it is a normal library"<<endl;
+                cout << "it is a normal library" << endl;
                 result = make_unique<normal_algorithm>();
             }
-            cout<<"main executable is ready"<<endl;
+            cout << "main executable is ready" << endl;
             for (Value::ConstValueIterator it = obj["body"].Begin(); it != obj["body"].End(); it++) {
                 string type = (*it)["type"].GetString();
                 if (type == "dylib") {
-                    cout<<"it is dylib"<<endl;
+                    cout << "it is dylib" << endl;
                     string location = (*it)["location"].GetString();
                     string func = (*it)["func"].GetString();
                     dylib_func_ptr ptr = manager.load_algorithm(location, func);
                     unique_ptr<executable> temp = make_unique<dynamic_library_func>(ptr);
                     (*result.get()).add_executable(std::move(temp));
                 } else if (type == "algorithm") {
-                    cout<<"it is an algorithm"<<endl;
+                    cout << "it is an algorithm" << endl;
                     string path = "";
                     path = path + "./pvpf_algorithm/" + (*it)["algorithm"].GetString() + ".json";
                     Document d = cr.load_json_conf(path);
                     unique_ptr<executable> temp = generate_executable(d);
-                    cout<<"algorithm generated"<<endl;
+                    cout << "algorithm generated" << endl;
                     (*result.get()).add_executable(std::move(temp));
-                    cout<<"move finished"<<endl;
+                    cout << "move finished" << endl;
                 } else {
                     cout << "wrong type" << endl;
                 }
@@ -143,28 +143,25 @@ PVPF_NAMESPACE_BEGIN
         scheduler::generate_source_node(const Value &obj, shared_ptr<context> cont) {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             cout << "generate pipe" << endl;
-            bool flag;
-            if (obj.HasMember("control") && obj["control"].HasMember("block") &&
-                obj["control"]["block"].GetBool() == false) {
-                flag = false;
-            } else {
-                flag = true;
-            }
+
+            bool flag = !obj.HasMember("control") || !obj["control"].HasMember("block") ||
+                        obj["control"]["block"].GetBool();
 
             tuple<unique_ptr<data_io::source_io_pipe>, unique_ptr<data_io::io_pipe_for_source_node>> pair = pvpf::data_io::create_source(
                     BUFFER_SIZE, flag);
 
             cout << "generate body" << endl;
-            io_body ib(cont, std::move(get<1>(pair)));
+            source_body ib(cont, std::move(get<1>(pair)));
 
             cout << "generate node" << endl;
 
-            unique_ptr<flow::source_node<pvpf::data_bucket>> node(
-                    new flow::source_node<pvpf::data_bucket>(graph, ib, false));
+            auto node = std::make_unique<
+                    flow::source_node<pvpf::data_bucket>>
+                    (graph, ib, false);
 
             cout << "generate logical_source_node" << endl;
 
-            auto logi_source = std::make_unique<logical_source_node>(move(node), cont);
+            auto logi_source = std::make_unique<logical_source_node>(std::move(node), cont);
 
             path location(obj["task"]["dylib"]["location"].GetString());
 
@@ -249,8 +246,7 @@ PVPF_NAMESPACE_BEGIN
 
             cout << "generate node" << endl;
 
-            unique_ptr<flow::function_node<pvpf::data_bucket>> node(
-                    new flow::function_node<pvpf::data_bucket>(graph, flow::unlimited, sb));
+            auto node = std::make_unique<flow::function_node<pvpf::data_bucket>>(graph, flow::unlimited, sb);
 
             path location(obj["task"]["dylib"]["location"].GetString());
 
