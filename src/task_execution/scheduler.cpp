@@ -278,7 +278,7 @@ PVPF_NAMESPACE_BEGIN
 
                                                                               });
                     ln.wrap.size_1 = {
-                            .cont = cont,
+                            .cont = std::move(cont),
                             .func_node = std::move(func1),
                     };
                     break;
@@ -292,7 +292,7 @@ PVPF_NAMESPACE_BEGIN
                                                                                         });
                     auto join2 = std::make_unique<join_node<array<data_bucket, 2>>>(graph);
                     ln.wrap.size_2 = {
-                            .cont = cont,
+                            .cont = std::move(cont),
                             .func_node = std::move(func2),
                             .join = std::move(join2)
 
@@ -306,7 +306,7 @@ PVPF_NAMESPACE_BEGIN
                                                                                         });
                     auto join3 = std::make_unique<join_node<array<data_bucket, 3>>>(graph);
                     ln.wrap.size_3 = {
-                            .cont = cont,
+                            .cont = std::move(cont),
                             .func_node = std::move(func3),
                             .join = std::move(join3)
 
@@ -319,7 +319,7 @@ PVPF_NAMESPACE_BEGIN
 
                                                                               });
                     ln.wrap.size_1 = {
-                            .cont = cont,
+                            .cont = std::move(cont),
                             .func_node = std::move(func4),
                     };
                 }
