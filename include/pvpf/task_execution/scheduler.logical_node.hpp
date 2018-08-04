@@ -33,12 +33,12 @@ PVPF_NAMESPACE_BEGIN
                 } size_1;
                 struct ssize_2 {
                     std::shared_ptr<context> cont;
-                    std::unique_ptr<join_node<std::array<data_bucket, 2>>> join_node;
+                    std::unique_ptr<join_node<std::array<data_bucket, 2>>> join;
                     std::unique_ptr<function_node<std::array<data_bucket, 2>>> func_node;
                 } size_2;
                 struct ssize_3 {
                     std::shared_ptr<context> cont;
-                    std::unique_ptr<join_node<std::array<data_bucket, 3>>> join_node;
+                    std::unique_ptr<join_node<std::array<data_bucket, 3>>> join;
                     std::unique_ptr<function_node<std::array<data_bucket, 3>>> func_node;
                 } size_3;
             } wrap;

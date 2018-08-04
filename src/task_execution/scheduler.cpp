@@ -294,7 +294,7 @@ PVPF_NAMESPACE_BEGIN
                     ln.wrap.size_2 = {
                             .cont = cont,
                             .func_node = std::move(func2),
-                            .join_node = std::move(join2)
+                            .join = std::move(join2)
 
                     };
                     break;
@@ -308,7 +308,7 @@ PVPF_NAMESPACE_BEGIN
                     ln.wrap.size_3 = {
                             .cont = cont,
                             .func_node = std::move(func3),
-                            .join_node = std::move(join3)
+                            .join = std::move(join3)
 
                     };
                     break;
