@@ -16,7 +16,7 @@ PVPF_NAMESPACE_BEGIN
     namespace data_io {
         class source_io_pipe {
         public:
-            explicit source_io_pipe(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
+            explicit source_io_pipe(std::shared_ptr<buffer> b) : buf(std::move(b)) {}
 
             template<typename T>
             void source_write(std::string const &key, T &&obj) {
@@ -27,63 +27,63 @@ PVPF_NAMESPACE_BEGIN
             }
 
             void source_write(data_bucket data) {
-                buffer->write(std::move(data));
+                buf->write(std::move(data));
             }
 
             void source_complete() {
-                buffer->stop_writing();
+                buf->stop_writing();
             }
 
         private:
-            std::shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buf;
         };
 
         class io_pipe_for_source_node {
         public:
-            explicit io_pipe_for_source_node(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
+            explicit io_pipe_for_source_node(std::shared_ptr<buffer> b) : buf(std::move(b)) {}
 
             bool is_empty() {
-                return buffer->is_empty();
+                return buf->is_empty();
             }
 
             data_bucket read() {
-                return buffer->read();
+                return buf->read();
             }
 
         private:
-            std::shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buf;
         };
 
         class sink_io_pipe {
         public:
-            explicit sink_io_pipe(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
+            explicit sink_io_pipe(std::shared_ptr<buffer> b) : buf(std::move(b)) {}
 
             data_bucket sink_read() {
-                return buffer->read();
+                return buf->read();
             }
 
             bool sink_is_complete() {
-                return buffer->is_empty();
+                return buf->is_empty();
             }
 
         private:
-            std::shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buf;
         };
 
         class io_pipe_for_sink_node {
         public:
-            explicit io_pipe_for_sink_node(std::shared_ptr<buffer> b) : buffer(std::move(b)) {}
+            explicit io_pipe_for_sink_node(std::shared_ptr<buffer> b) : buf(std::move(b)) {}
 
             void write(data_bucket data) {
-                buffer->write(std::move(data));
+                buf->write(std::move(data));
             }
 
             void stop_writing() {
-                buffer->stop_writing();
+                buf->stop_writing();
             }
 
         private:
-            std::shared_ptr<buffer> buffer;
+            std::shared_ptr<buffer> buf;
         };
     }
 
