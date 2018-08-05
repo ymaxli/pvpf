@@ -54,3 +54,5 @@ CMakeCache.txt
 
 # Unit Tests
 !unit_test/test_dylib/*
+
+.vscode

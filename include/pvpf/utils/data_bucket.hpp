@@ -13,16 +13,23 @@
 #include <core/any.hpp>
 #include <unordered_map>
 #include <vector>
+#include <string>
 #include "pvpf/pvpf.hpp"
 #include <pvpf/utils/exception.hpp>
 
 PVPF_NAMESPACE_BEGIN
     namespace task_execution {
         class loop_algorithm;
+
+        template<size_t input_size>
+        struct node_body;
     }
 
     class data_bucket {
         friend class task_execution::loop_algorithm;
+
+        template<size_t input_size>
+        friend struct task_execution::node_body;
 
     public:
 
@@ -38,7 +45,7 @@ PVPF_NAMESPACE_BEGIN
 
         data_bucket(data_bucket const &new_data_bucket) noexcept {
             map = new std::unordered_map<std::string, std::shared_ptr<core::any>>(*new_data_bucket.map);
-        };
+        }
 
         data_bucket(data_bucket &&new_data_bucket) noexcept : map(new_data_bucket.map) {
             new_data_bucket.map = nullptr;
@@ -151,6 +158,15 @@ PVPF_NAMESPACE_BEGIN
             remove(key);
         }
 
+        void transfer(data_bucket &to, std::string const &to_key, std::string const &from_key) {
+            if (!(map->count(from_key)))
+                throw pvpf::utils::pvpf_exception(
+                        (std::string("key:") + from_key + std::string(" does not exist")).c_str());
+
+            to.put(to_key, std::move((*map)[from_key]));
+            remove(from_key);
+        }
+
         bool remove(std::string const &key) {
             if (!(map->count(key))) return false;
             map->erase(key);
@@ -170,7 +186,8 @@ PVPF_NAMESPACE_BEGIN
         }
 
     private:
-        std::unordered_map<std::string, std::shared_ptr<core::any>> *map{};
+        std::unordered_map<std::string, std::shared_ptr<core::any>> *map;
+        std::unordered_map<std::string, int> under_construction_collection;
 
         core::any *get_core_any_ptr(std::string const &key) const {
             if (!(map->count(key)))
@@ -183,6 +200,47 @@ PVPF_NAMESPACE_BEGIN
                 throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
             }
         }
+
+        void transferByConstructingVector(data_bucket &to, std::string const &to_key, std::string const &from_key) {
+            if (!(map->count(from_key)))
+                throw pvpf::utils::pvpf_exception(
+                        (std::string("key:") + from_key + std::string(" does not exist")).c_str());
+
+            to.push_item_constructing_vector(to_key, std::move((*map)[from_key]));
+            remove(from_key);
+        }
+
+        void start_constructing_vector(std::string const &key) {
+            if (under_construction_collection.count(key))
+                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" already exists")).c_str());
+
+            under_construction_collection[key] = 0;
+        }
+
+        void push_item_constructing_vector(std::string const &key, std::shared_ptr<core::any> obj) {
+            if (!under_construction_collection.count(key))
+                throw pvpf::utils::pvpf_exception((std::string("invoke start_constructing_vector first")).c_str());
+
+            (*map)[key + std::to_string(under_construction_collection[key])] = std::move(obj);
+            under_construction_collection[key]++;
+        }
+
+        void complete_constructing_vector(std::string const &key) {
+            if (!under_construction_collection.count(key))
+                throw pvpf::utils::pvpf_exception((std::string("key:") + key + std::string(" does not exist")).c_str());
+
+            if (under_construction_collection[key] > 0) {
+                int size = under_construction_collection[key];
+                std::vector<std::shared_ptr<core::any>> vec;
+                for (int i = 0; i < size; i++) {
+                    vec.push_back(std::move((*map)[key + std::to_string(i)]));
+                }
+                put_collection_by_move(key, vec);
+            }
+
+            under_construction_collection.erase(key);
+        }
+
     };
 
 PVPF_NAMESPACE_END
