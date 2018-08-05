@@ -15,18 +15,17 @@
 #include <pvpf/utils/data_bucket.hpp>
 
 PVPF_NAMESPACE_BEGIN
-    namespace task_execution {
+namespace task_execution
+{
 
-        class memory_manager {
-        public:
-            void pre_process(std::vector<data_bucket> & data, context const & context);
-            void post_process(data_bucket & data, context const & context);
-            std::vector<data_bucket> generate_output_buckets(data_bucket & original);
+namespace memory_manager
+{
+void pre_process(std::vector<data_bucket> &data, context const &context);
+void post_process(data_bucket &data, context const &context);
+std::vector<data_bucket> generate_output_buckets(data_bucket &original);
+} // namespace memory_manager
 
-        };
-
-
-    }
+} // namespace task_execution
 
 PVPF_NAMESPACE_END
 

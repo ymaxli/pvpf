@@ -248,8 +248,7 @@ BOOST_AUTO_TEST_SUITE(io_node)
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
         task_execution::figure_out_json_object(d, sch);
-        tbb::flow::graph g;
-        sch.source_node_list(g,d["source"]);
+        sch.source_node_list(d["source"]);
         cout<<"here is the start"<<endl;
         sch.start_source_functions();
         sch.stop_io_threads();
@@ -259,8 +258,7 @@ BOOST_AUTO_TEST_SUITE(io_node)
         Document d = load_json_conf("./test_json/context.json");
         task_execution::scheduler sch;
         task_execution::figure_out_json_object(d, sch);
-        tbb::flow::graph g;
-        sch.source_node_list(g,d["source"]);
+        sch.source_node_list(d["source"]);
         cout<<"here is the start"<<endl;
         sch.start_source_functions();
         sch.stop_io_threads();
