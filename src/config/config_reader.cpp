@@ -52,7 +52,7 @@ namespace config
         return d;
     }
 
-    std::unordered_map load_algorithm(rapidjson::Document const &d){
+    std::unordered_map<std::string, std::string> load_algorithm(rapidjson::Document const &d){
 
     }
 

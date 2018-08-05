@@ -17,7 +17,7 @@ namespace config
     class config_reader{
     public:
         rapidjson::Document load_json_conf(const std::string &file);
-        std::unordered_map load_algorithm(rapidjson::Document const &d);
+        std::unordered_map<std::string, std::string> load_algorithm(rapidjson::Document const &d);
     };
 }
 
