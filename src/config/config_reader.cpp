@@ -52,6 +52,10 @@ namespace config
         return d;
     }
 
+    std::unordered_map load_algorithm(rapidjson::Document const &d){
+
+    }
+
 }
 
 PVPF_NAMESPACE_END
