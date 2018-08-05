@@ -65,4 +65,16 @@ BOOST_AUTO_TEST_SUITE(config_reader_test)
 
     }
 
+    BOOST_AUTO_TEST_CASE(reader_read_algorithm)
+    {
+        config_reader cr;
+        string jsonfile = "./test_json/context.json";
+        Document d = cr.load_json_conf(jsonfile);
+        auto map = cr.load_algorithm(d);
+        BOOST_CHECK((*map.get()).count("gpu_false") > 0);
+        BOOST_CHECK((*map.get()).count("lack_input") > 0);
+        BOOST_CHECK((*map.get()).count("happy_case") > 0);
+        BOOST_CHECK((*map.get()).count("no_gpu") > 0);
+    }
+
 BOOST_AUTO_TEST_SUITE_END()

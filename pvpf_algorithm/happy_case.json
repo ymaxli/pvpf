@@ -24,7 +24,7 @@
     },
     {
       "type": "algorithm",
-      "algorithm": ""
+      "algorithm": "lack_input"
     },
     {
       "type": "dylib",

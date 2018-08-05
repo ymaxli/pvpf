@@ -6,7 +6,7 @@
     "loop": {
       "input": "key1",
       "output": "key1"
-    },
+    }
   },
   "output": {
     "key1": "any",
@@ -20,7 +20,7 @@
     },
     {
       "type": "algorithm",
-      "algorithm": ""
+      "algorithm": "gpu_false"
     },
     {
       "type": "dylib",
