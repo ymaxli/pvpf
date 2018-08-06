@@ -35,6 +35,8 @@ void scheduler::build_graph(rapidjson::Document &conf)
     source_node_list(source_json_list);
     graph_node_map(graph_json_list);
     sink_node_list(sink_json_list);
+
+    connect_nodes();
 }
 
 void scheduler::start_source_functions()
@@ -219,6 +221,40 @@ std::unique_ptr<executable> scheduler::generate_executable(Value const &obj)
         }
     }
     return result;
+}
+
+void scheduler::connect_nodes()
+{
+    for (auto it = node_map.begin(); it != node_map.end(); it++)
+    {
+        auto &current_node = it->second;
+
+        // connect join_node & func_node within one logical node
+        switch (current_node->join_size)
+        {
+        case 2:
+            make_edge(*(current_node->wrap.size_2.j_node), *(current_node->wrap.size_2.func_node));
+            break;
+        case 3:
+            make_edge(*(current_node->wrap.size_3.j_node), *(current_node->wrap.size_3.func_node));
+            break;
+        }
+
+        // connect current logical node to its predecessors
+        context *current_context = get_context_of_logical_graph_node(*current_node);
+        for (int i = 0; i < current_context->pre.size(); i++)
+        {
+            auto &pre = current_context->pre[i];
+            if (node_map.count(pre) != 0)
+            {
+                connect_two_logical_graph_node(*(node_map[pre]), *current_node, i);
+            }
+            else if (source_node_map.count(pre) != 0)
+            {
+                connect_logical_source_node_with_logical_graph_node(*(source_node_map[pre]), *current_node, i);
+            }
+        }
+    }
 }
 
 } // namespace task_execution

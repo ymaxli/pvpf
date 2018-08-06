@@ -72,10 +72,7 @@ struct source_body
         pipe = std::move(const_cast<source_body &>(b).pipe);
     }
 
-    bool operator()(const data_bucket &db)
-    {
-        return true;
-    };
+    bool operator()(data_bucket &db);
 };
 
 template <size_t input_size>

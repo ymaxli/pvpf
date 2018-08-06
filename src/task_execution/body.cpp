@@ -88,30 +88,18 @@ data_bucket sink_body<input_size>::operator()(array<data_bucket, input_size> con
 
     return data_bucket();
 }
+
+bool source_body::operator()(data_bucket &db)
+{
+    if (!pipe->is_empty())
+    {
+        db = std::move(pipe->read());
+    }
+    else
+    {
+        return false;
+    }
+}
+
 } // namespace task_execution
 PVPF_NAMESPACE_END
-
-// // no need to invoke this method
-// void avoid_body_link_error()
-// {
-//     pvpf::task_execution::node_body<1> node1;
-//     pvpf::task_execution::node_body<2> node2;
-//     pvpf::task_execution::node_body<3> node3;
-//     pvpf::task_execution::node_body<4> node4;
-//     pvpf::task_execution::node_body<5> node5;
-//     pvpf::task_execution::node_body<6> node6;
-//     pvpf::task_execution::node_body<7> node7;
-//     pvpf::task_execution::node_body<8> node8;
-//     pvpf::task_execution::node_body<9> node9;
-//     pvpf::task_execution::node_body<10> node10;
-//     pvpf::task_execution::sink_body<1> node11;
-//     pvpf::task_execution::sink_body<2> node12;
-//     pvpf::task_execution::sink_body<3> node13;
-//     pvpf::task_execution::sink_body<4> node14;
-//     pvpf::task_execution::sink_body<5> node15;
-//     pvpf::task_execution::sink_body<6> node16;
-//     pvpf::task_execution::sink_body<7> node17;
-//     pvpf::task_execution::sink_body<8> node18;
-//     pvpf::task_execution::sink_body<9> node19;
-//     pvpf::task_execution::sink_body<10> node20;
-// }
