@@ -44,10 +44,12 @@ struct logical_graph_node
         struct ssize_1
         {
             std::shared_ptr<context> cont;
+            std::unique_ptr<join_node<std::array<data_bucket, 1>>> j_node;
             std::unique_ptr<function_node<std::array<data_bucket, 1>, data_bucket>> func_node;
 
             ssize_1(std::shared_ptr<context> cont,
-                    std::unique_ptr<function_node<std::array<data_bucket, 1>, data_bucket>> func_node) : cont(std::move(cont)), func_node(std::move(func_node)) {}
+                    std::unique_ptr<function_node<std::array<data_bucket, 1>, data_bucket>> func_node,
+                    std::unique_ptr<join_node<std::array<data_bucket, 1>>> j_node) : cont(std::move(cont)), func_node(std::move(func_node)), j_node(std::move(j_node)) {}
         } size_1;
 
         struct ssize_2
@@ -81,6 +83,12 @@ generate_logical_graph_node(graph &g, size_t join_size, std::shared_ptr<context>
 std::unique_ptr<logical_graph_node>
 generate_logical_sink_node(graph &g, size_t join_size, std::shared_ptr<context> cont,
                            std::unique_ptr<data_io::io_pipe_for_sink_node> io_pipe);
+
+void connect_two_logical_graph_node(logical_graph_node const &first, logical_graph_node const &second, int second_port);
+void connect_logical_source_node_with_logical_graph_node(logical_source_node const &first, logical_graph_node const &second, int second_port);
+
+context *
+get_context_of_logical_graph_node(logical_graph_node const &node);
 
 } // namespace task_execution
 PVPF_NAMESPACE_END
