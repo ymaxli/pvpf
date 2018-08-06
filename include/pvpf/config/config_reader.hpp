@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <string>
 #include "pvpf/pvpf.hpp"
+#include <memory>
 
 PVPF_NAMESPACE_BEGIN
 
