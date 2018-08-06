@@ -19,7 +19,7 @@ PVPF_NAMESPACE_BEGIN
         public:
             rapidjson::Document load_json_conf(const std::string &file);
 
-            std::unique_ptr<std::unordered_map<std::string, rapidjson::Document>> load_algorithm(rapidjson::Document const &d);
+            std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> load_algorithm(rapidjson::Document const &d);
         private:
             void config_algorithm(std::unordered_map<std::string, rapidjson::Document> &map, std::string algorithm_name);
         };

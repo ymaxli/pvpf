@@ -15,6 +15,7 @@
 #include <pvpf/utils/data_bucket.hpp>
 #include <map>
 #include <utility>
+#include <memory>
 
 using namespace tbb::flow;
 
@@ -60,7 +61,8 @@ PVPF_NAMESPACE_BEGIN
 
             void save_sink_pipe(rapidjson::Value const &obj, std::unique_ptr<data_io::sink_io_pipe> io_pipe);
 
-//            std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj);
+            std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj,
+                                                            std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> map);
 
             void start_source_functions();
 
