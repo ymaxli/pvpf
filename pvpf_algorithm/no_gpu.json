@@ -23,7 +23,7 @@
     },
     {
       "type": "algorithm",
-      "algorithm": ""
+      "algorithm": "gpu_false"
     },
     {
       "type": "dylib",

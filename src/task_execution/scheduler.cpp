@@ -170,58 +170,58 @@ void scheduler::save_sink_pipe(Value const &obj, unique_ptr<sink_io_pipe> io_pip
     sink_pipe_map[func_id] = std::move(io_pipe);
 }
 
-std::unique_ptr<executable> scheduler::generate_executable(Value const &obj)
-{
-    os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
-    config_reader cr;
-    unique_ptr<abstract_algorithm> result;
-    if (obj.HasMember("meta") && obj["meta"].HasMember("loop"))
-    {
-        cout << "it is a loop" << endl;
-        unordered_map<string, string> loop_key_map;
-        for (Value::ConstMemberIterator it = obj["meta"]["loop"].MemberBegin();
-             it != obj["meta"]["loop"].MemberEnd(); it++)
-        {
-            loop_key_map[it->name.GetString()] = it->value.GetString();
-        }
-        result = make_unique<loop_algorithm>(loop_key_map);
-    }
-    else
-    {
-        cout << "it is a normal library" << endl;
-        result = make_unique<normal_algorithm>();
-    }
-    cout << "main executable is ready" << endl;
-    for (Value::ConstValueIterator it = obj["body"].Begin(); it != obj["body"].End(); it++)
-    {
-        string type = (*it)["type"].GetString();
-        if (type == "dylib")
-        {
-            cout << "it is dylib" << endl;
-            string location = (*it)["location"].GetString();
-            string func = (*it)["func"].GetString();
-            dylib_func_ptr ptr = manager.load_algorithm(location, func);
-            unique_ptr<executable> temp = make_unique<dynamic_library_func>(ptr);
-            (*result.get()).add_executable(std::move(temp));
-        }
-        else if (type == "algorithm")
-        {
-            cout << "it is an algorithm" << endl;
-            string path = "";
-            path = path + "./pvpf_algorithm/" + (*it)["algorithm"].GetString() + ".json";
-            Document d = cr.load_json_conf(path);
-            unique_ptr<executable> temp = generate_executable(d);
-            cout << "algorithm generated" << endl;
-            (*result.get()).add_executable(std::move(temp));
-            cout << "move finished" << endl;
-        }
-        else
-        {
-            cout << "wrong type" << endl;
-        }
-    }
-    return result;
-}
+//std::unique_ptr<executable> scheduler::generate_executable(Value const &obj)
+//{
+//    os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
+//    config_reader cr;
+//    unique_ptr<abstract_algorithm> result;
+//    if (obj.HasMember("meta") && obj["meta"].HasMember("loop"))
+//    {
+//        cout << "it is a loop" << endl;
+//        unordered_map<string, string> loop_key_map;
+//        for (Value::ConstMemberIterator it = obj["meta"]["loop"].MemberBegin();
+//             it != obj["meta"]["loop"].MemberEnd(); it++)
+//        {
+//            loop_key_map[it->name.GetString()] = it->value.GetString();
+//        }
+//        result = make_unique<loop_algorithm>(loop_key_map);
+//    }
+//    else
+//    {
+//        cout << "it is a normal library" << endl;
+//        result = make_unique<normal_algorithm>();
+//    }
+//    cout << "main executable is ready" << endl;
+//    for (Value::ConstValueIterator it = obj["body"].Begin(); it != obj["body"].End(); it++)
+//    {
+//        string type = (*it)["type"].GetString();
+//        if (type == "dylib")
+//        {
+//            cout << "it is dylib" << endl;
+//            string location = (*it)["location"].GetString();
+//            string func = (*it)["func"].GetString();
+//            dylib_func_ptr ptr = manager.load_algorithm(location, func);
+//            unique_ptr<executable> temp = make_unique<dynamic_library_func>(ptr);
+//            (*result.get()).add_executable(std::move(temp));
+//        }
+//        else if (type == "algorithm")
+//        {
+//            cout << "it is an algorithm" << endl;
+//            string path = "";
+//            path = path + "./pvpf_algorithm/" + (*it)["algorithm"].GetString() + ".json";
+//            Document d = cr.load_json_conf(path);
+//            unique_ptr<executable> temp = generate_executable(d);
+//            cout << "algorithm generated" << endl;
+//            (*result.get()).add_executable(std::move(temp));
+//            cout << "move finished" << endl;
+//        }
+//        else
+//        {
+//            cout << "wrong type" << endl;
+//        }
+//    }
+//    return result;
+//}
 
 void scheduler::connect_nodes()
 {

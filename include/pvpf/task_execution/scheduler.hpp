@@ -62,7 +62,7 @@ class scheduler
 
     void save_sink_pipe(rapidjson::Value const &obj, std::unique_ptr<data_io::sink_io_pipe> io_pipe);
 
-    std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj);
+    //            std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj);
 
     void connect_nodes();
 
