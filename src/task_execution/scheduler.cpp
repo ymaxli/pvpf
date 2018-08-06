@@ -93,7 +93,7 @@ void scheduler::activate_source_nodes()
 {
     for (auto it = source_node_map.begin(); it != source_node_map.end(); it++)
     {
-        it->activate();
+        it->second->source->activate();
     }
 }
 
