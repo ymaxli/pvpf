@@ -39,6 +39,17 @@ void scheduler::build_graph(rapidjson::Document &conf)
     connect_nodes();
 }
 
+void scheduler::run()
+{
+    start_sink_functions();
+    start_source_functions();
+    activate_source_nodes();
+
+    graph.wait_for_all();
+
+    stop_io_threads();
+}
+
 void scheduler::start_source_functions()
 {
     for (auto &it : source_pipe_map)
@@ -75,6 +86,14 @@ void scheduler::stop_io_threads()
     for (int i = 0; i < thread_vector.size(); i++)
     {
         thread_vector[i].join();
+    }
+}
+
+void scheduler::activate_source_nodes()
+{
+    for (auto it = source_node_map.begin(); it != source_node_map.end(); it++)
+    {
+        it->activate();
     }
 }
 
