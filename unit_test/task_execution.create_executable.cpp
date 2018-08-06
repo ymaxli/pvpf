@@ -9,6 +9,7 @@
 #include <rapidjson/document.h>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <pvpf/config/config_reader.hpp>
 
 BOOST_AUTO_TEST_SUITE(scheduler_executable)
     using namespace std;
@@ -50,12 +51,14 @@ BOOST_AUTO_TEST_SUITE(scheduler_executable)
     }
 
     BOOST_AUTO_TEST_CASE(normal_algorithm) {
-//        Document d = load_json_conf("./test_json/executable.json");
-//        task_execution::scheduler sch;
-//        unique_ptr<task_execution::executable> result = sch.generate_executable(d);
-//        data_bucket fake;
-//        fake.put("input", string("key1"));
-//        fake.put("output", string("key1"));
-//        result.get()->exec(fake, fake);
+        Document d = load_json_conf("./test_json/executable.json");
+        task_execution::scheduler sch;
+        config::config_reader cr;
+        shared_ptr<unordered_map<string, Document>> map = cr.load_algorithm(d);
+        unique_ptr<task_execution::executable> result = sch.generate_executable(d, std::move(map));
+        data_bucket fake;
+        fake.put("input", string("key1"));
+        fake.put("output", string("key1"));
+        result.get()->exec(fake, fake);
     }
 BOOST_AUTO_TEST_SUITE_END()

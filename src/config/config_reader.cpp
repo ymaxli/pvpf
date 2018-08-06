@@ -50,9 +50,9 @@ PVPF_NAMESPACE_BEGIN
             return d;
         }
 
-        std::unique_ptr<std::unordered_map<std::string, rapidjson::Document>> config_reader::load_algorithm(rapidjson::Document const &d) {
+        std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> config_reader::load_algorithm(rapidjson::Document const &d) {
             const Value &graph_json = d["graph"];
-            auto map = make_unique<unordered_map<string, Document>>();
+            auto map = make_shared<unordered_map<string, Document>>();
             for (auto node = graph_json.Begin(); node != graph_json.End(); node++) {
                 if ((*node)["task"].HasMember("algorithm")){
                     config_algorithm(*(map), (*node)["task"]["algorithm"].GetString());
