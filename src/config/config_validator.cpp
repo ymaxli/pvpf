@@ -5,6 +5,7 @@
 #include "pvpf/config/config_validator.hpp"
 #include "pvpf/config/validation_rule.hpp"
 #include <iostream>
+#include <memory>
 
 using namespace rapidjson;
 using namespace std;
