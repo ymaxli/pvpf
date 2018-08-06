@@ -50,26 +50,26 @@ PVPF_NAMESPACE_BEGIN
             return d;
         }
 
-        std::unique_ptr<std::unordered_map<std::string, rapidjson::Document *>> config_reader::load_algorithm(rapidjson::Document const &d) {
+        std::unique_ptr<std::unordered_map<std::string, rapidjson::Document>> config_reader::load_algorithm(rapidjson::Document const &d) {
             const Value &graph_json = d["graph"];
-            auto map = make_unique<unordered_map<string, Document *>>();
+            auto map = make_unique<unordered_map<string, Document>>();
             for (auto node = graph_json.Begin(); node != graph_json.End(); node++) {
                 if ((*node)["task"].HasMember("algorithm")){
-                    config_algorithm(*(map.get()), (*node)["task"]["algorithm"].GetString());
+                    config_algorithm(*(map), (*node)["task"]["algorithm"].GetString());
                 }
             }
             return map;
         }
 
-        void config_reader::config_algorithm(std::unordered_map<std::string, rapidjson::Document *> &map,
+        void config_reader::config_algorithm(std::unordered_map<std::string, rapidjson::Document> &map,
                                              std::string algorithm_name) {
             if (map.count(algorithm_name) > 0) return;
             string path = "";
             path = path + "./pvpf_algorithm/" + algorithm_name + ".json";
             Document d = load_json_conf(path);
-            map[algorithm_name] = const_cast<Document *>(&d);
-            for (Value::ConstValueIterator algo_config = d["body"].Begin();
-                 algo_config != d["body"].End(); algo_config++){
+            map[algorithm_name] = std::move(d);
+            for (Value::ConstValueIterator algo_config = map[algorithm_name]["body"].Begin();
+                 algo_config != map[algorithm_name]["body"].End(); algo_config++){
                 string str = (*algo_config)["type"].GetString();
                 if (str == "algorithm"){
                     config_algorithm(map, (*algo_config)["algorithm"].GetString());
