@@ -197,16 +197,17 @@ PVPF_NAMESPACE_BEGIN
                 } else if (type == "algorithm") {
                     cout << "it is an algorithm" << endl;
                     string algorithm_name = (*it)["algorithm"].GetString();
-                    d = map[algorithm_name];
-                    unique_ptr<executable> temp = generate_executable(d);
+                    Document d = std::move((*map)[algorithm_name]);
+                    unique_ptr<executable> temp = generate_executable(d, map);
                     cout << "algorithm generated" << endl;
                     (*result.get()).add_executable(std::move(temp));
                     cout << "move finished" << endl;
+                    (*map)[algorithm_name] = std::move(d);
                 } else {
                     cout << "wrong type" << endl;
                 }
             }
-            return result;
+            return make_unique<executable>(result);
         }
 
         void scheduler::connect_nodes() {
