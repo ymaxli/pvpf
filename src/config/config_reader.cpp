@@ -9,6 +9,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem.hpp>
 #include <sstream>
+#include <memory>
 
 using namespace rapidjson;
 using namespace std;
