@@ -18,17 +18,8 @@
   "body": [
     {
       "type": "dylib",
-      "location": "",
-      "func": ""
-    },
-    {
-      "type": "algorithm",
-      "algorithm": "gpu_false"
-    },
-    {
-      "type": "dylib",
-      "location": "",
-      "func": ""
+      "location": "./test_dylib/algorithm.dylib",
+      "func": "test1"
     }
   ]
 }

@@ -19,17 +19,17 @@
   "body": [
     {
       "type": "dylib",
-      "location": "",
-      "func": ""
+      "location": "./test_dylib/algorithm.dylib",
+      "func": "test1"
     },
     {
       "type": "algorithm",
-      "algorithm": "lack_input"
+      "algorithm": "gpu_false"
     },
     {
       "type": "dylib",
-      "location": "",
-      "func": ""
+      "location": "./test_dylib/algorithm.dylib",
+      "func": "test2"
     }
   ]
 }

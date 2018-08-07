@@ -191,8 +191,18 @@ PVPF_NAMESPACE_BEGIN
 
         std::unique_ptr<executable>
         scheduler::generate_executable(Value const &obj, shared_ptr<unordered_map<string, Document>> map) {
+            string algorithm_name = obj["task"]["algorithm"].GetString();
+            Document algorithm = std::move((*map)[algorithm_name]);
+            cout<<"generating executable"<<endl;
+            unique_ptr<executable> result = executable_helper(algorithm, map);
+            cout<<"here"<<endl;
+            cout<<(*map).count(algorithm_name)<<endl;
+            return result;
+        }
+
+        std::unique_ptr<executable>
+        scheduler::executable_helper(Value const &obj, shared_ptr<unordered_map<string, Document>> map) {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
-            config_reader cr;
             unique_ptr<abstract_algorithm> result;
             if (obj.HasMember("meta") && obj["meta"].HasMember("loop")) {
                 cout << "it is a loop" << endl;
@@ -212,8 +222,8 @@ PVPF_NAMESPACE_BEGIN
                 if (type == "dylib") {
                     cout << "it is dylib" << endl;
                     string location = (*it)["location"].GetString();
-                    string func = (*it)["func"
-                                        ""].GetString();
+                    string func = (*it)["func"].GetString();
+                    cout<<func<<endl;
                     dylib_func_ptr ptr = manager.load_algorithm(location, func);
                     unique_ptr<executable> temp = make_unique<dynamic_library_func>(ptr);
                     (*result.get()).add_executable(std::move(temp));
@@ -221,7 +231,7 @@ PVPF_NAMESPACE_BEGIN
                     cout << "it is an algorithm" << endl;
                     string algorithm_name = (*it)["algorithm"].GetString();
                     Document d = std::move((*map)[algorithm_name]);
-                    unique_ptr<executable> temp = generate_executable(d, map);
+                    unique_ptr<executable> temp = executable_helper(d, map);
                     cout << "algorithm generated" << endl;
                     (*result.get()).add_executable(std::move(temp));
                     cout << "move finished" << endl;

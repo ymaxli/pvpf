@@ -75,6 +75,9 @@ private:
   void start_sink_functions();
 
   void activate_source_nodes();
+
+  std::unique_ptr<executable> executable_helper(const rapidjson::Value &obj,
+                                                  std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> map);
 };
 
 void run_source_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe);

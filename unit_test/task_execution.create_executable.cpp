@@ -55,10 +55,11 @@ BOOST_AUTO_TEST_SUITE(scheduler_executable)
         task_execution::scheduler sch;
         config::config_reader cr;
         shared_ptr<unordered_map<string, Document>> map = cr.load_algorithm(d);
-        unique_ptr<task_execution::executable> result = sch.generate_executable(d["graph"][0]["task"], std::move(map));
-        data_bucket fake;
-        fake.put("input", string("key1"));
-        fake.put("output", string("key1"));
-        result.get()->exec(fake, fake);
+        cout<<d.HasMember("graph")<<endl;
+        unique_ptr<task_execution::executable> result = sch.generate_executable(d["graph"][0], std::move(map));
+//        data_bucket fake;
+//        fake.put("input", string("key1"));
+//        fake.put("output", string("key1"));
+//        result.get()->exec(fake, fake);
     }
 BOOST_AUTO_TEST_SUITE_END()
