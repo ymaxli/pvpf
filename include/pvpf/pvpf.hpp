@@ -15,9 +15,9 @@
 #define PVPF_NAMESPACE_END }
 #endif
 
-//#ifdef DEV_MODE
-//#define private public
-//#endif
+#ifdef DEV_MODE
+#define private public
+#endif
 
 
 #endif //PVPF_H
