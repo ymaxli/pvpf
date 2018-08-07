@@ -25,7 +25,7 @@ include_directories(${SYSTEM_TESTS_INCLUDES})
 add_definitions(-DBOOST_TEST_DYN_LINK)
 #add_executable(${PROJECT_SYSTEM_TESTS_NAME} ${SYSTEM_TESTS_SRC_FILES} $<TARGET_OBJECTS:demo_objects> )
 add_executable(${PROJECT_SYSTEM_TESTS_NAME} ${SYSTEM_TESTS_SRC_FILES} ${SRC_FILES})
-target_link_libraries(${PROJECT_SYSTEM_TESTS_NAME} ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_SYSTEM_TESTS_NAME} ${Boost_LIBRARIES} ${OpenCV_LIBS} ${CMAKE_DL_LIBS} -ltbb)
 
 enable_testing()
 add_test(SYSTEMTEST ${PROJECT_SYSTEM_TESTS_NAME})

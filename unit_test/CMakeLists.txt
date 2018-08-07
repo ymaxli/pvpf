@@ -21,7 +21,7 @@ add_definitions(-DDEV_MODE)
 add_definitions(-DBOOST_TEST_DYN_LINK)
 
 add_executable(${PROJECT_UNIT_TESTS_NAME} ${UNIT_TESTS_SRC_FILES} ${INC_FILES} ${SRC_FILES})
-target_link_libraries(${PROJECT_UNIT_TESTS_NAME} PRIVATE ${Boost_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_UNIT_TESTS_NAME} PRIVATE ${Boost_LIBRARIES} ${OpenCV_LIBS} ${CMAKE_DL_LIBS} -ltbb)
 
 enable_testing()
 #add_test(RealTest second_test)
