@@ -23,8 +23,10 @@ using namespace pvpf::config;
 using namespace pvpf::data_io;
 
 PVPF_NAMESPACE_BEGIN
-    namespace task_execution {
-        void scheduler::build_graph(rapidjson::Document &conf) {
+    namespace task_execution
+    {
+        void scheduler::build_graph(rapidjson::Document &conf)
+        {
 
             const Value &source_json_list = conf["source"];
             const Value &graph_json_list = conf["graph"];
@@ -37,7 +39,8 @@ PVPF_NAMESPACE_BEGIN
             connect_nodes();
         }
 
-        void scheduler::run() {
+        void scheduler::run()
+        {
             start_sink_functions();
             start_source_functions();
             activate_source_nodes();
@@ -47,45 +50,57 @@ PVPF_NAMESPACE_BEGIN
             stop_io_threads();
         }
 
-        void scheduler::start_source_functions() {
-            for (auto &it : source_pipe_map) {
+        void scheduler::start_source_functions()
+        {
+            for (auto &it : source_pipe_map)
+            {
                 thread t(run_source_func, it.first, move(it.second));
                 cout << "start one thread" << endl;
                 thread_vector.push_back(std::move(t));
             }
         }
 
-        void run_source_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe) {
+        void run_source_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe)
+        {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             manager.invoke_io_func(id, *(pipe.get()));
         };
 
-        void scheduler::start_sink_functions() {
-            for (auto &it : sink_pipe_map) {
+        void scheduler::start_sink_functions()
+        {
+            for (auto &it : sink_pipe_map)
+            {
                 thread t(run_sink_func, it.first, move(it.second));
                 thread_vector.push_back(std::move(t));
             }
         }
 
-        void run_sink_func(int id, std::unique_ptr<pvpf::data_io::sink_io_pipe> pipe) {
+        void run_sink_func(int id, std::unique_ptr<pvpf::data_io::sink_io_pipe> pipe)
+        {
             os_agnostic::dynamic_lib_func_manager &manager = os_agnostic::dynamic_lib_func_manager::get_instance();
             manager.invoke_io_func(id, *(pipe.get()));
         };
 
-        void scheduler::stop_io_threads() {
-            for (int i = 0; i < thread_vector.size(); i++) {
+        void scheduler::stop_io_threads()
+        {
+            for (int i = 0; i < thread_vector.size(); i++)
+            {
                 thread_vector[i].join();
             }
         }
 
-        void scheduler::activate_source_nodes() {
-            for (auto it = source_node_map.begin(); it != source_node_map.end(); it++) {
-                it->activate();
+        void scheduler::activate_source_nodes()
+        {
+            for (auto it = source_node_map.begin(); it != source_node_map.end(); it++)
+            {
+                it->second->source->activate();
             }
         }
 
-        void scheduler::source_node_list(const Value &conf) {
-            for (auto it = conf.Begin(); it != conf.End(); it++) {
+        void scheduler::source_node_list(const Value &conf)
+        {
+            for (auto it = conf.Begin(); it != conf.End(); it++)
+            {
 
                 auto c = create_context(*it, *this);
 
@@ -98,8 +113,10 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        void scheduler::graph_node_map(Value const &conf) {
-            for (auto it = conf.Begin(); it != conf.End(); it++) {
+        void scheduler::graph_node_map(Value const &conf)
+        {
+            for (auto it = conf.Begin(); it != conf.End(); it++)
+            {
 
                 auto c = create_context(*it, *this);
 
@@ -107,8 +124,10 @@ PVPF_NAMESPACE_BEGIN
             }
         }
 
-        void scheduler::sink_node_list(Value const &conf) {
-            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++) {
+        void scheduler::sink_node_list(Value const &conf)
+        {
+            for (Value::ConstValueIterator it = conf.Begin(); it != conf.End(); it++)
+            {
                 auto c = create_context(*(it), *this);
                 auto pair = pvpf::data_io::create_sink(BUFFER_SIZE, true);
 
@@ -118,7 +137,8 @@ PVPF_NAMESPACE_BEGIN
         }
 
         void scheduler::save_source_node(Value const &obj, shared_ptr<context> cont,
-                                         unique_ptr<io_pipe_for_source_node> io_pipe) {
+                                         unique_ptr<io_pipe_for_source_node> io_pipe)
+        {
             string id = obj["id"].GetString();
 
             source_body ib(cont, std::move(io_pipe));
@@ -127,7 +147,8 @@ PVPF_NAMESPACE_BEGIN
             source_node_map[id] = std::make_unique<logical_source_node>(std::move(node), cont);
         }
 
-        void scheduler::save_source_pipe(rapidjson::Value const &obj, std::unique_ptr<source_io_pipe> io_pipe) {
+        void scheduler::save_source_pipe(rapidjson::Value const &obj, std::unique_ptr<source_io_pipe> io_pipe)
+        {
             auto &manager = dynamic_lib_func_manager::get_instance();
 
             path location(obj["task"]["dylib"]["location"].GetString());
@@ -138,25 +159,26 @@ PVPF_NAMESPACE_BEGIN
             source_pipe_map[func_id] = std::move(io_pipe);
         }
 
-        void scheduler::save_graph_node(Value const &obj, shared_ptr<context> cont) {
+        void scheduler::save_graph_node(Value const &obj, shared_ptr<context> cont)
+        {
             string id = obj["id"].GetString();
 
             // auto exec = generate_executable(obj);
 
-            node_map[id] = task_execution::generate_logical_graph_node(graph, cont->pre.size(), cont,
-                                                                       make_shared<normal_algorithm>(),
+            node_map[id] = task_execution::generate_logical_graph_node(graph, cont->pre.size(), cont, make_shared<normal_algorithm>(),
                                                                        make_shared<data_bucket>());
         }
 
         void scheduler::save_sink_node(Value const &obj, shared_ptr<context> cont,
-                                       unique_ptr<io_pipe_for_sink_node> io_pipe) {
+                                       unique_ptr<io_pipe_for_sink_node> io_pipe)
+        {
             string id = obj["id"].GetString();
 
-            node_map[id] = task_execution::generate_logical_sink_node(graph, cont->pre.size(), cont,
-                                                                      std::move(io_pipe));
+            node_map[id] = task_execution::generate_logical_sink_node(graph, cont->pre.size(), cont, std::move(io_pipe));
         }
 
-        void scheduler::save_sink_pipe(Value const &obj, unique_ptr<sink_io_pipe> io_pipe) {
+        void scheduler::save_sink_pipe(Value const &obj, unique_ptr<sink_io_pipe> io_pipe)
+        {
             auto &manager = dynamic_lib_func_manager::get_instance();
 
             path location(obj["task"]["dylib"]["location"].GetString());
@@ -190,7 +212,8 @@ PVPF_NAMESPACE_BEGIN
                 if (type == "dylib") {
                     cout << "it is dylib" << endl;
                     string location = (*it)["location"].GetString();
-                    string func = (*it)["func"].GetString();
+                    string func = (*it)["func"
+                                        ""].GetString();
                     dylib_func_ptr ptr = manager.load_algorithm(location, func);
                     unique_ptr<executable> temp = make_unique<dynamic_library_func>(ptr);
                     (*result.get()).add_executable(std::move(temp));
@@ -207,15 +230,18 @@ PVPF_NAMESPACE_BEGIN
                     cout << "wrong type" << endl;
                 }
             }
-            return make_unique<executable>(result);
+            return result;
         }
 
-        void scheduler::connect_nodes() {
-            for (auto it = node_map.begin(); it != node_map.end(); it++) {
+        void scheduler::connect_nodes()
+        {
+            for (auto it = node_map.begin(); it != node_map.end(); it++)
+            {
                 auto &current_node = it->second;
 
                 // connect join_node & func_node within one logical node
-                switch (current_node->join_size) {
+                switch (current_node->join_size)
+                {
                     case 2:
                         make_edge(*(current_node->wrap.size_2.j_node), *(current_node->wrap.size_2.func_node));
                         break;
@@ -226,11 +252,15 @@ PVPF_NAMESPACE_BEGIN
 
                 // connect current logical node to its predecessors
                 context *current_context = get_context_of_logical_graph_node(*current_node);
-                for (int i = 0; i < current_context->pre.size(); i++) {
+                for (int i = 0; i < current_context->pre.size(); i++)
+                {
                     auto &pre = current_context->pre[i];
-                    if (node_map.count(pre) != 0) {
+                    if (node_map.count(pre) != 0)
+                    {
                         connect_two_logical_graph_node(*(node_map[pre]), *current_node, i);
-                    } else if (source_node_map.count(pre) != 0) {
+                    }
+                    else if (source_node_map.count(pre) != 0)
+                    {
                         connect_logical_source_node_with_logical_graph_node(*(source_node_map[pre]), *current_node, i);
                     }
                 }
