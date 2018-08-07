@@ -4,7 +4,7 @@
 
 #include <pvpf/task_execution/scheduler.logical_node.hpp>
 #include <pvpf/task_execution/body.hpp>
-#include "body.cpp"
+#include "body_template.cpp"
 #include <pvpf/utils/exception.hpp>
 #include <tbb/flow_graph.h>
 
