@@ -32,7 +32,7 @@ public:
 
   void run();
 
-//private:
+private:
   tbb::flow::graph graph;
 
   std::unordered_map<std::string, std::unique_ptr<logical_graph_node>> node_map;
