@@ -1,0 +1,17 @@
+{
+    "meta": {
+        "name": "sink",
+        "version": "0.1",
+        "gpu": false
+    },
+    "input": {
+        "sink": "any"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "",
+            "func": "sink"
+        }
+    ]
+}
