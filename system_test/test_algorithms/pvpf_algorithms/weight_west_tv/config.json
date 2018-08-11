@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "name": "weight_west_tv",
+        "version": "1.0.0",
+        "gpu": false
+    },
+    "input": {
+        "data": "Mat",
+        "dy": "Mat"
+    },
+    "output": {
+        "weight_west": "Mat"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "./weight_tv.dylib",
+            "func": "weight_west_tv"
+        }
+    ]
+}

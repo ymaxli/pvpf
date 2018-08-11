@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "name": "opencv_filter2d",
+        "version": "1.0.0",
+        "gpu": false
+    },
+    "input": {
+        "data": "Mat"
+    },
+    "output": {
+        "data": "Mat",
+        "d": "Mat"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "./opencv.dylib",
+            "func": "filter2d"
+        }
+    ]
+}

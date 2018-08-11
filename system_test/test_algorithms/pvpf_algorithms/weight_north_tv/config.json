@@ -1,0 +1,21 @@
+{
+    "meta": {
+        "name": "weight_north_tv",
+        "version": "1.0.0",
+        "gpu": false
+    },
+    "input": {
+        "data": "Mat",
+        "dx": "Mat"
+    },
+    "output": {
+        "weight_north": "Mat"
+    },
+    "body": [
+        {
+            "type": "dylib",
+            "location": "./weight_tv.dylib",
+            "func": "weight_north_tv"
+        }
+    ]
+}

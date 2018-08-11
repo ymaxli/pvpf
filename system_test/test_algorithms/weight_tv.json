@@ -1,0 +1,232 @@
+{
+    "meta": {
+        "name": "weight_tv",
+        "version": "0.0.1"
+    },
+    "source": [
+        {
+            "id": "read_image",
+            "task": {
+                "dylib": {
+                    "location": "./io/read_image.dylib",
+                    "func": "source"
+                }
+            },
+            "output": {
+                "data": {
+                    "data": "any"
+                }
+            }
+        }
+    ],
+    "graph": [
+        {
+            "id": "filter2d_y",
+            "meta": {
+                "frame_dropping": false
+            },
+            "input": {
+                "pre": [
+                    "read_image"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "algorithm": "opencv_filter2d",
+                "params": {
+                    "kernel": [
+                        0.25,
+                        0.75,
+                        0,
+                        -0.25
+                    ]
+                }
+            },
+            "output": {}
+        },
+        {
+            "id": "filter2d_x",
+            "meta": {
+                "frame_dropping": false
+            },
+            "input": {
+                "pre": [
+                    "read_image"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "algorithm": "opencv_filter2d",
+                "params": {
+                    "kernel": [
+                        0.75,
+                        0.25,
+                        0,
+                        -0.25
+                    ]
+                }
+            },
+            "output": {}
+        },
+        {
+            "id": "weight_west_tv",
+            "meta": {
+                "frame_dropping": false
+            },
+            "input": {
+                "pre": [
+                    "filter2d_y"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "algorithm": "weight_west_tv",
+                "params": {
+                    "diff_horizontalkernel": [
+                        -1.0,
+                        -2.0,
+                        1.0
+                    ],
+                    "sum_horizontalkernel": [
+                        1.0,
+                        2.0,
+                        1.0
+                    ]
+                }
+            },
+            "output": {}
+        },
+        {
+            "id": "weight_east_tv",
+            "meta": {
+                "frame_dropping": false
+            },
+            "input": {
+                "pre": [
+                    "filter2d_y"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "algorithm": "weight_east_tv",
+                "params": {
+                    "diff_horizontalkernel": [
+                        -1.0,
+                        -2.0,
+                        1.0
+                    ],
+                    "sum_horizontalkernel": [
+                        1.0,
+                        2.0,
+                        1.0
+                    ]
+                }
+            },
+            "output": {}
+        },
+        {
+            "id": "weight_north_tv",
+            "meta": {
+                "frame_dropping": false
+            },
+            "input": {
+                "pre": [
+                    "filter2d_x"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "algorithm": "weight_north_tv",
+                "params": {
+                    "diff_verticalkernel": [
+                        -2.0,
+                        -1.0,
+                        1.0
+                    ],
+                    "sum_verticalkernel": [
+                        2.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            "output": {}
+        },
+        {
+            "id": "weight_south_tv",
+            "meta": {
+                "frame_dropping": false
+            },
+            "input": {
+                "pre": [
+                    "filter2d_x"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "algorithm": "weight_south_tv",
+                "params": {
+                    "diff_verticalkernel": [
+                        -2.0,
+                        -1.0,
+                        1.0
+                    ],
+                    "sum_verticalkernel": [
+                        2.0,
+                        1.0,
+                        1.0
+                    ]
+                }
+            },
+            "output": {}
+        }
+    ],
+    "sink": [
+        {
+            "id": "write_weights",
+            "input": {
+                "pre": [
+                    "weight_west_tv",
+                    "weight_east_tv",
+                    "weight_north_tv",
+                    "weight_south_tv"
+                ],
+                "pre_conf": [
+                    {
+                        "readonly": true
+                    }
+                ]
+            },
+            "task": {
+                "dylib": {
+                    "location": "./io/write_weights.dylib",
+                    "func": "sink"
+                }
+            }
+        }
+    ]
+}

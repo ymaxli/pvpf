@@ -14,18 +14,20 @@
 
 PVPF_NAMESPACE_BEGIN
 
-    namespace config {
-        class config_reader {
-        public:
-            rapidjson::Document load_json_conf(const std::string &file);
+namespace config
+{
+class config_reader
+{
+  public:
+    rapidjson::Document load_json_conf(const std::string &file);
 
-            std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> load_algorithm(rapidjson::Document const &d);
-        private:
-            void config_algorithm(std::unordered_map<std::string, rapidjson::Document> &map, std::string algorithm_name);
-        };
+    std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> load_algorithm(rapidjson::Document const &d, std::string const &parent_path);
 
+  private:
+    void config_algorithm(std::unordered_map<std::string, rapidjson::Document> &map, std::string const &algorithm_name, std::string const &parent_path);
+};
 
-    }
+} // namespace config
 
 PVPF_NAMESPACE_END
 
