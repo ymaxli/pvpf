@@ -26,13 +26,13 @@ namespace task_execution
 class scheduler
 {
 public:
-  std::map<std::string, rapidjson::Value *> json_object_map;
+  std::map<std::string, rapidjson::Value> json_object_map;
 
-  void build_graph(rapidjson::Document &conf);
+  void build_graph(rapidjson::Document &conf, std::unordered_map<std::string, rapidjson::Document> _algorithm_map);
 
   void run();
 
-//private:
+  //private:
   tbb::flow::graph graph;
 
   std::unordered_map<std::string, std::unique_ptr<logical_graph_node>> node_map;
@@ -44,6 +44,8 @@ public:
   std::unordered_map<int, std::unique_ptr<data_io::sink_io_pipe>> sink_pipe_map;
 
   std::vector<std::thread> thread_vector;
+
+  std::unordered_map<std::string, rapidjson::Document> algorithm_map;
 
   void source_node_list(rapidjson::Value const &conf);
 
@@ -64,7 +66,7 @@ public:
   void save_sink_pipe(rapidjson::Value const &obj, std::unique_ptr<data_io::sink_io_pipe> io_pipe);
 
   std::unique_ptr<executable> generate_executable(rapidjson::Value const &obj,
-                                                            std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> map);
+                                                  std::unordered_map<std::string, rapidjson::Document> const &map);
 
   void connect_nodes();
 
@@ -76,8 +78,10 @@ public:
 
   void activate_source_nodes();
 
-  std::unique_ptr<executable> executable_helper(const rapidjson::Value &obj,
-                                                  std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> map);
+  std::unique_ptr<executable> executable_helper(rapidjson::Value const &obj,
+                                                std::unordered_map<std::string, rapidjson::Document> const &map);
+
+  void fill_json_obj_map(rapidjson::Document &conf);
 };
 
 void run_source_func(int id, std::unique_ptr<pvpf::data_io::source_io_pipe> pipe);

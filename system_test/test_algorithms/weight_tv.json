@@ -8,8 +8,8 @@
             "id": "read_image",
             "task": {
                 "dylib": {
-                    "location": "./io/read_image.dylib",
-                    "func": "source"
+                    "location": "io/io_lib.dylib",
+                    "func": "input"
                 }
             },
             "output": {
@@ -33,17 +33,19 @@
                     {
                         "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "data": "data.0"
+                }
             },
             "task": {
                 "algorithm": "opencv_filter2d",
                 "params": {
-                    "kernel": [
-                        0.25,
-                        0.75,
-                        0,
-                        -0.25
-                    ]
+                    "kernel1": "3",
+                    "kernel2": "1",
+                    "kernel3": "0.25",
+                    "kernel4": "0.0",
+                    "kernel5": "-0.25"
                 }
             },
             "output": {}
@@ -61,17 +63,19 @@
                     {
                         "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "data": "data.0"
+                }
             },
             "task": {
                 "algorithm": "opencv_filter2d",
                 "params": {
-                    "kernel": [
-                        0.75,
-                        0.25,
-                        0,
-                        -0.25
-                    ]
+                    "kernel1": "1",
+                    "kernel2": "3",
+                    "kernel3": "0.25",
+                    "kernel4": "0.0",
+                    "kernel5": "-0.25"
                 }
             },
             "output": {}
@@ -89,21 +93,23 @@
                     {
                         "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "data": "data.0",
+                    "dy": "result.0"
+                }
             },
             "task": {
                 "algorithm": "weight_west_tv",
                 "params": {
-                    "diff_horizontalkernel": [
-                        -1.0,
-                        -2.0,
-                        1.0
-                    ],
-                    "sum_horizontalkernel": [
-                        1.0,
-                        2.0,
-                        1.0
-                    ]
+                    "diff_horizontalkernel1": "1",
+                    "diff_horizontalkernel2": "2",
+                    "diff_horizontalkernel3": "-1",
+                    "diff_horizontalkernel4": "1",
+                    "sum_horizontalkernel1": "1",
+                    "sum_horizontalkernel2": "2",
+                    "sum_horizontalkernel3": "1",
+                    "sum_horizontalkernel4": "1"
                 }
             },
             "output": {}
@@ -121,21 +127,23 @@
                     {
                         "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "data": "data.0",
+                    "dy": "result.0"
+                }
             },
             "task": {
                 "algorithm": "weight_east_tv",
                 "params": {
-                    "diff_horizontalkernel": [
-                        -1.0,
-                        -2.0,
-                        1.0
-                    ],
-                    "sum_horizontalkernel": [
-                        1.0,
-                        2.0,
-                        1.0
-                    ]
+                    "diff_horizontalkernel1": "1",
+                    "diff_horizontalkernel2": "2",
+                    "diff_horizontalkernel3": "-1",
+                    "diff_horizontalkernel4": "1",
+                    "sum_horizontalkernel1": "1",
+                    "sum_horizontalkernel2": "2",
+                    "sum_horizontalkernel3": "1",
+                    "sum_horizontalkernel4": "1"
                 }
             },
             "output": {}
@@ -153,21 +161,23 @@
                     {
                         "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "data": "data.0",
+                    "dx": "result.0"
+                }
             },
             "task": {
                 "algorithm": "weight_north_tv",
                 "params": {
-                    "diff_verticalkernel": [
-                        -2.0,
-                        -1.0,
-                        1.0
-                    ],
-                    "sum_verticalkernel": [
-                        2.0,
-                        1.0,
-                        1.0
-                    ]
+                    "diff_verticalkernel1": "2",
+                    "diff_verticalkernel2": "1",
+                    "diff_verticalkernel3": "-1",
+                    "diff_verticalkernel4": "1",
+                    "sum_verticalkernel1": "2",
+                    "sum_verticalkernel2": "1",
+                    "sum_verticalkernel3": "1",
+                    "sum_verticalkernel4": "1"
                 }
             },
             "output": {}
@@ -185,21 +195,23 @@
                     {
                         "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "data": "data.0",
+                    "dx": "result.0"
+                }
             },
             "task": {
                 "algorithm": "weight_south_tv",
                 "params": {
-                    "diff_verticalkernel": [
-                        -2.0,
-                        -1.0,
-                        1.0
-                    ],
-                    "sum_verticalkernel": [
-                        2.0,
-                        1.0,
-                        1.0
-                    ]
+                    "diff_verticalkernel1": "2",
+                    "diff_verticalkernel2": "1",
+                    "diff_verticalkernel3": "-1",
+                    "diff_verticalkernel4": "1",
+                    "sum_verticalkernel1": "2",
+                    "sum_verticalkernel2": "1",
+                    "sum_verticalkernel3": "1",
+                    "sum_verticalkernel4": "1"
                 }
             },
             "output": {}
@@ -218,13 +230,28 @@
                 "pre_conf": [
                     {
                         "readonly": true
+                    },
+                    {
+                        "readonly": true
+                    },
+                    {
+                        "readonly": true
+                    },
+                    {
+                        "readonly": true
                     }
-                ]
+                ],
+                "mapping": {
+                    "weight_west": "weight_west.0",
+                    "weight_east": "weight_east.1",
+                    "weight_north": "weight_north.2",
+                    "weight_south": "weight_south.3"
+                }
             },
             "task": {
                 "dylib": {
-                    "location": "./io/write_weights.dylib",
-                    "func": "sink"
+                    "location": "io/io_lib.dylib",
+                    "func": "output"
                 }
             }
         }

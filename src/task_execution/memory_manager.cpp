@@ -7,6 +7,7 @@
 #include "pvpf/task_execution/memory_manager.hpp"
 #include "pvpf/task_execution/memory_utils.hpp"
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -51,6 +52,9 @@ void memory_manager::pre_process(vector<data_bucket> &data, context const &conte
 //generate output data_bucket
 void memory_manager::post_process(data_bucket &data, context const &context)
 {
+
+    if (context.output_mapping.size() <= 0)
+        return;
 
     for (auto itr = data.begin(); itr != data.end(); ++itr)
     {

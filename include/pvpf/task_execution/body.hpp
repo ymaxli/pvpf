@@ -20,7 +20,7 @@ struct context
   public:
     std::string const node_id;
     std::vector<std::string> pre;
-    std::vector<std::string> succ;
+    std::vector<std::string> succ; // not implemented
     std::unordered_map<std::string, std::vector<std::pair<int, std::string>>> input_mapping;
     std::unordered_map<std::string, std::string> output_mapping;
     std::unordered_map<std::string, std::string> output_data;
@@ -107,7 +107,7 @@ struct node_body
               std::shared_ptr<data_bucket> params) : cont(std::move(context)),
                                                      exec(std::move(exec)), params(std::move(params)){};
 
-    node_body(const node_body &b) : exec(b.exec), cont(b.cont), params(b.params){};
+    node_body(const node_body &b) : cont(b.cont), exec(b.exec), params(b.params){};
 
     data_bucket operator()(std::array<data_bucket, input_size> const &data);
 

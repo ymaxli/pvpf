@@ -4,6 +4,10 @@
 
 #include <pvpf/task_execution/body.hpp>
 #include <pvpf/task_execution/memory_manager.hpp>
+#include <iostream>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <pvpf/utils/exception.hpp>
 
 using namespace std;
 
@@ -14,12 +18,11 @@ bool source_body::operator()(data_bucket &db)
 {
     if (!pipe->is_empty())
     {
-        db = std::move(pipe->read());
+        db = pipe->read();
+        return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 } // namespace task_execution
 PVPF_NAMESPACE_END

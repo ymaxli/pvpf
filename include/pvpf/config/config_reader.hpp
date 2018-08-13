@@ -18,13 +18,17 @@ namespace config
 {
 class config_reader
 {
-  public:
-    rapidjson::Document load_json_conf(const std::string &file);
+public:
+  rapidjson::Document load_json_conf(const std::string &file);
 
-    std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> load_algorithm(rapidjson::Document const &d, std::string const &parent_path);
+  std::shared_ptr<std::unordered_map<std::string, rapidjson::Document>> load_algorithm(rapidjson::Document const &d, std::string const &parent_path);
 
-  private:
-    void config_algorithm(std::unordered_map<std::string, rapidjson::Document> &map, std::string const &algorithm_name, std::string const &parent_path);
+private:
+  void config_algorithm(std::unordered_map<std::string, rapidjson::Document> &map, std::string const &algorithm_name, std::string const &parent_path);
+
+  void parse_library_location(rapidjson::Document &d, std::string const &parent_path);
+
+  void parse_algorithm_library_location(rapidjson::Document &d, std::string const &parent_path);
 };
 
 } // namespace config

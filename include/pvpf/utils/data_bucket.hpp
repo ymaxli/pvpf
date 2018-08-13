@@ -198,7 +198,7 @@ class data_bucket
             throw pvpf::utils::pvpf_exception(
                 (std::string("key:") + from_key + std::string(" does not exist")).c_str());
 
-        to.put(to_key, std::move((*map)[from_key]));
+        (*to.map)[to_key] = std::move((*map)[from_key]);
         remove(from_key);
     }
 
@@ -210,7 +210,7 @@ class data_bucket
         return true;
     }
 
-    unsigned long size()
+    unsigned long size() const
     {
         return this->map ? this->map->size() : 0;
     }
@@ -223,6 +223,11 @@ class data_bucket
     std::unordered_map<std::string, std::shared_ptr<core::any>>::iterator end()
     {
         return this->map->end();
+    }
+
+    size_t count(std::string const &key)
+    {
+        return this->map->count(key);
     }
 
   private:

@@ -14,8 +14,8 @@
     "body": [
         {
             "type": "dylib",
-            "location": "./opencv.dylib",
-            "func": "filter2d"
+            "location": "opencv.dylib",
+            "func": "filter2D"
         }
     ]
 }

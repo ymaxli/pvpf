@@ -7,6 +7,7 @@
 #include "body_template.cpp"
 #include <pvpf/utils/exception.hpp>
 #include <tbb/flow_graph.h>
+#include <iostream>
 
 using namespace std;
 using namespace tbb::flow;
@@ -20,7 +21,6 @@ generate_logical_graph_node(graph &g, size_t join_size, shared_ptr<context> cont
                             std::shared_ptr<executable> exec,
                             std::shared_ptr<data_bucket> params)
 {
-
     auto node = make_unique<logical_graph_node>();
     node->join_size = join_size;
 
@@ -56,12 +56,22 @@ generate_logical_graph_node(graph &g, size_t join_size, shared_ptr<context> cont
         node->wrap.size_3 = {std::move(cont), std::move(func), std::move(join)};
         break;
     }
+    case 4:
+    {
+        auto func = std::make_unique<function_node<array<data_bucket, 4>, data_bucket>>(g, unlimited,
+                                                                                        node_body<4>(cont,
+                                                                                                     exec,
+                                                                                                     params));
+        auto join = std::make_unique<join_node<array<data_bucket, 4>>>(g);
+        node->wrap.size_4 = {std::move(cont), std::move(func), std::move(join)};
+        break;
+    }
     default:
         throw utils::pvpf_exception(
             (std::string("illegal number of join nodes: ") + std::to_string(join_size)).c_str());
     }
 
-    return std::move(node);
+    return node;
 }
 
 std::unique_ptr<logical_graph_node>
@@ -105,12 +115,23 @@ generate_logical_sink_node(graph &g, size_t join_size, shared_ptr<context> cont,
 
         break;
     }
+    case 4:
+    {
+        auto func = std::make_unique<function_node<array<data_bucket, 4>, data_bucket>>(g, unlimited,
+                                                                                        sink_body<4>(
+                                                                                            cont,
+                                                                                            std::move(io_pipe)));
+        auto join = std::make_unique<join_node<array<data_bucket, 4>>>(g);
+        node->wrap.size_4 = {std::move(cont), std::move(func), std::move(join)};
+
+        break;
+    }
     default:
         throw utils::pvpf_exception(
             (std::string("illegal number of join nodes: ") + std::to_string(join_size)).c_str());
     }
 
-    return std::move(node);
+    return node;
 }
 
 void connect_two_logical_graph_node(logical_graph_node const &first, logical_graph_node const &second, int second_port)
@@ -156,6 +177,25 @@ void connect_two_logical_graph_node(logical_graph_node const &first, logical_gra
                 break;
             }
         }
+        else if (second_size == 4)
+        {
+            auto &second_join = second.wrap.size_4.j_node;
+            switch (second_port)
+            {
+            case 0:
+                make_edge(*first_func, input_port<0>(*second_join));
+                break;
+            case 1:
+                make_edge(*first_func, input_port<1>(*second_join));
+                break;
+            case 2:
+                make_edge(*first_func, input_port<2>(*second_join));
+                break;
+            case 3:
+                make_edge(*first_func, input_port<3>(*second_join));
+                break;
+            }
+        }
     }
     else if (first_size == 2)
     {
@@ -195,6 +235,25 @@ void connect_two_logical_graph_node(logical_graph_node const &first, logical_gra
                 break;
             }
         }
+        else if (second_size == 4)
+        {
+            auto &second_join = second.wrap.size_4.j_node;
+            switch (second_port)
+            {
+            case 0:
+                make_edge(*first_func, input_port<0>(*second_join));
+                break;
+            case 1:
+                make_edge(*first_func, input_port<1>(*second_join));
+                break;
+            case 2:
+                make_edge(*first_func, input_port<2>(*second_join));
+                break;
+            case 3:
+                make_edge(*first_func, input_port<3>(*second_join));
+                break;
+            }
+        }
     }
     else if (first_size == 3)
     {
@@ -231,6 +290,83 @@ void connect_two_logical_graph_node(logical_graph_node const &first, logical_gra
                 break;
             case 2:
                 make_edge(*first_func, input_port<2>(*second_join));
+                break;
+            }
+        }
+        else if (second_size == 4)
+        {
+            auto &second_join = second.wrap.size_4.j_node;
+            switch (second_port)
+            {
+            case 0:
+                make_edge(*first_func, input_port<0>(*second_join));
+                break;
+            case 1:
+                make_edge(*first_func, input_port<1>(*second_join));
+                break;
+            case 2:
+                make_edge(*first_func, input_port<2>(*second_join));
+                break;
+            case 3:
+                make_edge(*first_func, input_port<3>(*second_join));
+                break;
+            }
+        }
+    }
+    else if (first_size == 4)
+    {
+        auto &first_func = first.wrap.size_4.func_node;
+
+        if (second_size == 1)
+        {
+            auto &second_join = second.wrap.size_1.j_node;
+            make_edge(*first_func, input_port<0>(*second_join));
+        }
+        else if (second_size == 2)
+        {
+            auto &second_join = second.wrap.size_2.j_node;
+            switch (second_port)
+            {
+            case 0:
+                make_edge(*first_func, input_port<0>(*second_join));
+                break;
+            case 1:
+                make_edge(*first_func, input_port<1>(*second_join));
+                break;
+            }
+        }
+        else if (second_size == 3)
+        {
+            auto &second_join = second.wrap.size_3.j_node;
+            switch (second_port)
+            {
+            case 0:
+                make_edge(*first_func, input_port<0>(*second_join));
+                break;
+            case 1:
+                make_edge(*first_func, input_port<1>(*second_join));
+                break;
+            case 2:
+                make_edge(*first_func, input_port<2>(*second_join));
+                break;
+            }
+        }
+        else if (second_size == 4)
+        {
+            auto &second_join = second.wrap.size_4.j_node;
+            switch (second_port)
+            {
+            case 0:
+                make_edge(*first_func, input_port<0>(*second_join));
+                break;
+            case 1:
+                make_edge(*first_func, input_port<1>(*second_join));
+                break;
+            case 2:
+                make_edge(*first_func, input_port<2>(*second_join));
+                break;
+            case 3:
+                make_edge(*first_func, input_port<3>(*second_join));
                 break;
             }
         }
@@ -276,6 +412,25 @@ void connect_logical_source_node_with_logical_graph_node(logical_source_node con
             break;
         }
     }
+    else if (second_size == 4)
+    {
+        auto &second_join = second.wrap.size_4.j_node;
+        switch (second_port)
+        {
+        case 0:
+            make_edge(*first_source, input_port<0>(*second_join));
+            break;
+        case 1:
+            make_edge(*first_source, input_port<1>(*second_join));
+            break;
+        case 2:
+            make_edge(*first_source, input_port<2>(*second_join));
+            break;
+        case 3:
+            make_edge(*first_source, input_port<3>(*second_join));
+            break;
+        }
+    }
 }
 
 context *
@@ -289,6 +444,10 @@ get_context_of_logical_graph_node(logical_graph_node const &node)
         return node.wrap.size_2.cont.get();
     case 3:
         return node.wrap.size_3.cont.get();
+    case 4:
+        return node.wrap.size_4.cont.get();
+    default:
+        return nullptr;
     }
 }
 

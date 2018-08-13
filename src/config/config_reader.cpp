@@ -56,6 +56,8 @@ Document config_reader::load_json_conf(const string &file)
 
     d.Parse(char_array);
 
+    parse_library_location(d, filePath.parent_path().string());
+
     return d;
 }
 
@@ -80,7 +82,10 @@ void config_reader::config_algorithm(std::unordered_map<std::string, rapidjson::
     if (map.count(algorithm_name) > 0)
         return;
     path algo_config_file(parent_path + string("/pvpf_algorithms/") + algorithm_name + string("/config.json"));
+
     Document d = load_json_conf(algo_config_file.string());
+    parse_algorithm_library_location(d, parent_path + string("/pvpf_algorithms/") + algorithm_name);
+
     map[algorithm_name] = std::move(d);
     for (Value::ConstValueIterator algo_config = map[algorithm_name]["body"].Begin();
          algo_config != map[algorithm_name]["body"].End(); algo_config++)
@@ -92,6 +97,50 @@ void config_reader::config_algorithm(std::unordered_map<std::string, rapidjson::
         }
     }
 };
+
+void config_reader::parse_library_location(Document &d, std::string const &parent_path)
+{
+    // source lib
+    if (d.HasMember("source"))
+    {
+        auto &source_json = d["source"];
+        for (auto node = source_json.Begin(); node != source_json.End(); node++)
+        {
+            auto &dylib = (*node)["task"]["dylib"]["location"];
+            path source_lib(parent_path + string("/") + dylib.GetString());
+            dylib.SetString(source_lib.string().c_str(), source_lib.string().length(), d.GetAllocator());
+        }
+    }
+
+    // source lib
+    if (d.HasMember("sink"))
+    {
+        auto &sink_json = d["sink"];
+        for (auto node = sink_json.Begin(); node != sink_json.End(); node++)
+        {
+            auto &dylib = (*node)["task"]["dylib"]["location"];
+            path sink_lib(parent_path + string("/") + dylib.GetString());
+            dylib.SetString(sink_lib.string().c_str(), sink_lib.string().length(), d.GetAllocator());
+        }
+    }
+}
+
+void config_reader::parse_algorithm_library_location(rapidjson::Document &d, std::string const &parent_path)
+{
+    if (d.HasMember("body"))
+    {
+        auto &body_json = d["body"];
+        for (auto node = body_json.Begin(); node != body_json.End(); node++)
+        {
+            if ((*node)["type"] == "dylib")
+            {
+                auto &location = (*node)["location"];
+                path lib_location(parent_path + string("/") + location.GetString());
+                location.SetString(lib_location.string().c_str(), lib_location.string().length(), d.GetAllocator());
+            }
+        }
+    }
+}
 
 } // namespace config
 

@@ -4,6 +4,10 @@
 
 #include <pvpf/task_execution/body.hpp>
 #include <pvpf/task_execution/memory_manager.hpp>
+#include <iostream>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <pvpf/utils/exception.hpp>
 
 using namespace std;
 
@@ -13,7 +17,6 @@ namespace task_execution
 template <size_t input_size>
 data_bucket node_body<input_size>::operator()(array<data_bucket, input_size> const &data)
 {
-
     // pre process
     vector<data_bucket> preprocessedVec(data.begin(), data.end());
     memory_manager::pre_process(preprocessedVec, *cont);
@@ -22,6 +25,7 @@ data_bucket node_body<input_size>::operator()(array<data_bucket, input_size> con
     data_bucket input_data;
     for (auto it = cont->input_mapping.begin(); it != cont->input_mapping.end(); it++)
     {
+
         if (it->second.size() == 1)
         {
             auto pair = it->second[0];
@@ -54,7 +58,6 @@ data_bucket node_body<input_size>::operator()(array<data_bucket, input_size> con
 template <size_t input_size>
 data_bucket sink_body<input_size>::operator()(array<data_bucket, input_size> const &data)
 {
-
     // pre process
     vector<data_bucket> preprocessedVec(data.begin(), data.end());
     memory_manager::pre_process(preprocessedVec, *cont);

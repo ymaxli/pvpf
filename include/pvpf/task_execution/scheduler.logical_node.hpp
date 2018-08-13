@@ -21,11 +21,11 @@ namespace task_execution
 {
 struct logical_source_node
 {
-    std::shared_ptr<context> cont;
     std::unique_ptr<tbb::flow::source_node<data_bucket>> source;
+    std::shared_ptr<context> cont;
 
     logical_source_node(std::unique_ptr<tbb::flow::source_node<data_bucket>> source,
-                        std::shared_ptr<context> cont) : cont(std::move(cont)), source(std::move(source)){};
+                        std::shared_ptr<context> cont) : source(std::move(source)), cont(std::move(cont)){};
 };
 
 struct logical_graph_node
@@ -44,8 +44,8 @@ struct logical_graph_node
         struct ssize_1
         {
             std::shared_ptr<context> cont;
-            std::unique_ptr<join_node<std::array<data_bucket, 1>>> j_node;
             std::unique_ptr<function_node<std::array<data_bucket, 1>, data_bucket>> func_node;
+            std::unique_ptr<join_node<std::array<data_bucket, 1>>> j_node;
 
             ssize_1(std::shared_ptr<context> cont,
                     std::unique_ptr<function_node<std::array<data_bucket, 1>, data_bucket>> func_node,
@@ -55,23 +55,35 @@ struct logical_graph_node
         struct ssize_2
         {
             std::shared_ptr<context> cont;
-            std::unique_ptr<join_node<std::array<data_bucket, 2>>> j_node;
             std::unique_ptr<function_node<std::array<data_bucket, 2>, data_bucket>> func_node;
+            std::unique_ptr<join_node<std::array<data_bucket, 2>>> j_node;
 
             ssize_2(std::shared_ptr<context> cont,
                     std::unique_ptr<function_node<std::array<data_bucket, 2>, data_bucket>> func_node,
                     std::unique_ptr<join_node<std::array<data_bucket, 2>>> j_node) : cont(std::move(cont)), func_node(std::move(func_node)), j_node(std::move(j_node)) {}
         } size_2;
+
         struct ssize_3
         {
             std::shared_ptr<context> cont;
-            std::unique_ptr<join_node<std::array<data_bucket, 3>>> j_node;
             std::unique_ptr<function_node<std::array<data_bucket, 3>, data_bucket>> func_node;
+            std::unique_ptr<join_node<std::array<data_bucket, 3>>> j_node;
 
             ssize_3(std::shared_ptr<context> cont,
                     std::unique_ptr<function_node<std::array<data_bucket, 3>, data_bucket>> func_node,
                     std::unique_ptr<join_node<std::array<data_bucket, 3>>> j_node) : cont(std::move(cont)), func_node(std::move(func_node)), j_node(std::move(j_node)) {}
         } size_3;
+
+        struct ssize_4
+        {
+            std::shared_ptr<context> cont;
+            std::unique_ptr<function_node<std::array<data_bucket, 4>, data_bucket>> func_node;
+            std::unique_ptr<join_node<std::array<data_bucket, 4>>> j_node;
+
+            ssize_4(std::shared_ptr<context> cont,
+                    std::unique_ptr<function_node<std::array<data_bucket, 4>, data_bucket>> func_node,
+                    std::unique_ptr<join_node<std::array<data_bucket, 4>>> j_node) : cont(std::move(cont)), func_node(std::move(func_node)), j_node(std::move(j_node)) {}
+        } size_4;
     } wrap;
 };
 
