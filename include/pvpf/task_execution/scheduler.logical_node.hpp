@@ -19,6 +19,9 @@ using namespace tbb::flow;
 PVPF_NAMESPACE_BEGIN
 namespace task_execution
 {
+/**
+ * logical source node struct representing source nodes in project configuration files
+ */
 struct logical_source_node
 {
     std::unique_ptr<tbb::flow::source_node<data_bucket>> source;
@@ -28,6 +31,10 @@ struct logical_source_node
                         std::shared_ptr<context> cont) : source(std::move(source)), cont(std::move(cont)){};
 };
 
+/**
+ * logical graph node struct representing normal nodes & sink nodes in project configuration files
+ * notice that this struct uses a union to store different types of TBB nodes
+ */
 struct logical_graph_node
 {
     int join_size = 0;

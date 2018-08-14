@@ -15,6 +15,9 @@
 PVPF_NAMESPACE_BEGIN
 namespace task_execution
 {
+/**
+ * structured context storing all the information one logical node needs
+ */
 struct context
 {
   public:
@@ -55,6 +58,9 @@ struct context
                               is_cpu(cont.is_cpu) {}
 };
 
+/**
+ * Body struct used in TBB for a source node
+ */
 struct source_body
 {
     std::shared_ptr<context> cont;
@@ -75,6 +81,9 @@ struct source_body
     bool operator()(data_bucket &db);
 };
 
+/**
+ * Body class used in TBB for a sink node
+ */
 template <size_t input_size>
 struct sink_body
 {
@@ -95,6 +104,9 @@ struct sink_body
     std::unique_ptr<data_io::io_pipe_for_sink_node> pipe;
 };
 
+/**
+ * Body class used in TBB for a normal node
+ */
 template <size_t input_size>
 struct node_body
 {

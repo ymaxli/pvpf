@@ -28,8 +28,14 @@ class scheduler
 public:
   std::map<std::string, rapidjson::Value> json_object_map;
 
+  /**
+   * build the TBB graph according to configuration files
+   */
   void build_graph(rapidjson::Document &conf, std::unordered_map<std::string, rapidjson::Document> _algorithm_map);
 
+  /**
+   * run the built graph
+   */
   void run();
 
   //private:
