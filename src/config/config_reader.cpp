@@ -56,8 +56,6 @@ Document config_reader::load_json_conf(const string &file)
 
     d.Parse(char_array);
 
-    parse_library_location(d, filePath.parent_path().string());
-
     return d;
 }
 

@@ -27,10 +27,7 @@ BOOST_AUTO_TEST_CASE(weight_tv)
     Document d = cr.load_json_conf(TEST_ALGORITHM_DIR + string("/weight_tv.json"));
     config_validator cv;
     vector<validation_result> res = cv.validate(d);
-    for (auto aa : res)
-    {
-        cout << aa.get_message() << endl;
-    }
+    cr.parse_library_location(d, TEST_ALGORITHM_DIR);
 
     auto algo_map = cr.load_algorithm(d, TEST_ALGORITHM_DIR);
 
