@@ -30,22 +30,17 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
         auto node = std::move(std::get<1>(pair));
 
         cv::Mat images[7];
-        cout<<"before thread"<<endl;
 
         std::thread first([&]() -> void {
             for (int i = 0; i < 6; i++) {
                 images[i] = cv::imread(TEST_IMAGE_DIR + to_string(i + 1) + string(".png"));
                 source->source_write("kkk", images[i]);
             }
-            cout<<"before complete"<<endl;
             source->source_complete();
-            cout<<"after complete"<<endl;
         });
         std::thread second([&]() -> void {
             int index = 0;
             while (!node->is_empty()) {
-                cout<<node->is_empty()<<endl;
-                cout<<index<<endl;
                 data_bucket data = node->read();
                 auto result = data.get_copy<cv::Mat>("kkk");
                 bool isEqual = (cv::sum(images[index] != result) == cv::Scalar(0, 0, 0, 0));
@@ -53,9 +48,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 index++;
                 this_thread::sleep_for(chrono::milliseconds(50));
             }
-            cout<<"after while"<<endl;
         });
-        cout<<"after thread"<<endl;
 
         first.join();
         second.join();
