@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
         cv::Mat images[7];
 
         std::thread first([&]() -> void {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 7; i++) {
                 images[i] = cv::imread(TEST_IMAGE_DIR + to_string(i + 1) + string(".png"));
                 source->source_write("kkk", images[i]);
             }
@@ -52,7 +52,6 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
-        cout<<"read_continuous_data"<<endl;
     }
 
     BOOST_AUTO_TEST_CASE(read_single_data) {
@@ -80,7 +79,6 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
-        cout<<"read_single_data"<<endl;
     }
 
     BOOST_AUTO_TEST_CASE(write_continuous_data) {
@@ -113,7 +111,6 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
-        cout<<"write_continuous_data"<<endl;
     }
 
     BOOST_AUTO_TEST_CASE(write_single_data) {
@@ -143,7 +140,6 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
-        cout<<"write_single_data"<<endl;
     }
 
 BOOST_AUTO_TEST_SUITE_END()
