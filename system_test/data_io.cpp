@@ -39,12 +39,12 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
             }
             cout<<"before complete"<<endl;
             source->source_complete();
-            cout<<node->is_empty()<<endl;
             cout<<"after complete"<<endl;
         });
         std::thread second([&]() -> void {
             int index = 0;
             while (!node->is_empty()) {
+                cout<<node->is_empty()<<endl;
                 cout<<index<<endl;
                 data_bucket data = node->read();
                 auto result = data.get_copy<cv::Mat>("kkk");
