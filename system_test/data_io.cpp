@@ -37,17 +37,20 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 images[i] = cv::imread(TEST_IMAGE_DIR + to_string(i + 1) + string(".png"));
                 source->source_write("kkk", images[i]);
             }
+            cout<<"before complete"<<endl;
             source->source_complete();
         });
         std::thread second([&]() -> void {
             int index = 0;
             while (!node->is_empty()) {
+                cout<<index<<endl;
                 data_bucket data = node->read();
                 auto result = data.get_copy<cv::Mat>("kkk");
                 bool isEqual = (cv::sum(images[index] != result) == cv::Scalar(0, 0, 0, 0));
                 BOOST_TEST(isEqual);
                 index++;
             }
+            cout<<"after while"<<endl;
         });
         cout<<"after thread"<<endl;
 
