@@ -81,6 +81,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 bool isEqual = (cv::sum(image != result) == cv::Scalar(0, 0, 0, 0));
                 BOOST_TEST(isEqual);
             }
+            this_thread::sleep_for(chrono::milliseconds(50));
         });
 
         first.join();
@@ -112,6 +113,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 BOOST_TEST(isEqual);
                 index++;
             }
+            this_thread::sleep_for(chrono::milliseconds(50));
         });
 
         first.join();
@@ -140,6 +142,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 auto result = data.get_ptr<std::map<string, int>>("abc");
                 BOOST_TEST((*result)[key] == 123);
             }
+            this_thread::sleep_for(chrono::milliseconds(50));
         });
 
         first.join();
