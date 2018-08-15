@@ -51,6 +51,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 bool isEqual = (cv::sum(images[index] != result) == cv::Scalar(0, 0, 0, 0));
                 BOOST_TEST(isEqual);
                 index++;
+                this_thread::sleep_for(chrono::milliseconds(50));
             }
             cout<<"after while"<<endl;
         });
