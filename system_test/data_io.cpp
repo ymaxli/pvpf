@@ -51,6 +51,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
+        cout<<"read_continuous_data"<<endl;
     }
 
     BOOST_AUTO_TEST_CASE(read_single_data) {
@@ -76,6 +77,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
+        cout<<"read_single_data"<<endl;
     }
 
     BOOST_AUTO_TEST_CASE(write_continuous_data) {
@@ -106,6 +108,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
+        cout<<"write_continuous_data"<<endl;
     }
 
     BOOST_AUTO_TEST_CASE(write_single_data) {
@@ -133,6 +136,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
 
         first.join();
         second.join();
+        cout<<"write_single_data"<<endl;
     }
 
 BOOST_AUTO_TEST_SUITE_END()
