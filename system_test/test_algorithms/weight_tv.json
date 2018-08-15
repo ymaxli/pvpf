@@ -8,7 +8,7 @@
             "id": "read_image",
             "task": {
                 "dylib": {
-                    "location": "io/io_lib.dylib",
+                    "location": "io/io_lib.so",
                     "func": "input"
                 }
             },
@@ -250,7 +250,7 @@
             },
             "task": {
                 "dylib": {
-                    "location": "io/io_lib.dylib",
+                    "location": "io/io_lib.so",
                     "func": "output"
                 }
             }
