@@ -39,6 +39,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
             }
             cout<<"before complete"<<endl;
             source->source_complete();
+            cout<<"after complete"<<endl;
         });
         std::thread second([&]() -> void {
             int index = 0;
