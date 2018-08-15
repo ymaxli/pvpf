@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
         cout<<"before thread"<<endl;
 
         std::thread first([&]() -> void {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 6; i++) {
                 images[i] = cv::imread(TEST_IMAGE_DIR + to_string(i + 1) + string(".png"));
                 source->source_write("kkk", images[i]);
             }
