@@ -30,6 +30,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
         auto node = std::move(std::get<1>(pair));
 
         cv::Mat images[7];
+        cout<<"before thread"<<endl;
 
         std::thread first([&]() -> void {
             for (int i = 0; i < 7; i++) {
@@ -48,6 +49,7 @@ BOOST_AUTO_TEST_SUITE(system_testing_data_io_suite)
                 index++;
             }
         });
+        cout<<"after thread"<<endl;
 
         first.join();
         second.join();
